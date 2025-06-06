@@ -28,7 +28,14 @@
 - **フォント**: Noto Sans JP
 - **ホスティング**: Vercel
 
+## リポジトリ情報
+
+- **GitHub**: https://github.com/ryoshin0830/suisui
+- **Vercelプロジェクト**: suisui
+
 ## セットアップ
+
+### ローカル開発環境
 
 ```bash
 # リポジトリのクローン
@@ -77,6 +84,16 @@ npm run dev
 このプロジェクトは研究・教育目的で開発されています。
 
 ## デプロイ
+
+### 🌐 本番環境
+**プロジェクトは既にVercelにデプロイ済みです！**
+
+- **プロジェクト名**: suisui
+- **デプロイ方法**: GitHubリポジトリから手動デプロイ
+- **URL**: https://suisui.vercel.app （予想URL - 実際のURLを確認してください）
+
+### 新規デプロイ
+他の環境にデプロイする場合は、以下のボタンを使用してください：
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/ryoshin0830/suisui)
 
