@@ -1,36 +1,89 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# すいすいリーダー (SuiSui Reader)
 
-## Getting Started
+日本語学習者のための速読ウェブサイト
 
-First, run the development server:
+## プロジェクト概要
+
+すいすいリーダーは、日本語学習者の読解流暢さ（Fluency）向上を目的とした速読練習ウェブサイトです。
+
+### 主な機能
+
+- 📖 **読解速度測定**: 読書時間とスクロール行動を自動記録
+- 📝 **理解度テスト**: 選択式問題による理解度確認
+- 📱 **QRコード結果**: 正答率に応じた色分けQRコード生成
+- 📊 **3段階レベル**: 初級・中級・上級に対応
+- 🔧 **管理画面**: コンテンツ管理とシステム監視
+
+### QRコード色分けシステム
+
+- 🔴 **赤色**: 70%未満の正答率
+- 🔵 **青色**: 70-80%の正答率
+- 🟢 **緑色**: 80%以上の正答率
+
+## 技術スタック
+
+- **フレームワーク**: Next.js 15 + React 19
+- **スタイリング**: Tailwind CSS
+- **QRコード**: qrcode ライブラリ
+- **フォント**: Noto Sans JP
+- **ホスティング**: Vercel
+
+## セットアップ
 
 ```bash
+# リポジトリのクローン
+git clone https://github.com/ryoshin0830/suisui.git
+cd suisui
+
+# 依存関係のインストール
+npm install
+
+# 開発サーバーの起動
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+ブラウザで [http://localhost:3000](http://localhost:3000) を開いてください。
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## ページ構成
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `/` - ホームページ（初級向け説明）
+- `/about` - Fluency概念の詳細説明
+- `/reading` - 読解練習メインページ
+- `/admin` - 管理画面（パスワード: suisui2025）
 
-## Learn More
+## 収録コンテンツ
 
-To learn more about Next.js, take a look at the following resources:
+### 初級修了レベル (1-1)
+- ももたろう
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 中級レベル (2-1)
+- 仏教
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 上級レベル (3-1)
+- エチオピアのコーヒー
 
-## Deploy on Vercel
+## プロジェクトメンバー
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **光恵さん（Mitsue Tabata-Sandom）**: マッセイ大学、プロジェクト主導者
+- **梁震さん（リョウ・シン）**: 京都大学、ITエンジニア・開発担当
+- **松下達彦さん（たつさん）**: 国立国語研究所、アドバイザー
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 研究背景
+
+このプロジェクトは国際交流基金助成金（4,000ドル）により実施され、多読プログラムで併用できる速読サイトの構築を通じて、日本語学習者の読解流暢さ向上を目指しています。
+
+## ライセンス
+
+このプロジェクトは研究・教育目的で開発されています。
+
+## デプロイ
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/ryoshin0830/suisui)
+
+## 今後の機能追加予定
+
+- [ ] 新しいコンテンツの追加機能
+- [ ] 既存コンテンツの編集機能
+- [ ] 学習データの分析機能
+- [ ] 多言語対応（英語・中国語）
+- [ ] 実際のWordファイルからのコンテンツ自動読み込み
