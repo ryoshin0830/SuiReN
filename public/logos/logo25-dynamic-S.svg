@@ -1,0 +1,18 @@
+<svg width="240" height="80" viewBox="0 0 240 80" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="dynamicS" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#FF0080;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#8000FF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0080FF;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <!-- Large dynamic S -->
+  <path d="M20,20 Q40,10 60,25 Q50,35 40,40 Q50,45 60,55 Q40,70 20,60 Q30,50 40,45 Q30,40 20,30 Q30,25 20,20" fill="url(#dynamicS)"/>
+  <!-- Motion trails -->
+  <path d="M65,25 Q75,20 85,25" stroke="#FF0080" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M65,40 Q80,35 95,40" stroke="#8000FF" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M65,55 Q78,50 90,55" stroke="#0080FF" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <!-- Modern text -->
+  <text x="105" y="40" font-family="Arial Black, sans-serif" font-size="18" font-weight="900" fill="#1A1A1A">uisuiリーダー</text>
+  <text x="105" y="55" font-family="Arial, sans-serif" font-size="10" fill="#666">NEXT LEVEL READING</text>
+</svg>

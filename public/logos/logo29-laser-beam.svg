@@ -1,0 +1,28 @@
+<svg width="240" height="80" viewBox="0 0 240 80" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="laser" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#FF0000;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#FFFFFF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#00FFFF;stop-opacity:1" />
+    </linearGradient>
+    <filter id="laserGlow">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <!-- Laser beam -->
+  <rect x="20" y="38" width="180" height="4" fill="url(#laser)" filter="url(#laserGlow)"/>
+  <rect x="25" y="39" width="170" height="2" fill="#FFFFFF" opacity="0.8"/>
+  <!-- Laser source -->
+  <circle cx="20" cy="40" r="8" fill="#FF0000" filter="url(#laserGlow)"/>
+  <circle cx="20" cy="40" r="4" fill="#FFFFFF"/>
+  <!-- Laser target -->
+  <circle cx="200" cy="40" r="6" fill="#00FFFF" filter="url(#laserGlow)"/>
+  <!-- Sharp text -->
+  <text x="120" y="25" font-family="Arial Black, sans-serif" font-size="20" font-weight="900" text-anchor="middle" fill="#FF0000">すいすい</text>
+  <text x="120" y="60" font-family="Arial Black, sans-serif" font-size="16" font-weight="900" text-anchor="middle" fill="#00FFFF">リーダー</text>
+  <text x="120" y="72" font-family="Arial, sans-serif" font-size="8" text-anchor="middle" fill="#666">LASER PRECISION</text>
+</svg>

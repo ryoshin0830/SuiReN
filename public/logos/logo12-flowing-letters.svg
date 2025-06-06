@@ -1,0 +1,10 @@
+<svg width="200" height="60" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
+  <!-- Flowing letter effect -->
+  <text x="20" y="35" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#3B82F6" transform="rotate(-5 20 35)">す</text>
+  <text x="35" y="30" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#06B6D4" transform="rotate(-2 35 30)">い</text>
+  <text x="50" y="32" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#0EA5E9" transform="rotate(2 50 32)">す</text>
+  <text x="65" y="28" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#3B82F6" transform="rotate(1 65 28)">い</text>
+  <!-- Regular text -->
+  <text x="85" y="30" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#1E40AF">リーダー</text>
+  <text x="85" y="45" font-family="Arial, sans-serif" font-size="10" fill="#64748B">Speed Reading</text>
+</svg>

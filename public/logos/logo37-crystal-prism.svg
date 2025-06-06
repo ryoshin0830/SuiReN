@@ -1,0 +1,31 @@
+<svg width="240" height="80" viewBox="0 0 240 80" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="prism1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FF0080;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#8000FF;stop-opacity:0.8" />
+    </linearGradient>
+    <linearGradient id="prism2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00FF80;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#0080FF;stop-opacity:0.8" />
+    </linearGradient>
+    <linearGradient id="prism3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFFF00;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#FF8000;stop-opacity:0.8" />
+    </linearGradient>
+  </defs>
+  <!-- Crystal prism facets -->
+  <polygon points="40,20 60,25 50,45 30,40" fill="url(#prism1)"/>
+  <polygon points="60,25 80,30 70,50 50,45" fill="url(#prism2)"/>
+  <polygon points="50,45 70,50 65,65 45,60" fill="url(#prism3)"/>
+  <!-- Light refraction -->
+  <line x1="85" y1="30" x2="105" y2="25" stroke="#FF0080" stroke-width="2"/>
+  <line x1="85" y1="35" x2="110" y2="35" stroke="#00FF80" stroke-width="2"/>
+  <line x1="85" y1="40" x2="105" y2="45" stroke="#FFFF00" stroke-width="2"/>
+  <!-- Prismatic text -->
+  <text x="120" y="30" font-family="Arial Black, sans-serif" font-size="18" font-weight="900" fill="#FF0080">す</text>
+  <text x="135" y="30" font-family="Arial Black, sans-serif" font-size="18" font-weight="900" fill="#00FF80">い</text>
+  <text x="150" y="30" font-family="Arial Black, sans-serif" font-size="18" font-weight="900" fill="#0080FF">す</text>
+  <text x="165" y="30" font-family="Arial Black, sans-serif" font-size="18" font-weight="900" fill="#FFFF00">い</text>
+  <text x="120" y="48" font-family="Arial Black, sans-serif" font-size="14" font-weight="900" fill="#8000FF">リーダー</text>
+  <text x="120" y="62" font-family="Arial, sans-serif" font-size="8" fill="#FF8000">SPECTRUM</text>
+</svg>

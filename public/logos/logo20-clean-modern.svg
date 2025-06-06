@@ -1,0 +1,10 @@
+<svg width="200" height="60" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
+  <!-- Clean modern design -->
+  <rect x="20" y="20" width="4" height="20" fill="#3B82F6" rx="2"/>
+  <rect x="28" y="15" width="4" height="25" fill="#06B6D4" rx="2"/>
+  <rect x="36" y="18" width="4" height="22" fill="#0EA5E9" rx="2"/>
+  <rect x="44" y="12" width="4" height="26" fill="#3B82F6" rx="2"/>
+  <!-- Modern typography -->
+  <text x="60" y="30" font-family="Arial, sans-serif" font-size="18" font-weight="300" fill="#0F172A">すいすい</text>
+  <text x="60" y="45" font-family="Arial, sans-serif" font-size="14" font-weight="600" fill="#3B82F6">リーダー</text>
+</svg>
