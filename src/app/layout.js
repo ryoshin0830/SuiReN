@@ -8,7 +8,7 @@ const notoSansJP = Noto_Sans_JP({
 });
 
 export const metadata = {
-  title: "すいすいリーダー | SuiSui Reader",
+  title: "速読ゴリラ | Speed Reading Gorilla",
   description: "日本語学習者のための速読ウェブサイト",
 };
 

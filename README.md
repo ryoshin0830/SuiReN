@@ -1,10 +1,10 @@
-# すいすいリーダー (SuiSui Reader)
+# 速読ゴリラ (Speed Reading Gorilla)
 
 日本語学習者のための速読ウェブサイト
 
 ## プロジェクト概要
 
-すいすいリーダーは、日本語学習者の読解流暢さ（Fluency）向上を目的とした速読練習ウェブサイトです。
+速読ゴリラは、日本語学習者の読解流暢さ（Fluency）向上を目的とした速読練習ウェブサイトです。
 
 ### 主な機能
 
@@ -30,8 +30,8 @@
 
 ## リポジトリ情報
 
-- **GitHub**: https://github.com/ryoshin0830/suisui
-- **Vercelプロジェクト**: suisui
+- **GitHub**: https://github.com/ryoshin0830/speed-reading-gorilla
+- **Vercelプロジェクト**: speed-reading-gorilla
 
 ## セットアップ
 
@@ -39,8 +39,8 @@
 
 ```bash
 # リポジトリのクローン
-git clone https://github.com/ryoshin0830/suisui.git
-cd suisui
+git clone https://github.com/ryoshin0830/speed-reading-gorilla.git
+cd speed-reading-gorilla
 
 # 依存関係のインストール
 npm install
@@ -56,7 +56,7 @@ npm run dev
 - `/` - ホームページ（初級向け説明）
 - `/about` - Fluency概念の詳細説明
 - `/reading` - 読解練習メインページ
-- `/admin` - 管理画面（パスワード: suisui2025）
+- `/admin` - 管理画面（パスワード: gorilla2025）
 
 ## 収録コンテンツ
 
@@ -88,14 +88,14 @@ npm run dev
 ### 🌐 本番環境
 **プロジェクトは既にVercelにデプロイ済みです！**
 
-- **プロジェクト名**: suisui
+- **プロジェクト名**: speed-reading-gorilla
 - **デプロイ方法**: GitHubリポジトリから手動デプロイ
-- **URL**: https://suisui.vercel.app （予想URL - 実際のURLを確認してください）
+- **URL**: https://speed-reading-gorilla.vercel.app （予想URL - 実際のURLを確認してください）
 
 ### 新規デプロイ
 他の環境にデプロイする場合は、以下のボタンを使用してください：
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/ryoshin0830/suisui)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/ryoshin0830/speed-reading-gorilla)
 
 ## 今後の機能追加予定
 

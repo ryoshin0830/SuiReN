@@ -5,29 +5,11 @@ export default function Home() {
     <div className="max-w-4xl mx-auto px-4 py-12">
       <div className="text-center mb-12">
         <div className="flex justify-center mb-6">
-          <svg width="300" height="100" viewBox="0 0 240 80" xmlns="http://www.w3.org/2000/svg" className="h-20">
-            {/* Book pages */}
-            <rect x="15" y="25" width="18" height="22" fill="#F1F5F9" stroke="#64748B" strokeWidth="1" rx="1"/>
-            <rect x="18" y="22" width="18" height="22" fill="#F8FAFC" stroke="#3B82F6" strokeWidth="1" rx="1"/>
-            <rect x="21" y="19" width="18" height="22" fill="white" stroke="#06B6D4" strokeWidth="1" rx="1"/>
-            {/* Page lines */}
-            <line x1="23" y1="23" x2="37" y2="23" stroke="#CBD5E1" strokeWidth="0.5"/>
-            <line x1="23" y1="26" x2="35" y2="26" stroke="#CBD5E1" strokeWidth="0.5"/>
-            <line x1="23" y1="29" x2="37" y2="29" stroke="#CBD5E1" strokeWidth="0.5"/>
-            <line x1="23" y1="32" x2="32" y2="32" stroke="#CBD5E1" strokeWidth="0.5"/>
-            <line x1="23" y1="35" x2="36" y2="35" stroke="#CBD5E1" strokeWidth="0.5"/>
-            <line x1="23" y1="38" x2="34" y2="38" stroke="#CBD5E1" strokeWidth="0.5"/>
-            
-            {/* Flowing letters */}
-            <text x="50" y="35" fontFamily="Arial, sans-serif" fontSize="18" fontWeight="bold" fill="#3B82F6" transform="rotate(-3 50 35)">す</text>
-            <text x="65" y="30" fontFamily="Arial, sans-serif" fontSize="18" fontWeight="bold" fill="#06B6D4" transform="rotate(-1 65 30)">い</text>
-            <text x="80" y="32" fontFamily="Arial, sans-serif" fontSize="18" fontWeight="bold" fill="#0EA5E9" transform="rotate(2 80 32)">す</text>
-            <text x="95" y="28" fontFamily="Arial, sans-serif" fontSize="18" fontWeight="bold" fill="#3B82F6" transform="rotate(1 95 28)">い</text>
-            
-            {/* Regular text */}
-            <text x="115" y="30" fontFamily="Arial, sans-serif" fontSize="16" fontWeight="bold" fill="#1E40AF">リーダー</text>
-            <text x="115" y="45" fontFamily="Arial, sans-serif" fontSize="10" fill="#64748B">SuiSui Reader</text>
-          </svg>
+          <img 
+            src="/logos/gorilla-complete-balanced.svg" 
+            alt="速読ゴリラ" 
+            className="h-32 w-auto"
+          />
         </div>
         <p className="text-xl text-gray-600 mb-8">
           日本語学習者のための速読練習サイト
@@ -52,11 +34,11 @@ export default function Home() {
           </p>
           
           <p>
-            私たちは、「文章をよくわかりながら速く読むこと」を、<strong>「すいすいリーダー」</strong>と言うことにしました。海や川で、すいすいと楽しく泳いでいるように、皆さんに日本語の文章を、よくわかって、楽しく速く読んでほしいと思います。
+私たちは、「文章をよくわかりながら速く読むこと」を、<strong>「速読ゴリラ」</strong>と言うことにしました。ゴリラのように、力強く、そして速く文章を読んでほしいと思います。皆さんに日本語の文章を、よくわかって、楽しく速く読んでほしいと思います。
           </p>
           
           <p>
-            「すいすいリーダー」の練習では、とても簡単な文章を、なるべく速く読みます。でも、早すぎてはだめです。<strong>大体の意味がわかるように</strong>、そして、速く読んでください。何回もこの練習をしていると、楽しく速く読めるようになりますよ。
+「速読ゴリラ」の練習では、とても簡単な文章を、なるべく速く読みます。でも、早すぎてはだめです。<strong>大体の意味がわかるように</strong>、そして、速く読んでください。何回もこの練習をしていると、楽しく速く読めるようになりますよ。
           </p>
           
           <p className="text-center text-blue-600 font-medium text-xl">
@@ -64,7 +46,7 @@ export default function Home() {
           </p>
           
           <p className="text-right text-gray-600 text-base">
-            すいすいリーダー・チーム
+速読ゴリラ・チーム
           </p>
         </div>
       </div>
