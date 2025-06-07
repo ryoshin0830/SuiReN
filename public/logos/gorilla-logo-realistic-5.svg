@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 160" class="logo">
+  <defs>
+    <linearGradient id="mightyGorilla" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2c3e50;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#34495e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1b2631;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="powerFace" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#85754e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#6b5c3f;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="powerText" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#c0392b;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#e74c3c;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#922b21;stop-opacity:1" />
+    </linearGradient>
+    <filter id="powerGlow">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- パワフルなゴリラ（胸を叩くポーズ） -->
+  <!-- 大きな体 -->
+  <ellipse cx="100" cy="100" rx="50" ry="55" fill="url(#mightyGorilla)"/>
+  
+  <!-- 筋肉質な胸 -->
+  <ellipse cx="100" cy="85" rx="35" ry="25" fill="#1b2631"/>
+  
+  <!-- 大きな頭 -->
+  <ellipse cx="100" cy="50" rx="38" ry="32" fill="url(#mightyGorilla)"/>
+  
+  <!-- 目立つサジタルクレスト -->
+  <ellipse cx="100" cy="30" rx="30" ry="15" fill="#17202a"/>
+  
+  <!-- 力強い顔 -->
+  <ellipse cx="100" cy="55" rx="28" ry="28" fill="url(#powerFace)"/>
+  
+  <!-- 集中した目 -->
+  <ellipse cx="90" cy="48" rx="5" ry="4" fill="#fff"/>
+  <ellipse cx="110" cy="48" rx="5" ry="4" fill="#fff"/>
+  <circle cx="90" cy="48" r="3" fill="#2c1810"/>
+  <circle cx="110" cy="48" r="3" fill="#2c1810"/>
+  <circle cx="91" cy="47" r="1" fill="#fff"/>
+  <circle cx="111" cy="47" r="1" fill="#fff"/>
+  
+  <!-- 大きな鼻孔 -->
+  <ellipse cx="95" cy="60" rx="3" ry="2" fill="#2c1810"/>
+  <ellipse cx="105" cy="60" rx="3" ry="2" fill="#2c1810"/>
+  
+  <!-- 決意の表情 -->
+  <path d="M88 68 Q100 72 112 68" fill="#2c1810"/>
+  <rect x="96" y="68" width="2" height="4" fill="#fff"/>
+  <rect x="99" y="68" width="2" height="4" fill="#fff"/>
+  <rect x="102" y="68" width="2" height="4" fill="#fff"/>
+  
+  <!-- 強い眉 -->
+  <ellipse cx="100" cy="42" rx="32" ry="6" fill="#17202a" opacity="0.8"/>
+  
+  <!-- 筋肉質な腕（胸を叩くポーズ） -->
+  <ellipse cx="65" cy="75" rx="20" ry="35" fill="url(#mightyGorilla)" transform="rotate(-25 65 75)"/>
+  <ellipse cx="135" cy="75" rx="20" ry="35" fill="url(#mightyGorilla)" transform="rotate(25 135 75)"/>
+  
+  <!-- 大きな拳 -->
+  <ellipse cx="55" cy="95" rx="15" ry="12" fill="url(#powerFace)"/>
+  <ellipse cx="145" cy="95" rx="15" ry="12" fill="url(#powerFace)"/>
+  
+  <!-- ナックル -->
+  <circle cx="50" cy="92" r="2" fill="#6b5c3f"/>
+  <circle cx="54" cy="95" r="2" fill="#6b5c3f"/>
+  <circle cx="58" cy="98" r="2" fill="#6b5c3f"/>
+  <circle cx="150" cy="92" r="2" fill="#6b5c3f"/>
+  <circle cx="146" cy="95" r="2" fill="#6b5c3f"/>
+  <circle cx="142" cy="98" r="2" fill="#6b5c3f"/>
+  
+  <!-- 知識の本（足元に置いてある）-->
+  <rect x="85" y="135" width="30" height="20" fill="#3498db" rx="2"/>
+  <rect x="87" y="137" width="26" height="16" fill="#fff"/>
+  <line x1="89" y1="140" x2="111" y2="140" stroke="#2c3e50" stroke-width="1"/>
+  <line x1="89" y1="143" x2="109" y2="143" stroke="#2c3e50" stroke-width="1"/>
+  <line x1="89" y1="146" x2="107" y2="146" stroke="#2c3e50" stroke-width="1"/>
+  <line x1="89" y1="149" x2="111" y2="149" stroke="#2c3e50" stroke-width="1"/>
+  <line x1="100" y1="137" x2="100" y2="153" stroke="#3498db" stroke-width="2"/>
+  
+  <!-- 太い足 -->
+  <ellipse cx="80" cy="140" rx="20" ry="15" fill="url(#powerFace)"/>
+  <ellipse cx="120" cy="140" rx="20" ry="15" fill="url(#powerFace)"/>
+  
+  <!-- パワフルなテキスト -->
+  <text x="180" y="65" font-family="'Impact', 'Arial Black', sans-serif" font-size="38" font-weight="bold" 
+        fill="url(#powerText)" filter="url(#powerGlow)">速読</text>
+  <text x="180" y="110" font-family="'Impact', 'Arial Black', sans-serif" font-size="38" font-weight="bold" 
+        fill="url(#powerText)" filter="url(#powerGlow)">ゴリラ</text>
+  
+  <!-- パワーオーラ -->
+  <g opacity="0.5">
+    <circle cx="100" cy="85" r="65" fill="none" stroke="#e74c3c" stroke-width="1"/>
+    <circle cx="100" cy="85" r="75" fill="none" stroke="#c0392b" stroke-width="0.5"/>
+  </g>
+  
+  <!-- パワーライン -->
+  <g opacity="0.8">
+    <line x1="170" y1="45" x2="175" y2="47" stroke="#e74c3c" stroke-width="4"/>
+    <line x1="172" y1="55" x2="177" y2="57" stroke="#c0392b" stroke-width="3"/>
+    <line x1="170" y1="90" x2="175" y2="92" stroke="#e74c3c" stroke-width="4"/>
+    <line x1="172" y1="100" x2="177" y2="102" stroke="#c0392b" stroke-width="3"/>
+  </g>
+</svg>

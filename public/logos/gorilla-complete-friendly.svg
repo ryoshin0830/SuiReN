@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 150" class="logo">
+  <defs>
+    <radialGradient id="friendlyGorilla" cx="50%" cy="40%" r="70%">
+      <stop offset="0%" style="stop-color:#4a4a4a;stop-opacity:1" />
+      <stop offset="70%" style="stop-color:#353535;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2a2a2a;stop-opacity:1" />
+    </radialGradient>
+    <radialGradient id="friendlyFace" cx="50%" cy="30%" r="80%">
+      <stop offset="0%" style="stop-color:#a1845c;stop-opacity:1" />
+      <stop offset="60%" style="stop-color:#8b7355;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#6f5d42;stop-opacity:1" />
+    </radialGradient>
+    <linearGradient id="modernText" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#e67e22;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#f39c12;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#d68910;stop-opacity:1" />
+    </linearGradient>
+    <filter id="textShadow">
+      <feDropShadow dx="2" dy="2" stdDeviation="1" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  
+  <!-- 親しみやすいゴリラ -->
+  <!-- 体 -->
+  <ellipse cx="100" cy="95" rx="42" ry="50" fill="url(#friendlyGorilla)"/>
+  
+  <!-- 丸い頭 -->
+  <circle cx="100" cy="50" r="32" fill="url(#friendlyGorilla)"/>
+  
+  <!-- 優しい顔 -->
+  <ellipse cx="100" cy="55" rx="24" ry="26" fill="url(#friendlyFace)"/>
+  
+  <!-- 笑顔の目 -->
+  <path d="M88 48 Q92 45 96 48" fill="none" stroke="#2c1810" stroke-width="2"/>
+  <path d="M104 48 Q108 45 112 48" fill="none" stroke="#2c1810" stroke-width="2"/>
+  <circle cx="92" cy="48" r="1" fill="#2c1810"/>
+  <circle cx="108" cy="48" r="1" fill="#2c1810"/>
+  
+  <!-- 可愛い鼻 -->
+  <ellipse cx="100" cy="58" rx="5" ry="4" fill="#6f5d42"/>
+  <ellipse cx="98" cy="60" rx="1.5" ry="1" fill="#2c1810"/>
+  <ellipse cx="102" cy="60" rx="1.5" ry="1" fill="#2c1810"/>
+  
+  <!-- 優しい笑顔 -->
+  <path d="M92 65 Q100 70 108 65" fill="none" stroke="#2c1810" stroke-width="2"/>
+  
+  <!-- 丸い頬 -->
+  <circle cx="80" cy="58" r="6" fill="#a1845c" opacity="0.7"/>
+  <circle cx="120" cy="58" r="6" fill="#a1845c" opacity="0.7"/>
+  
+  <!-- 腕 -->
+  <ellipse cx="65" cy="80" rx="16" ry="32" fill="url(#friendlyGorilla)" transform="rotate(-12 65 80)"/>
+  <ellipse cx="135" cy="80" rx="16" ry="32" fill="url(#friendlyGorilla)" transform="rotate(12 135 80)"/>
+  
+  <!-- 手 -->
+  <ellipse cx="58" cy="100" rx="11" ry="9" fill="url(#friendlyFace)"/>
+  <ellipse cx="142" cy="100" rx="11" ry="9" fill="url(#friendlyFace)"/>
+  
+  <!-- 楽しそうに本を読んでいる -->
+  <rect x="85" y="90" width="30" height="22" fill="#27ae60" rx="3"/>
+  <rect x="87" y="92" width="26" height="18" fill="#fff"/>
+  
+  <!-- 本の中身（絵本風） -->
+  <circle cx="95" cy="98" r="3" fill="#f1c40f"/>
+  <rect x="98" y="96" width="8" height="1" fill="#2c3e50"/>
+  <rect x="98" y="98" width="6" height="1" fill="#2c3e50"/>
+  <rect x="98" y="100" width="7" height="1" fill="#2c3e50"/>
+  <rect x="98" y="102" width="5" height="1" fill="#2c3e50"/>
+  
+  <circle cx="105" cy="104" r="2" fill="#e74c3c"/>
+  <rect x="92" y="105" width="6" height="1" fill="#2c3e50"/>
+  <rect x="92" y="107" width="8" height="1" fill="#2c3e50"/>
+  
+  <line x1="100" y1="92" x2="100" y2="110" stroke="#27ae60" stroke-width="2"/>
+  
+  <!-- 足 -->
+  <ellipse cx="85" cy="125" rx="18" ry="12" fill="url(#friendlyFace)"/>
+  <ellipse cx="115" cy="125" rx="18" ry="12" fill="url(#friendlyFace)"/>
+  
+  <!-- デザインされたテキスト -->
+  <!-- 速読 -->
+  <g filter="url(#textShadow)">
+    <text x="200" y="70" font-family="'Hiragino Kaku Gothic ProN', 'Noto Sans JP', 'Yu Gothic', sans-serif" 
+          font-size="42" font-weight="900" fill="url(#modernText)" stroke="#d68910" stroke-width="1">速読</text>
+  </g>
+  
+  <!-- ゴリラ -->
+  <g filter="url(#textShadow)">
+    <text x="200" y="120" font-family="'Hiragino Kaku Gothic ProN', 'Noto Sans JP', 'Yu Gothic', sans-serif" 
+          font-size="42" font-weight="900" fill="url(#modernText)" stroke="#d68910" stroke-width="1">ゴリラ</text>
+  </g>
+  
+  <!-- テキストの装飾ライン -->
+  <line x1="190" y1="75" x2="340" y2="75" stroke="url(#modernText)" stroke-width="3" opacity="0.6"/>
+  <line x1="190" y1="125" x2="340" y2="125" stroke="url(#modernText)" stroke-width="3" opacity="0.6"/>
+  
+  <!-- スピードを表現する装飾 -->
+  <g opacity="0.7">
+    <path d="M180 50 L185 52 L180 54 Z" fill="#e67e22"/>
+    <path d="M180 100 L185 102 L180 104 Z" fill="#e67e22"/>
+  </g>
+  
+  <!-- コーナーの装飾 -->
+  <g opacity="0.5">
+    <circle cx="360" cy="30" r="3" fill="#f39c12"/>
+    <circle cx="370" cy="35" r="2" fill="#e67e22"/>
+    <circle cx="365" cy="130" r="2.5" fill="#d68910"/>
+  </g>
+</svg>

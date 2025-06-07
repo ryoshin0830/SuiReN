@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 170" class="logo">
+  <defs>
+    <linearGradient id="familyGorilla" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3e3e3e;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#2d2d2d;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1e1e1e;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="familyFace" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#8b7965;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#6d5f4a;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="familyText" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#8e44ad;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#9b59b6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7d3c98;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- 家族的なゴリラ（子供に読み聞かせしている様子） -->
+  <!-- 大人のゴリラの体 -->
+  <ellipse cx="90" cy="110" rx="45" ry="55" fill="url(#familyGorilla)"/>
+  
+  <!-- 大人のゴリラの頭 -->
+  <ellipse cx="90" cy="55" rx="35" ry="32" fill="url(#familyGorilla)"/>
+  
+  <!-- サジタルクレスト -->
+  <ellipse cx="90" cy="35" rx="28" ry="12" fill="#1e1e1e"/>
+  
+  <!-- 優しい顔 -->
+  <ellipse cx="90" cy="60" rx="26" ry="28" fill="url(#familyFace)"/>
+  
+  <!-- 優しい目 -->
+  <ellipse cx="82" cy="52" rx="4" ry="3" fill="#fff"/>
+  <ellipse cx="98" cy="52" rx="4" ry="3" fill="#fff"/>
+  <circle cx="82" cy="52" r="2.5" fill="#2c1810"/>
+  <circle cx="98" cy="52" r="2.5" fill="#2c1810"/>
+  <circle cx="83" cy="51" r="1" fill="#fff"/>
+  <circle cx="99" cy="51" r="1" fill="#fff"/>
+  
+  <!-- 鼻 -->
+  <ellipse cx="90" cy="62" rx="5" ry="4" fill="#6d5f4a"/>
+  <ellipse cx="88" cy="64" rx="1.5" ry="1" fill="#2c1810"/>
+  <ellipse cx="92" cy="64" rx="1.5" ry="1" fill="#2c1810"/>
+  
+  <!-- 微笑み -->
+  <path d="M82 70 Q90 74 98 70" fill="none" stroke="#2c1810" stroke-width="2"/>
+  
+  <!-- 腕 -->
+  <ellipse cx="55" cy="85" rx="16" ry="32" fill="url(#familyGorilla)" transform="rotate(-10 55 85)"/>
+  <ellipse cx="125" cy="85" rx="16" ry="32" fill="url(#familyGorilla)" transform="rotate(10 125 85)"/>
+  
+  <!-- 手 -->
+  <ellipse cx="50" cy="105" rx="10" ry="8" fill="url(#familyFace)"/>
+  <ellipse cx="130" cy="105" rx="10" ry="8" fill="url(#familyFace)"/>
+  
+  <!-- 絵本を持っている -->
+  <rect x="70" y="95" width="40" height="28" fill="#f39c12" rx="4"/>
+  <rect x="72" y="97" width="36" height="24" fill="#fff"/>
+  
+  <!-- 絵本の絵（太陽とお花） -->
+  <circle cx="82" cy="105" r="4" fill="#f1c40f"/>
+  <path d="M78 105 L86 105 M82 101 L82 109 M79 102 L85 108 M85 102 L79 108" stroke="#e67e22" stroke-width="1"/>
+  
+  <ellipse cx="95" cy="115" rx="3" ry="1" fill="#27ae60"/>
+  <path d="M95 112 L95 116 M92 114 Q95 111 98 114" fill="none" stroke="#27ae60" stroke-width="1"/>
+  
+  <line x1="90" y1="97" x2="90" y2="121" stroke="#f39c12" stroke-width="2"/>
+  
+  <!-- 小さなゴリラ（子供） -->
+  <ellipse cx="140" cy="135" rx="18" ry="22" fill="url(#familyGorilla)"/>
+  <circle cx="140" cy="120" r="12" fill="url(#familyGorilla)"/>
+  <ellipse cx="140" cy="122" rx="8" ry="10" fill="url(#familyFace)"/>
+  
+  <!-- 子供の目（キラキラ） -->
+  <circle cx="137" cy="119" r="2" fill="#fff"/>
+  <circle cx="143" cy="119" r="2" fill="#fff"/>
+  <circle cx="137" cy="119" r="1" fill="#2c1810"/>
+  <circle cx="143" cy="119" r="1" fill="#2c1810"/>
+  
+  <!-- 子供の鼻 -->
+  <ellipse cx="140" cy="123" rx="2" ry="1.5" fill="#6d5f4a"/>
+  
+  <!-- 子供の笑顔 -->
+  <path d="M137 126 Q140 128 143 126" fill="none" stroke="#2c1810" stroke-width="1"/>
+  
+  <!-- 足 -->
+  <ellipse cx="75" cy="145" rx="18" ry="12" fill="url(#familyFace)"/>
+  <ellipse cx="105" cy="145" rx="18" ry="12" fill="url(#familyFace)"/>
+  
+  <!-- 家族的なテキスト -->
+  <text x="180" y="70" font-family="'Georgia', serif" font-size="34" font-weight="bold" 
+        fill="url(#familyText)">速読</text>
+  <text x="180" y="115" font-family="'Georgia', serif" font-size="34" font-weight="bold" 
+        fill="url(#familyText)">ゴリラ</text>
+  
+  <!-- 愛情のハート -->
+  <g opacity="0.6">
+    <path d="M160 45 Q165 40 170 45 Q175 40 180 45 Q175 55 170 60 Q165 55 160 45" fill="#e91e63"/>
+    <text x="320" y="80" font-family="serif" font-size="20" fill="#e91e63">❤️</text>
+  </g>
+  
+  <!-- 温かい雰囲気のエフェクト -->
+  <g opacity="0.5">
+    <circle cx="150" cy="30" r="2" fill="#f8c471"/>
+    <circle cx="160" cy="140" r="1.5" fill="#f7dc6f"/>
+    <circle cx="340" cy="50" r="1" fill="#fadbd8"/>
+  </g>
+</svg>

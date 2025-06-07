@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 140" class="logo">
+  <defs>
+    <linearGradient id="heroGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3498db;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#2980b9;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1f4e79;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="heroText" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#e74c3c;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#3498db;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f39c12;stop-opacity:1" />
+    </linearGradient>
+    <filter id="heroGlow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Cape flowing behind -->
+  <path d="M30 40 Q40 30 50 45 Q45 60 35 70 Q25 65 20 50 Q25 45 30 40 Z" 
+        fill="#e74c3c" opacity="0.8"/>
+  
+  <!-- Superhero gorilla body -->
+  <ellipse cx="80" cy="70" rx="35" ry="45" fill="url(#heroGradient)"/>
+  
+  <!-- Gorilla head with mask -->
+  <circle cx="80" cy="40" r="22" fill="#2c3e50"/>
+  
+  <!-- Superhero mask -->
+  <path d="M60 35 Q80 25 100 35 Q105 40 100 45 Q80 50 60 45 Q55 40 60 35 Z" 
+        fill="#3498db"/>
+  
+  <!-- Hero emblem on chest -->
+  <circle cx="80" cy="65" r="12" fill="#f1c40f"/>
+  <text x="80" y="72" font-family="'Arial Black', sans-serif" font-size="16" font-weight="bold" 
+        fill="#2c3e50" text-anchor="middle">速</text>
+  
+  <!-- Confident superhero eyes -->
+  <ellipse cx="72" cy="38" rx="4" ry="3" fill="#fff"/>
+  <ellipse cx="88" cy="38" rx="4" ry="3" fill="#fff"/>
+  <circle cx="72" cy="38" r="2" fill="#2c3e50"/>
+  <circle cx="88" cy="38" r="2" fill="#2c3e50"/>
+  
+  <!-- Muscular arms -->
+  <ellipse cx="50" cy="60" rx="10" ry="18" fill="url(#heroGradient)" transform="rotate(-15 50 60)"/>
+  <ellipse cx="110" cy="60" rx="10" ry="18" fill="url(#heroGradient)" transform="rotate(15 110 60)"/>
+  
+  <!-- Dynamic text with comic book style -->
+  <text x="150" y="50" font-family="'Impact', 'Arial Black', sans-serif" font-size="32" font-weight="bold" 
+        fill="url(#heroText)" filter="url(#heroGlow)" stroke="#fff" stroke-width="1">速読</text>
+  <text x="150" y="90" font-family="'Impact', 'Arial Black', sans-serif" font-size="32" font-weight="bold" 
+        fill="url(#heroText)" filter="url(#heroGlow)" stroke="#fff" stroke-width="1">ゴリラ</text>
+  
+  <!-- Comic book action lines -->
+  <g opacity="0.7">
+    <line x1="250" y1="20" x2="270" y2="25" stroke="#f39c12" stroke-width="3"/>
+    <line x1="255" y1="30" x2="275" y2="35" stroke="#e67e22" stroke-width="2"/>
+    <line x1="250" y1="40" x2="270" y2="45" stroke="#d35400" stroke-width="3"/>
+    <line x1="255" y1="50" x2="275" y2="55" stroke="#c0392b" stroke-width="2"/>
+  </g>
+  
+  <!-- Power burst effect -->
+  <g opacity="0.6">
+    <circle cx="280" cy="35" r="3" fill="#f1c40f"/>
+    <path d="M280 30 L285 35 L280 40 L275 35 Z" fill="#f39c12"/>
+    <circle cx="290" cy="45" r="2" fill="#e67e22"/>
+  </g>
+</svg>

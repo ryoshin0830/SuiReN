@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>速読ゴリラ - ロゴコレクション</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            font-weight: 900;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 1.2em;
+            margin-bottom: 40px;
+        }
+
+        .logo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .logo-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .logo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            border-color: #3498db;
+        }
+
+        .logo-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .logo-display {
+            width: 100%;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .logo-display svg {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+        }
+
+        .logo-description {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        .section-title {
+            font-size: 2em;
+            color: #2c3e50;
+            margin: 50px 0 30px 0;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .recommended {
+            border: 3px solid #e74c3c;
+            background: linear-gradient(135deg, #fff5f5, #ffffff);
+        }
+
+        .recommended .logo-title {
+            color: #e74c3c;
+            font-size: 1.4em;
+        }
+
+        .recommended::before {
+            content: "🌟 推奨";
+            position: absolute;
+            top: -10px;
+            right: 10px;
+            background: #e74c3c;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .recommended {
+            position: relative;
+        }
+
+        .final-section {
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .logo-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>速読ゴリラ - ロゴデザイン提案</h1>
+        <p class="subtitle">日本語学習者のための速読ウェブサイト「すいすいリーダー」のロゴコレクション</p>
+
+        <div class="section-title">初期デザイン（スタイライズド）</div>
+        <div class="logo-grid">
+            <div class="logo-card">
+                <div class="logo-title">1. スピードライン・ゴリラ</div>
+                <div class="logo-display">
+                    <img src="public/logos/gorilla-logo1-speed-reading.svg" alt="スピードライン・ゴリラ">
+                </div>
+                <div class="logo-description">スピードライン付きシンプルなゴリラと読書アイコン</div>
+            </div>
+
+            <div class="logo-card">
+                <div class="logo-title">2. 筋肉質リーダー</div>
+                <div class="logo-display">
+                    <img src="public/logos/gorilla-logo2-muscular-reader.svg" alt="筋肉質リーダー">
+                </div>
+                <div class="logo-description">筋肉質で本を持つパワフルなゴリラ</div>
+            </div>
+
+            <div class="logo-card">
+                <div class="logo-title">3. サイバーゴリラ</div>
+                <div class="logo-display">
+                    <img src="public/logos/gorilla-logo3-cyber-reader.svg" alt="サイバーゴリラ">
+                </div>
+                <div class="logo-description">デジタル・サイバー風の未来的ゴリラ</div>
+            </div>
+
+            <div class="logo-card">
+                <div class="logo-title">4. 電撃ゴリラ</div>
+                <div class="logo-display">
+                    <img src="public/logos/gorilla-logo4-lightning-reader.svg" alt="電撃ゴリラ">
+                </div>
+                <div class="logo-description">電撃エフェクト付きエネルギッシュなゴリラ</div>
+            </div>
+
+            <div class="logo-card">
+                <div class="logo-title">5. 忍者ゴリラ</div>
+                <div class="logo-display">
+                    <img src="public/logos/gorilla-logo5-ninja-reader.svg" alt="忍者ゴリラ">
+                </div>
+                <div class="logo-description">忍者マスク着用の素早いゴリラ</div>
+            </div>
+
+            <div class="logo-card">
+                <div class="logo-title">6. スーパーヒーロー</div>
+                <div class="logo-display">
+                    <img src="public/logos/gorilla-logo6-superhero-reader.svg" alt="スーパーヒーロー">
+                </div>
+                <div class="logo-description">マント付きスーパーヒーロー風ゴリラ</div>
+            </div>
+
+            <div class="logo-card">
+                <div class="logo-title">7. 禅ゴリラ</div>
+                <div class="logo-display">
+                    <img src="public/logos/gorilla-logo7-zen-reader.svg" alt="禅ゴリラ">
+                </div>
+                <div class="logo-description">瞑想中の平和な禅ゴリラ</div>
+            </div>
+
+            <div class="logo-card">
+                <div class="logo-title">8. 学者ゴリラ</div>
+                <div class="logo-display">
+                    <img src="public/logos/gorilla-logo8-academic-reader.svg" alt="学者ゴリラ">
+                </div>
+                <div class="logo-description">卒業帽とメガネの知的なゴリラ</div>
+            </div>
+
+            <div class="logo-card">
+                <div class="logo-title">9. ロケットゴリラ</div>
+                <div class="logo-display">
+                    <img src="public/logos/gorilla-logo9-rocket-reader.svg" alt="ロケットゴリラ">
+                </div>
+                <div class="logo-description">ロケット装備の宇宙ゴリラ</div>
+            </div>
+
+            <div class="logo-card">
+                <div class="logo-title">10. 威厳ゴリラ</div>
+                <div class="logo-display">
+                    <img src="public/logos/gorilla-logo10-fierce-reader.svg" alt="威厳ゴリラ">
+                </div>
+                <div class="logo-description">迫力満点の威厳あるゴリラ</div>
+            </div>
+        </div>
+
+        <div class="section-title">リアルスタイル（ゴリラ感強化版）</div>
+        <div class="logo-grid">
+            <div class="logo-card">
+                <div class="logo-title">リアル 1. 本読みゴリラ</div>
+                <div class="logo-display">
+                    <img src="public/logos/gorilla-logo-realistic-1.svg" alt="本読みゴリラ">
+                </div>
+                <div class="logo-description">本を持つリアルで親しみやすいゴリラ</div>
+            </div>
+
+            <div class="logo-card">
+                <div class="logo-title">リアル 2. 座読ゴリラ</div>
+                <div class="logo-display">
+                    <img src="public/logos/gorilla-logo-realistic-2.svg" alt="座読ゴリラ">
+                </div>
+                <div class="logo-description">座って集中して読書するゴリラ</div>
+            </div>
+
+            <div class="logo-card">
+                <div class="logo-title">リアル 3. シルバーバック</div>
+                <div class="logo-display">
+                    <img src="public/logos/gorilla-logo-realistic-3.svg" alt="シルバーバック">
+                </div>
+                <div class="logo-description">威厳あるシルバーバック風ゴリラ</div>
+            </div>
+
+            <div class="logo-card recommended">
+                <div class="logo-title">リアル 4. フレンドリー</div>
+                <div class="logo-display">
+                    <img src="public/logos/gorilla-logo-realistic-4.svg" alt="フレンドリー">
+                </div>
+                <div class="logo-description">親しみやすい笑顔の可愛いゴリラ</div>
+            </div>
+
+            <div class="logo-card">
+                <div class="logo-title">リアル 5. パワーゴリラ</div>
+                <div class="logo-display">
+                    <img src="public/logos/gorilla-logo-realistic-5.svg" alt="パワーゴリラ">
+                </div>
+                <div class="logo-description">胸を叩くポーズのパワフルなゴリラ</div>
+            </div>
+
+            <div class="logo-card">
+                <div class="logo-title">リアル 6. 若いゴリラ</div>
+                <div class="logo-display">
+                    <img src="public/logos/gorilla-logo-realistic-6.svg" alt="若いゴリラ">
+                </div>
+                <div class="logo-description">好奇心旺盛な学習意欲ある若いゴリラ</div>
+            </div>
+
+            <div class="logo-card">
+                <div class="logo-title">リアル 7. 家族ゴリラ</div>
+                <div class="logo-display">
+                    <img src="public/logos/gorilla-logo-realistic-7.svg" alt="家族ゴリラ">
+                </div>
+                <div class="logo-description">読み聞かせする家族的なゴリラ</div>
+            </div>
+
+            <div class="logo-card">
+                <div class="logo-title">リアル 8. アスリート</div>
+                <div class="logo-display">
+                    <img src="public/logos/gorilla-logo-realistic-8.svg" alt="アスリート">
+                </div>
+                <div class="logo-description">動的ポーズのアスリート系ゴリラ</div>
+            </div>
+
+            <div class="logo-card">
+                <div class="logo-title">リアル 9. 賢者ゴリラ</div>
+                <div class="logo-display">
+                    <img src="public/logos/gorilla-logo-realistic-9.svg" alt="賢者ゴリラ">
+                </div>
+                <div class="logo-description">知恵のオーラを纏う賢者ゴリラ</div>
+            </div>
+
+            <div class="logo-card">
+                <div class="logo-title">リアル 10. クラシック</div>
+                <div class="logo-display">
+                    <img src="public/logos/gorilla-logo-realistic-10.svg" alt="クラシック">
+                </div>
+                <div class="logo-description">クラシックでリアルなゴリラ</div>
+            </div>
+        </div>
+
+        <div class="final-section">
+            <div class="section-title">最終候補バージョン</div>
+            <div class="logo-grid">
+                <div class="logo-card">
+                    <div class="logo-title">ゴリラのみ</div>
+                    <div class="logo-display">
+                        <img src="public/logos/gorilla-only-friendly.svg" alt="ゴリラのみ">
+                    </div>
+                    <div class="logo-description">アイコン用：ゴリラ部分のみのバージョン</div>
+                </div>
+
+                <div class="logo-card recommended">
+                    <div class="logo-title">完成版（バランス調整済み）</div>
+                    <div class="logo-display">
+                        <img src="public/logos/gorilla-complete-balanced.svg" alt="完成版">
+                    </div>
+                    <div class="logo-description">最終推奨版：シンプルで洗練された文字とゴリラの完璧なバランス</div>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px; color: #7f8c8d;">
+            <p>🦍 すべてのロゴはSVG形式で作成されており、拡大縮小時も高品質を保持します</p>
+            <p>📱 Webサイト、アプリ、印刷物など様々な用途に対応可能です</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,143 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 450 160" class="logo">
+  <defs>
+    <radialGradient id="friendlyGorilla" cx="50%" cy="40%" r="70%">
+      <stop offset="0%" style="stop-color:#4a4a4a;stop-opacity:1" />
+      <stop offset="70%" style="stop-color:#353535;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2a2a2a;stop-opacity:1" />
+    </radialGradient>
+    <radialGradient id="friendlyFace" cx="50%" cy="30%" r="80%">
+      <stop offset="0%" style="stop-color:#a1845c;stop-opacity:1" />
+      <stop offset="60%" style="stop-color:#8b7355;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#6f5d42;stop-opacity:1" />
+    </radialGradient>
+    <linearGradient id="modernText" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff6b6b;stop-opacity:1" />
+      <stop offset="30%" style="stop-color:#ff5722;stop-opacity:1" />
+      <stop offset="70%" style="stop-color:#e91e63;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#9c27b0;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="textStroke" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2c3e50;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#34495e;stop-opacity:1" />
+    </linearGradient>
+    <filter id="modernGlow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="textEffect">
+      <feDropShadow dx="3" dy="3" stdDeviation="2" flood-color="#000" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+  
+  <!-- 親しみやすいゴリラ -->
+  <!-- 体 -->
+  <ellipse cx="100" cy="95" rx="42" ry="50" fill="url(#friendlyGorilla)"/>
+  
+  <!-- 丸い頭 -->
+  <circle cx="100" cy="50" r="32" fill="url(#friendlyGorilla)"/>
+  
+  <!-- 優しい顔 -->
+  <ellipse cx="100" cy="55" rx="24" ry="26" fill="url(#friendlyFace)"/>
+  
+  <!-- 笑顔の目 -->
+  <path d="M88 48 Q92 45 96 48" fill="none" stroke="#2c1810" stroke-width="2"/>
+  <path d="M104 48 Q108 45 112 48" fill="none" stroke="#2c1810" stroke-width="2"/>
+  <circle cx="92" cy="48" r="1" fill="#2c1810"/>
+  <circle cx="108" cy="48" r="1" fill="#2c1810"/>
+  
+  <!-- 可愛い鼻 -->
+  <ellipse cx="100" cy="58" rx="5" ry="4" fill="#6f5d42"/>
+  <ellipse cx="98" cy="60" rx="1.5" ry="1" fill="#2c1810"/>
+  <ellipse cx="102" cy="60" rx="1.5" ry="1" fill="#2c1810"/>
+  
+  <!-- 優しい笑顔 -->
+  <path d="M92 65 Q100 70 108 65" fill="none" stroke="#2c1810" stroke-width="2"/>
+  
+  <!-- 丸い頬 -->
+  <circle cx="80" cy="58" r="6" fill="#a1845c" opacity="0.7"/>
+  <circle cx="120" cy="58" r="6" fill="#a1845c" opacity="0.7"/>
+  
+  <!-- 腕 -->
+  <ellipse cx="65" cy="80" rx="16" ry="32" fill="url(#friendlyGorilla)" transform="rotate(-12 65 80)"/>
+  <ellipse cx="135" cy="80" rx="16" ry="32" fill="url(#friendlyGorilla)" transform="rotate(12 135 80)"/>
+  
+  <!-- 手 -->
+  <ellipse cx="58" cy="100" rx="11" ry="9" fill="url(#friendlyFace)"/>
+  <ellipse cx="142" cy="100" rx="11" ry="9" fill="url(#friendlyFace)"/>
+  
+  <!-- 楽しそうに本を読んでいる -->
+  <rect x="85" y="90" width="30" height="22" fill="#27ae60" rx="3"/>
+  <rect x="87" y="92" width="26" height="18" fill="#fff"/>
+  
+  <!-- 本の中身（絵本風） -->
+  <circle cx="95" cy="98" r="3" fill="#f1c40f"/>
+  <rect x="98" y="96" width="8" height="1" fill="#2c3e50"/>
+  <rect x="98" y="98" width="6" height="1" fill="#2c3e50"/>
+  <rect x="98" y="100" width="7" height="1" fill="#2c3e50"/>
+  <rect x="98" y="102" width="5" height="1" fill="#2c3e50"/>
+  
+  <circle cx="105" cy="104" r="2" fill="#e74c3c"/>
+  <rect x="92" y="105" width="6" height="1" fill="#2c3e50"/>
+  <rect x="92" y="107" width="8" height="1" fill="#2c3e50"/>
+  
+  <line x1="100" y1="92" x2="100" y2="110" stroke="#27ae60" stroke-width="2"/>
+  
+  <!-- 足 -->
+  <ellipse cx="85" cy="125" rx="18" ry="12" fill="url(#friendlyFace)"/>
+  <ellipse cx="115" cy="125" rx="18" ry="12" fill="url(#friendlyFace)"/>
+  
+  <!-- モダンでカッコいいテキスト -->
+  <!-- 速読 - 大胆でモダンなスタイル -->
+  <g transform="translate(200, 0)">
+    <!-- テキストの背景エフェクト -->
+    <rect x="0" y="35" width="120" height="50" fill="url(#modernText)" opacity="0.1" rx="8"/>
+    
+    <!-- メインテキスト -->
+    <text x="60" y="70" 
+          font-family="'Arial Black', 'Hiragino Kaku Gothic ProN', sans-serif" 
+          font-size="48" 
+          font-weight="900" 
+          text-anchor="middle"
+          fill="url(#modernText)" 
+          stroke="url(#textStroke)" 
+          stroke-width="2"
+          filter="url(#textEffect)">速読</text>
+  </g>
+  
+  <!-- ゴリラ - 同じスタイルで統一 -->
+  <g transform="translate(200, 50)">
+    <!-- テキストの背景エフェクト -->
+    <rect x="0" y="35" width="140" height="50" fill="url(#modernText)" opacity="0.1" rx="8"/>
+    
+    <!-- メインテキスト -->
+    <text x="70" y="70" 
+          font-family="'Arial Black', 'Hiragino Kaku Gothic ProN', sans-serif" 
+          font-size="48" 
+          font-weight="900" 
+          text-anchor="middle"
+          fill="url(#modernText)" 
+          stroke="url(#textStroke)" 
+          stroke-width="2"
+          filter="url(#textEffect)">ゴリラ</text>
+  </g>
+  
+  <!-- モダンな装飾エレメント -->
+  <g opacity="0.8">
+    <!-- 幾何学的な装飾 -->
+    <polygon points="370,30 380,20 390,30 380,40" fill="url(#modernText)"/>
+    <circle cx="400" cy="30" r="4" fill="url(#modernText)" filter="url(#modernGlow)"/>
+    
+    <!-- スピードライン -->
+    <path d="M350 60 L390 65" stroke="url(#modernText)" stroke-width="4" opacity="0.7"/>
+    <path d="M350 110 L390 115" stroke="url(#modernText)" stroke-width="4" opacity="0.7"/>
+    
+    <!-- 追加の装飾 -->
+    <rect x="370" y="100" width="15" height="15" fill="url(#modernText)" opacity="0.6" transform="rotate(45 377.5 107.5)"/>
+  </g>
+  
+  <!-- アクセントライン -->
+  <line x1="180" y1="80" x2="420" y2="80" stroke="url(#modernText)" stroke-width="2" opacity="0.4"/>
+</svg>
