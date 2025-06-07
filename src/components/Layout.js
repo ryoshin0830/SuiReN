@@ -7,57 +7,71 @@ export default function Layout({ children }) {
   const pathname = usePathname();
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white shadow-sm border-b">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+      <nav className="sticky top-0 z-50 backdrop-blur-xl bg-white/70 border-b border-white/20 shadow-lg shadow-black/5">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+          <div className="flex justify-between items-center h-20">
             <div className="flex items-center">
-              <Link href="/" className="flex items-center space-x-2">
-                <img 
-                  src="/logos/gorilla-complete-balanced.svg" 
-                  alt="速読ゴリラ" 
-                  className="h-8 w-auto"
-                />
+              <Link href="/" className="group flex items-center space-x-3 transition-all duration-300 hover:scale-105">
+                <div className="relative">
+                  <img 
+                    src="/logos/gorilla-only-friendly.svg" 
+                    alt="速読ゴリラ" 
+                    className="h-12 w-auto transition-all duration-300 group-hover:drop-shadow-lg"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                </div>
+                <span className="text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
+                  速読ゴリラ
+                </span>
               </Link>
             </div>
-            <div className="flex items-center space-x-8">
+            <div className="flex items-center space-x-2">
               <Link 
                 href="/" 
-                className={`${
-                  pathname === '/' ? 'text-blue-600' : 'text-gray-700'
-                } hover:text-blue-600 transition-colors`}
+                className={`relative px-4 py-2 rounded-xl font-medium transition-all duration-300 ${
+                  pathname === '/' 
+                    ? 'text-white bg-gradient-to-r from-blue-600 to-purple-600 shadow-lg shadow-blue-500/25' 
+                    : 'text-gray-700 hover:text-white hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-500 hover:shadow-lg hover:shadow-blue-500/25'
+                }`}
               >
-                ホーム
+                <span className="relative z-10">ホーム</span>
               </Link>
               <Link 
                 href="/about" 
-                className={`${
-                  pathname === '/about' ? 'text-blue-600' : 'text-gray-700'
-                } hover:text-blue-600 transition-colors`}
+                className={`relative px-4 py-2 rounded-xl font-medium transition-all duration-300 ${
+                  pathname === '/about' 
+                    ? 'text-white bg-gradient-to-r from-blue-600 to-purple-600 shadow-lg shadow-blue-500/25' 
+                    : 'text-gray-700 hover:text-white hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-500 hover:shadow-lg hover:shadow-blue-500/25'
+                }`}
               >
-                Fluencyについて
+                <span className="relative z-10">Fluencyについて</span>
               </Link>
               <Link 
                 href="/reading" 
-                className={`${
-                  pathname === '/reading' ? 'text-blue-600' : 'text-gray-700'
-                } hover:text-blue-600 transition-colors`}
+                className={`relative px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
+                  pathname === '/reading' 
+                    ? 'text-white bg-gradient-to-r from-emerald-600 to-blue-600 shadow-lg shadow-emerald-500/25 transform scale-105' 
+                    : 'text-white bg-gradient-to-r from-emerald-500 to-blue-500 hover:from-emerald-600 hover:to-blue-600 hover:shadow-lg hover:shadow-emerald-500/25 hover:scale-105'
+                }`}
               >
-                読解練習
+                <span className="relative z-10">読解練習</span>
               </Link>
               <Link 
                 href="/admin" 
-                className={`${
-                  pathname === '/admin' ? 'text-blue-600' : 'text-gray-500'
-                } hover:text-blue-600 transition-colors text-sm`}
+                className={`relative px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
+                  pathname === '/admin' 
+                    ? 'text-purple-600 bg-purple-50' 
+                    : 'text-gray-500 hover:text-purple-600 hover:bg-purple-50'
+                }`}
               >
-                管理
+                <span className="relative z-10">管理</span>
               </Link>
             </div>
           </div>
         </div>
       </nav>
-      <main>{children}</main>
+      <main className="relative">{children}</main>
     </div>
   );
 }
