@@ -6,9 +6,9 @@ export default function Home() {
       <div className="text-center mb-12">
         <div className="flex justify-center mb-6">
           <img 
-            src="/logos/gorilla-complete-balanced.svg" 
+            src="/logos/gorilla-animated.svg" 
             alt="速読ゴリラ" 
-            className="h-32 w-auto"
+            className="h-32 w-auto transform transition-transform duration-300 hover:scale-105"
           />
         </div>
         <p className="text-xl text-gray-600 mb-8">
