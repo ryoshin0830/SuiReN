@@ -51,14 +51,14 @@ export default function TextWithImages({ text, images = [], className = "" }) {
   const renderTextWithImages = React.useMemo(() => {
     if (!text) return null;
 
-    // プレースホルダーで分割（プレースホルダー自体も保持）
-    const parts = text.split(/(\{\{IMAGE:[^}]+\}\})/g);
+    // プレースホルダーで分割（単一画像と複数画像の両方に対応）
+    const parts = text.split(/(\{\{IMAGES?:[^}]+\}\})/g);
     
     return parts.map((part, index) => {
-      // プレースホルダーの場合
-      const imageMatch = part.match(/\{\{IMAGE:([^}]+)\}\}/);
-      if (imageMatch) {
-        const imageId = imageMatch[1];
+      // 単一画像プレースホルダーの場合
+      const singleImageMatch = part.match(/\{\{IMAGE:([^}]+)\}\}/);
+      if (singleImageMatch) {
+        const imageId = singleImageMatch[1];
         const image = imageMap[imageId];
         
         if (image && image.base64) {
@@ -67,7 +67,12 @@ export default function TextWithImages({ text, images = [], className = "" }) {
               <img
                 src={image.base64}
                 alt={image.alt || '文章内の画像'}
-                className="max-w-full h-auto max-h-96 mx-auto rounded-lg shadow-lg"
+                className="max-w-full h-auto max-h-96 mx-auto rounded-lg bg-transparent"
+                style={{ 
+                  backgroundColor: 'transparent',
+                  backgroundImage: 'none',
+                  background: 'transparent'
+                }}
                 onError={(e) => {
                   console.error(`画像の読み込みに失敗しました: ${imageId}`, {
                     imageId,
@@ -76,6 +81,14 @@ export default function TextWithImages({ text, images = [], className = "" }) {
                   });
                   e.target.style.display = 'none';
                   e.target.nextSibling?.style && (e.target.nextSibling.style.display = 'block');
+                }}
+                onLoad={(e) => {
+                  console.log(`画像読み込み完了: ${imageId}`, {
+                    imageId,
+                    format: image.format,
+                    hasTransparency: image.hasTransparency,
+                    dimensions: `${image.width}x${image.height}`
+                  });
                 }}
               />
               {image.caption && (
@@ -102,6 +115,87 @@ export default function TextWithImages({ text, images = [], className = "" }) {
               <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                 <p className="text-yellow-700 text-sm">
                   ⚠️ 画像が見つかりません (ID: {imageId})
+                </p>
+                <p className="text-xs text-gray-500 mt-1">
+                  利用可能な画像ID: {Object.keys(imageMap).join(', ') || 'なし'}
+                </p>
+              </div>
+            </div>
+          );
+        }
+      }
+
+      // 複数画像プレースホルダーの場合
+      const multipleImageMatch = part.match(/\{\{IMAGES:([^}]+)\}\}/);
+      if (multipleImageMatch) {
+        const imageIds = multipleImageMatch[1].split(',').map(id => id.trim());
+        const validImages = imageIds
+          .map(id => ({ id, image: imageMap[id] }))
+          .filter(({ image }) => image && image.base64);
+        
+        if (validImages.length > 0) {
+          return (
+            <div key={index} className="my-6">
+              <div className="flex flex-wrap justify-center gap-4">
+                {validImages.map(({ id, image }, imgIndex) => (
+                  <div key={imgIndex} className="flex-shrink-0">
+                    <img
+                      src={image.base64}
+                      alt={image.alt || `文章内の画像${imgIndex + 1}`}
+                      className="max-w-xs h-auto max-h-64 rounded-lg bg-transparent"
+                      style={{ 
+                        backgroundColor: 'transparent',
+                        backgroundImage: 'none',
+                        background: 'transparent'
+                      }}
+                      onError={(e) => {
+                        console.error(`画像の読み込みに失敗しました: ${id}`, {
+                          imageId: id,
+                          image,
+                          base64Length: image?.base64?.length || 0
+                        });
+                        e.target.style.display = 'none';
+                      }}
+                      onLoad={(e) => {
+                        console.log(`複数画像読み込み完了: ${id}`, {
+                          imageId: id,
+                          format: image.format,
+                          hasTransparency: image.hasTransparency,
+                          dimensions: `${image.width}x${image.height}`
+                        });
+                      }}
+                    />
+                    {image.caption && (
+                      <p className="text-xs text-gray-600 mt-1 italic text-center max-w-xs">
+                        {image.caption}
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+              {/* 見つからない画像のリスト表示 */}
+              {imageIds.length > validImages.length && (
+                <div className="text-center mt-2">
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-2 inline-block">
+                    <p className="text-yellow-700 text-xs">
+                      ⚠️ 一部の画像が見つかりません: {
+                        imageIds
+                          .filter(id => !imageMap[id] || !imageMap[id].base64)
+                          .join(', ')
+                      }
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        } else {
+          // 全ての画像が見つからない場合
+          return (
+            <div key={index} className="my-6 text-center">
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                <p className="text-yellow-700 text-sm">
+                  ⚠️ 指定された画像が見つかりません: {imageIds.join(', ')}
                 </p>
                 <p className="text-xs text-gray-500 mt-1">
                   利用可能な画像ID: {Object.keys(imageMap).join(', ') || 'なし'}
@@ -171,7 +265,11 @@ export function TextStatistics({ text, images = [] }) {
     const characterCount = text ? text.length : 0;
     const lineCount = text ? text.split('\n').length : 0;
     const imageCount = images.length;
-    const placeholderCount = text ? (text.match(/\{\{IMAGE:[^}]+\}\}/g) || []).length : 0;
+    
+    // 単一画像と複数画像の両方のプレースホルダーをカウント
+    const singleImageMatches = text ? (text.match(/\{\{IMAGE:[^}]+\}\}/g) || []) : [];
+    const multipleImageMatches = text ? (text.match(/\{\{IMAGES:[^}]+\}\}/g) || []) : [];
+    const placeholderCount = singleImageMatches.length + multipleImageMatches.length;
     
     // ルビ統計の追加
     const rubyParts = text ? parseRubyText(text) : [];

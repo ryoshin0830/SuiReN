@@ -15,7 +15,7 @@ export const compressImageToBase64 = (file, options = {}) => {
       maxWidth = 600,        // より小さなサイズ
       maxHeight = 450,       // より小さなサイズ
       quality = 0.7,         // より低い品質
-      format = 'jpeg'
+      format = null          // 自動判定に変更
     } = options;
 
     const canvas = document.createElement('canvas');
@@ -34,12 +34,33 @@ export const compressImageToBase64 = (file, options = {}) => {
       canvas.width = width;
       canvas.height = height;
 
+      // 透明度チェック用の一時キャンバス
+      const tempCanvas = document.createElement('canvas');
+      const tempCtx = tempCanvas.getContext('2d');
+      tempCanvas.width = img.width;
+      tempCanvas.height = img.height;
+      tempCtx.drawImage(img, 0, 0);
+
+      // 透明度があるかチェック
+      const hasTransparency = checkImageTransparency(tempCtx, img.width, img.height) || 
+                            file.type === 'image/png' || 
+                            file.type === 'image/webp' || 
+                            file.type === 'image/gif';
+
+      // フォーマットを自動決定
+      const outputFormat = format || (hasTransparency ? 'png' : 'jpeg');
+
+      // 透明背景を保持するために背景をクリア
+      if (hasTransparency) {
+        ctx.clearRect(0, 0, width, height);
+      }
+
       // 画像を描画
       ctx.drawImage(img, 0, 0, width, height);
 
       // Base64に変換
-      const mimeType = `image/${format}`;
-      const base64 = canvas.toDataURL(mimeType, quality);
+      const mimeType = `image/${outputFormat}`;
+      const base64 = canvas.toDataURL(mimeType, outputFormat === 'jpeg' ? quality : undefined);
       
       // データサイズを計算
       const originalSize = file.size;
@@ -53,7 +74,8 @@ export const compressImageToBase64 = (file, options = {}) => {
         compressionRatio,
         width,
         height,
-        format
+        format: outputFormat,
+        hasTransparency
       });
     };
 
@@ -63,6 +85,45 @@ export const compressImageToBase64 = (file, options = {}) => {
 
     img.src = URL.createObjectURL(file);
   });
+};
+
+/**
+ * 画像に透明度があるかチェック
+ * @param {CanvasRenderingContext2D} ctx - キャンバスコンテキスト
+ * @param {number} width - 画像幅
+ * @param {number} height - 画像高さ
+ * @returns {boolean} 透明度の有無
+ */
+const checkImageTransparency = (ctx, width, height) => {
+  try {
+    // サンプルポイントで透明度をチェック（パフォーマンス向上のため全ピクセルは調べない）
+    const samplePoints = [
+      [0, 0], // 左上
+      [width - 1, 0], // 右上  
+      [0, height - 1], // 左下
+      [width - 1, height - 1], // 右下
+      [Math.floor(width / 2), Math.floor(height / 2)] // 中央
+    ];
+
+    for (const [x, y] of samplePoints) {
+      const imageData = ctx.getImageData(x, y, 1, 1);
+      const alpha = imageData.data[3]; // アルファチャンネル
+      if (alpha < 255) {
+        return true; // 透明度あり
+      }
+    }
+
+    // エッジ部分もチェック（透明背景の画像は周辺が透明なことが多い）
+    for (let i = 0; i < Math.min(width, 20); i++) {
+      const imageData = ctx.getImageData(i, 0, 1, 1);
+      if (imageData.data[3] < 255) return true;
+    }
+
+    return false; // 透明度なし
+  } catch (error) {
+    console.warn('透明度チェック中にエラーが発生:', error);
+    return false;
+  }
 };
 
 /**
@@ -212,19 +273,35 @@ export class ImageManager {
  * @returns {Object} 検証結果
  */
 export const validateImagePlaceholders = (text, images) => {
-  const placeholderRegex = /\{\{IMAGE:([^}]+)\}\}/g;
+  const singleImageRegex = /\{\{IMAGE:([^}]+)\}\}/g;
+  const multipleImageRegex = /\{\{IMAGES:([^}]+)\}\}/g;
   const placeholders = [];
   const imageIds = images.map(img => img.id);
   const errors = [];
 
+  // 単一画像プレースホルダーをチェック
   let match;
-  while ((match = placeholderRegex.exec(text)) !== null) {
+  while ((match = singleImageRegex.exec(text)) !== null) {
     const imageId = match[1];
     placeholders.push(imageId);
     
     if (!imageIds.includes(imageId)) {
       errors.push(`画像ID "${imageId}" が見つかりません`);
     }
+  }
+
+  // 複数画像プレースホルダーをチェック
+  while ((match = multipleImageRegex.exec(text)) !== null) {
+    const imageIdString = match[1];
+    const imageIdList = imageIdString.split(',').map(id => id.trim());
+    
+    imageIdList.forEach(imageId => {
+      placeholders.push(imageId);
+      
+      if (!imageIds.includes(imageId)) {
+        errors.push(`画像ID "${imageId}" が見つかりません`);
+      }
+    });
   }
 
   // 未使用の画像をチェック

@@ -109,6 +109,7 @@ export default function ReadingTest({ content, onBack }) {
   /**
    * 読書完了ボタンクリック時の処理
    * 読書追跡を停止し、データを収集して問題フェーズに移行
+   * 問題がない場合は直接結果フェーズに移行
    */
   const finishReading = () => {
     trackerRef.current.stopTracking();
@@ -121,9 +122,15 @@ export default function ReadingTest({ content, onBack }) {
       scrollData
     });
     
-    setPhase('questions');
-    // 回答配列を初期化（全てnullで埋める）
-    setAnswers(new Array(content.questions.length).fill(null));
+    // 問題がない場合は直接結果フェーズに移行
+    if (!content.questions || content.questions.length === 0) {
+      setAnswers([]); // 空の回答配列
+      setPhase('results');
+    } else {
+      setPhase('questions');
+      // 回答配列を初期化（全てnullで埋める）
+      setAnswers(new Array(content.questions.length).fill(null));
+    }
   };
 
   /**
@@ -149,8 +156,9 @@ export default function ReadingTest({ content, onBack }) {
   // ===== 計算されたプロパティ =====
   /**
    * 全ての問題が回答されているかチェック
+   * 問題がない場合は常にtrue
    */
-  const allQuestionsAnswered = answers.every(answer => answer !== null);
+  const allQuestionsAnswered = !content.questions || content.questions.length === 0 || answers.every(answer => answer !== null);
 
   // ===== 条件付きレンダリング =====
   /**
@@ -291,7 +299,7 @@ export default function ReadingTest({ content, onBack }) {
       )}
 
       {/* ===== 問題フェーズ ===== */}
-      {phase === 'questions' && (
+      {phase === 'questions' && content.questions && content.questions.length > 0 && (
         <div className="bg-white rounded-lg shadow-md p-8">
           {/* 戻るボタン（上部配置） */}
           <div className="mb-4">

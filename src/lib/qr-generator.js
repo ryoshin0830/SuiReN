@@ -44,6 +44,23 @@ export const createResultData = ({
   readingTime,
   scrollData
 }) => {
+  // 問題がない場合の処理
+  if (!questions || questions.length === 0) {
+    return {
+      contentId,
+      contentTitle,
+      accuracy: null, // 問題がない場合は正解率なし
+      correctAnswers: 0,
+      totalQuestions: 0,
+      readingTime,
+      scrollData: {
+        totalScrollEvents: scrollData.totalScrollEvents
+      },
+      timestamp: new Date().toISOString(),
+      color: '#6b7280' // グレー（問題なしの場合）
+    };
+  }
+
   const correctAnswers = answers.filter((answer, index) => 
     answer === questions[index].correctAnswer
   ).length;

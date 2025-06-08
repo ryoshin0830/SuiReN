@@ -312,12 +312,14 @@ export default function ResultDisplay({ content, answers, readingData, onBack, o
   }
 
   const getAccuracyColor = (accuracy) => {
+    if (accuracy === null) return 'text-gray-600 bg-gray-50'; // 問題なしの場合
     if (accuracy < 70) return 'text-red-600 bg-red-50';
     if (accuracy < 80) return 'text-blue-600 bg-blue-50';
     return 'text-green-600 bg-green-50';
   };
 
   const getAccuracyMessage = (accuracy) => {
+    if (accuracy === null) return '読解練習を完了しました！';
     if (accuracy < 70) return 'もう一度挑戦してみましょう';
     if (accuracy < 80) return 'よくできました！';
     return 'すばらしい結果です！';
@@ -363,17 +365,32 @@ export default function ResultDisplay({ content, answers, readingData, onBack, o
               <h2 className="text-lg font-semibold text-gray-900 mb-2">
                 正解率
               </h2>
-              <div className={`inline-block px-4 py-2 rounded-lg ${getAccuracyColor(resultData.accuracy)}`}>
-                <span className="text-2xl font-bold">
-                  {resultData.accuracy}%
-                </span>
-                <span className="text-sm ml-2">
-                  ({resultData.correctAnswers}/{resultData.totalQuestions}問正解)
-                </span>
-              </div>
-              <p className="mt-2 text-gray-600">
-                {getAccuracyMessage(resultData.accuracy)}
-              </p>
+              {resultData.accuracy !== null ? (
+                <div>
+                  <div className={`inline-block px-4 py-2 rounded-lg ${getAccuracyColor(resultData.accuracy)}`}>
+                    <span className="text-2xl font-bold">
+                      {resultData.accuracy}%
+                    </span>
+                    <span className="text-sm ml-2">
+                      ({resultData.correctAnswers}/{resultData.totalQuestions}問正解)
+                    </span>
+                  </div>
+                  <p className="mt-2 text-gray-600">
+                    {getAccuracyMessage(resultData.accuracy)}
+                  </p>
+                </div>
+              ) : (
+                <div>
+                  <div className={`inline-block px-4 py-2 rounded-lg ${getAccuracyColor(null)}`}>
+                    <span className="text-lg font-bold">
+                      問題なし
+                    </span>
+                  </div>
+                  <p className="mt-2 text-gray-600">
+                    {getAccuracyMessage(null)}
+                  </p>
+                </div>
+              )}
             </div>
 
             {/* 表示時間統計 */}
@@ -493,33 +510,62 @@ export default function ResultDisplay({ content, answers, readingData, onBack, o
           <h2 className="text-lg font-semibold text-gray-900 mb-4">
             問題別結果
           </h2>
-          <div className="space-y-4">
-            {content.questions.map((question, index) => {
-              const isCorrect = answers[index] === question.correctAnswer;
-              return (
-                <div key={question.id} className="border rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="font-medium text-gray-900">
-                      問題 {index + 1}: {question.question}
-                    </h3>
-                    <span className={`px-2 py-1 rounded text-sm font-medium ${
-                      isCorrect 
-                        ? 'bg-green-100 text-green-800' 
-                        : 'bg-red-100 text-red-800'
-                    }`}>
-                      {isCorrect ? '正解' : '不正解'}
-                    </span>
+          {content.questions && content.questions.length > 0 ? (
+            <div className="space-y-4">
+              {content.questions.map((question, index) => {
+                const isCorrect = answers[index] === question.correctAnswer;
+                return (
+                  <div key={question.id} className="border rounded-lg p-4">
+                    <div className="flex items-start justify-between mb-2">
+                      <h3 className="text-md font-semibold text-gray-900">
+                        問題 {index + 1}: {question.question}
+                      </h3>
+                      <span className={`px-2 py-1 rounded text-sm font-semibold ${
+                        isCorrect ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                      }`}>
+                        {isCorrect ? '正解' : '不正解'}
+                      </span>
+                    </div>
+                    
+                    <div className="space-y-1 text-sm">
+                      {question.options.map((option, optionIndex) => {
+                        const isSelected = answers[index] === optionIndex;
+                        const isCorrectOption = optionIndex === question.correctAnswer;
+                        
+                        let className = 'p-2 rounded ';
+                        if (isCorrectOption) {
+                          className += 'bg-green-50 text-green-800 border border-green-200';
+                        } else if (isSelected) {
+                          className += 'bg-red-50 text-red-800 border border-red-200';
+                        } else {
+                          className += 'bg-gray-50 text-gray-600';
+                        }
+                        
+                        return (
+                          <div key={optionIndex} className={className}>
+                            <span className="font-medium">{optionIndex + 1}. </span>
+                            {option}
+                            {isSelected && (
+                              <span className="ml-2 text-xs">（あなたの回答）</span>
+                            )}
+                            {isCorrectOption && (
+                              <span className="ml-2 text-xs">（正解）</span>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
-                  <div className="text-sm text-gray-600">
-                    <p>あなたの回答: {question.options[answers[index]]}</p>
-                    {!isCorrect && (
-                      <p>正解: {question.options[question.correctAnswer]}</p>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="text-center py-8 bg-gray-50 rounded-lg">
+              <div className="text-gray-500 text-lg mb-2">📖</div>
+              <p className="text-gray-600">このコンテンツには問題が設定されていません。</p>
+              <p className="text-sm text-gray-500 mt-1">読解練習のみを行いました。</p>
+            </div>
+          )}
         </div>
 
         <div className="text-center space-x-4">
