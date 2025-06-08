@@ -20,5 +20,5 @@
   
   <!-- Regular text -->
   <text x="115" y="30" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#1E40AF">リーダー</text>
-  <text x="115" y="45" font-family="Arial, sans-serif" font-size="10" fill="#64748B">SuiSui Reader</text>
+  <text x="115" y="45" font-family="Arial, sans-serif" font-size="10" fill="#64748B">gorilla Reader</text>
 </svg>

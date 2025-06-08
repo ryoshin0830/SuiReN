@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { readingContents } from '../../data/contents';
 
-const ADMIN_PASSWORD = 'suisui2025';
+const ADMIN_PASSWORD = 'gorira';
 
 export default function Admin() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);

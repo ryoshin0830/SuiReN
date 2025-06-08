@@ -9,5 +9,5 @@
   <circle cx="75" cy="18" r="1" fill="#06B6D4" opacity="0.3"/>
   <!-- Text -->
   <text x="100" y="30" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#0F172A">すいすいリーダー</text>
-  <text x="100" y="45" font-family="Arial, sans-serif" font-size="10" fill="#64748B">SuiSui Reader</text>
+  <text x="100" y="45" font-family="Arial, sans-serif" font-size="10" fill="#64748B">gorilla Reader</text>
 </svg>
