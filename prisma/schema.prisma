@@ -17,6 +17,7 @@ model Content {
   levelCode String    // システム内部レベルコード（beginner, intermediate, advanced）
   text      String    @db.Text
   images    Json?     // 複数画像データ（Base64形式）
+  thumbnail Json?     // サムネイル画像データ（Base64形式）
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   

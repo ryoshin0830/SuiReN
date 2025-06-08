@@ -420,42 +420,69 @@ export default function Reading() {
                     {paginatedContents.map((content) => (
                       <div 
                         key={content.id} 
-                        className="group bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+                        className="group bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 hover:shadow-xl transform hover:scale-105 transition-all duration-300"
                       >
-                                                 <div className="flex justify-start items-start mb-4">
-                           <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold ${
-                             content.levelCode === 'beginner' 
-                               ? 'bg-blue-100 text-blue-700'
-                               : content.levelCode === 'intermediate'
-                               ? 'bg-emerald-100 text-emerald-700'
-                               : 'bg-purple-100 text-purple-700'
-                           }`}>
-                             {content.level}
-                           </span>
-                         </div>
+                        {/* サムネイル背景エリア */}
+                        <div 
+                          className="relative h-40 bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden"
+                          style={{
+                            backgroundImage: content.thumbnail 
+                              ? `linear-gradient(to bottom right, rgba(0,0,0,0.3), rgba(0,0,0,0.5)), url(${content.thumbnail.base64})`
+                              : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                            backgroundSize: 'cover',
+                            backgroundPosition: 'center',
+                            backgroundRepeat: 'no-repeat'
+                          }}
+                        >
+                          {/* グラデーションオーバーレイ */}
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
+                          
+                          {/* レベルバッジ */}
+                          <div className="absolute top-4 left-4">
+                            <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold backdrop-blur-sm ${
+                              content.levelCode === 'beginner' 
+                                ? 'bg-blue-500/80 text-white'
+                                : content.levelCode === 'intermediate'
+                                ? 'bg-emerald-500/80 text-white'
+                                : 'bg-purple-500/80 text-white'
+                            }`}>
+                              {content.level}
+                            </span>
+                          </div>
 
-                        <h2 className="text-xl font-bold text-gray-800 mb-4 leading-tight">
-                          {content.title}
-                        </h2>
-                        
-                        <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl mb-4">
-                          <span className="text-sm font-medium text-gray-700">問題数</span>
-                          <span className="text-lg font-bold text-blue-600">
-                            {content.questions.length}問
-                          </span>
+                          {/* サムネイルがない場合のアイコン */}
+                          {!content.thumbnail && (
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <div className="text-6xl text-white/60">📚</div>
+                            </div>
+                          )}
                         </div>
 
-                        <button
-                          onClick={() => handleContentSelect(content)}
-                          className="w-full group relative px-6 py-3 text-base font-bold text-white bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
-                        >
-                          <span className="flex items-center justify-center space-x-2">
-                            <span>練習開始</span>
-                            <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                            </svg>
-                          </span>
-                        </button>
+                        {/* コンテンツ情報エリア */}
+                        <div className="p-6">
+                          <h2 className="text-xl font-bold text-gray-800 mb-4 leading-tight line-clamp-2">
+                            {content.title}
+                          </h2>
+                          
+                          <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl mb-4">
+                            <span className="text-sm font-medium text-gray-700">問題数</span>
+                            <span className="text-lg font-bold text-blue-600">
+                              {content.questions.length}問
+                            </span>
+                          </div>
+
+                          <button
+                            onClick={() => handleContentSelect(content)}
+                            className="w-full group relative px-6 py-3 text-base font-bold text-white bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+                          >
+                            <span className="flex items-center justify-center space-x-2">
+                              <span>練習開始</span>
+                              <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                              </svg>
+                            </span>
+                          </button>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -467,37 +494,60 @@ export default function Reading() {
                     {paginatedContents.map((content) => (
                       <div 
                         key={content.id} 
-                        className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300"
+                        className="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300"
                       >
-                                                 <div className="flex items-center justify-between">
-                           <div className="flex items-center space-x-6">
-                             <div>
-                               <h3 className="text-lg font-bold text-gray-800">{content.title}</h3>
-                               <div className="flex items-center space-x-4 mt-1">
-                                 <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-bold ${
-                                   content.levelCode === 'beginner' 
-                                     ? 'bg-blue-100 text-blue-700'
-                                     : content.levelCode === 'intermediate'
-                                     ? 'bg-emerald-100 text-emerald-700'
-                                     : 'bg-purple-100 text-purple-700'
-                                 }`}>
-                                   {content.level}
-                                 </span>
-                                 <span className="text-sm text-gray-600">{content.questions.length}問</span>
-                               </div>
-                             </div>
-                           </div>
-                          <button
-                            onClick={() => handleContentSelect(content)}
-                            className="px-6 py-3 text-sm font-bold text-white bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg"
+                        <div className="flex">
+                          {/* サムネイル */}
+                          <div 
+                            className="w-32 h-24 flex-shrink-0 bg-gradient-to-br from-gray-100 to-gray-200 relative overflow-hidden"
+                            style={{
+                              backgroundImage: content.thumbnail 
+                                ? `linear-gradient(to bottom right, rgba(0,0,0,0.2), rgba(0,0,0,0.4)), url(${content.thumbnail.base64})`
+                                : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                              backgroundSize: 'cover',
+                              backgroundPosition: 'center',
+                              backgroundRepeat: 'no-repeat'
+                            }}
                           >
-                            <span className="flex items-center space-x-2">
-                              <span>開始</span>
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                              </svg>
-                            </span>
-                          </button>
+                            {!content.thumbnail && (
+                              <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="text-2xl text-white/60">📚</div>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* コンテンツ情報 */}
+                          <div className="flex-1 p-6 flex items-center justify-between min-w-0">
+                            <div className="flex-1 min-w-0 mr-6">
+                              <h3 className="text-lg font-bold text-gray-800 mb-2 line-clamp-1">{content.title}</h3>
+                              <div className="flex items-center space-x-4">
+                                <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold ${
+                                  content.levelCode === 'beginner' 
+                                    ? 'bg-blue-100 text-blue-700'
+                                    : content.levelCode === 'intermediate'
+                                    ? 'bg-emerald-100 text-emerald-700'
+                                    : 'bg-purple-100 text-purple-700'
+                                }`}>
+                                  {content.level}
+                                </span>
+                                <span className="text-sm text-gray-600 font-medium">{content.questions.length}問</span>
+                              </div>
+                            </div>
+                            
+                            <div className="flex-shrink-0">
+                              <button
+                                onClick={() => handleContentSelect(content)}
+                                className="px-6 py-3 text-sm font-bold text-white bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg"
+                              >
+                                <span className="flex items-center space-x-2">
+                                  <span>開始</span>
+                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                                  </svg>
+                                </span>
+                              </button>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     ))}

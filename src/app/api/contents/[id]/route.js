@@ -35,6 +35,7 @@ export async function GET(request, { params }) {
       levelCode: content.levelCode,
       text: content.text,
       images: content.images || [],
+      thumbnail: content.thumbnail || null,
       questions: content.questions.map(question => ({
         id: question.orderIndex + 1,
         question: question.question,
@@ -58,7 +59,7 @@ export async function PUT(request, { params }) {
   try {
     const { id } = await params;
     const body = await request.json();
-    const { title, level, levelCode, text, questions, images } = body;
+    const { title, level, levelCode, text, questions, images, thumbnail } = body;
 
     // トランザクション内で更新処理（タイムアウトを延長）
     const updatedContent = await prisma.$transaction(async (tx) => {
@@ -83,6 +84,7 @@ export async function PUT(request, { params }) {
           levelCode,
           text,
           images: images || [],
+          thumbnail: thumbnail || null,
           questions: {
             create: questions.map((question, questionIndex) => ({
               question: question.question,

@@ -18,6 +18,7 @@ export default function ContentEditor({ mode, content, onClose }) {
     levelCode: 'beginner',
     text: '',
     images: [],
+    thumbnail: null, // サムネイル画像
     questions: [
       {
         question: '',
@@ -52,6 +53,7 @@ export default function ContentEditor({ mode, content, onClose }) {
         levelCode: content.levelCode,
         text: content.text,
         images: images,
+        thumbnail: content.thumbnail || null, // サムネイルも初期化
         questions: content.questions.map(q => ({
           question: q.question,
           options: [...q.options],
@@ -119,6 +121,46 @@ export default function ContentEditor({ mode, content, onClose }) {
       setError(error.message);
       setImageUploadProgress(null);
     }
+  };
+
+  // サムネイルアップロード処理
+  const handleThumbnailUpload = async (file) => {
+    try {
+      validateImageFile(file);
+      setImageUploadProgress({ stage: 'processing', progress: 0 });
+
+      const result = await compressImageToBase64(file, {
+        maxWidth: 400,
+        maxHeight: 300,
+        quality: 0.8
+        // サムネイルは少し高品質で保存
+      });
+
+      setImageUploadProgress({ stage: 'processing', progress: 100 });
+
+      const thumbnailData = {
+        base64: result.base64,
+        alt: `${formData.title}のサムネイル`,
+        originalSize: result.originalSize,
+        compressedSize: result.compressedSize,
+        compressionRatio: result.compressionRatio,
+        width: result.width,
+        height: result.height,
+        format: result.format
+      };
+
+      setFormData(prev => ({ ...prev, thumbnail: thumbnailData }));
+      setImageUploadProgress(null);
+
+    } catch (error) {
+      setError(error.message);
+      setImageUploadProgress(null);
+    }
+  };
+
+  // サムネイルを削除
+  const removeThumbnail = () => {
+    setFormData(prev => ({ ...prev, thumbnail: null }));
   };
 
   // 画像更新
@@ -442,6 +484,86 @@ export default function ContentEditor({ mode, content, onClose }) {
                   <option value="上級レベル">上級レベル</option>
                 </select>
               </div>
+            </div>
+          </div>
+
+          {/* サムネイル設定セクション */}
+          <div className="border-b border-gray-200 pb-8">
+            <div className="mb-6">
+              <h2 className="text-xl font-semibold text-gray-900">サムネイル設定</h2>
+              <p className="text-sm text-gray-600 mt-1">読解練習ライブラリで表示されるサムネイル画像を設定してください</p>
+            </div>
+
+            {/* 隠しファイル入力 */}
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                if (e.target.files[0]) {
+                  handleThumbnailUpload(e.target.files[0]);
+                }
+              }}
+              className="hidden"
+              id="thumbnail-upload"
+            />
+
+            {formData.thumbnail ? (
+              <div className="bg-white border border-gray-200 rounded-xl p-6">
+                <div className="flex items-start space-x-6">
+                  <div className="flex-shrink-0">
+                    <img
+                      src={formData.thumbnail.base64}
+                      alt={formData.thumbnail.alt}
+                      className="w-32 h-24 object-cover rounded-lg shadow-md"
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">設定済みサムネイル</h3>
+                    <div className="space-y-2 text-sm text-gray-600">
+                      <div>サイズ: {formData.thumbnail.width}×{formData.thumbnail.height}</div>
+                      <div>ファイルサイズ: {formatFileSize(formData.thumbnail.compressedSize)}</div>
+                      <div>圧縮率: {formData.thumbnail.compressionRatio}%</div>
+                      <div>形式: {formData.thumbnail.format.toUpperCase()}</div>
+                    </div>
+                  </div>
+                  <div className="flex-shrink-0">
+                    <button
+                      type="button"
+                      onClick={removeThumbnail}
+                      className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
+                    >
+                      削除
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-xl p-8 text-center">
+                <div className="text-6xl mb-4">🖼️</div>
+                <h3 className="text-lg font-semibold text-gray-700 mb-2">サムネイルが設定されていません</h3>
+                <p className="text-gray-600 mb-4">
+                  読解練習ライブラリで表示されるサムネイル画像を設定してください
+                </p>
+                <label
+                  htmlFor="thumbnail-upload"
+                  className="inline-flex items-center px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors cursor-pointer font-medium"
+                >
+                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                  </svg>
+                  サムネイルを選択
+                </label>
+              </div>
+            )}
+
+            <div className="mt-4 bg-blue-50 rounded-lg p-4">
+              <h4 className="text-sm font-semibold text-blue-800 mb-2">💡 サムネイルについて</h4>
+              <ul className="text-sm text-blue-700 space-y-1">
+                <li>• 推奨サイズ: 400×300ピクセル（4:3の比率）</li>
+                <li>• 自動的に圧縮・最適化されます</li>
+                <li>• 読解練習ライブラリの各文章カードの背景として表示されます</li>
+                <li>• 文章の内容に関連した画像を設定することをお勧めします</li>
+              </ul>
             </div>
           </div>
 

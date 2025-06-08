@@ -26,6 +26,7 @@ export async function GET() {
       levelCode: content.levelCode,
       text: content.text,
       images: content.images || [],
+      thumbnail: content.thumbnail || null,
       questions: content.questions.map(question => ({
         id: question.orderIndex + 1, // 1から始まる連番
         question: question.question,
@@ -56,7 +57,7 @@ export async function POST(request) {
       totalSize: JSON.stringify(body).length
     });
     
-    const { title, level, levelCode, text, questions, images } = body;
+    const { title, level, levelCode, text, questions, images, thumbnail } = body;
 
     const content = await prisma.content.create({
       data: {
@@ -65,6 +66,7 @@ export async function POST(request) {
         levelCode,
         text,
         images: images || [],
+        thumbnail: thumbnail || null,
         questions: {
           create: questions.map((question, questionIndex) => ({
             question: question.question,
