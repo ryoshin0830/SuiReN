@@ -8,6 +8,25 @@ export default function ResultDisplay({ content, answers, readingData, onBack, o
   const [resultData, setResultData] = useState(null);
   const [speedAnalysis, setSpeedAnalysis] = useState(null);
 
+  // 画像に関する行を判定する関数
+  const isImageLine = (line) => {
+    const trimmed = line.trim();
+    // アプリケーション固有の画像プレースホルダー
+    if (trimmed.match(/\{\{IMAGE:[^}]+\}\}/)) return true;
+    if (trimmed.match(/\{\{IMAGES:[^}]+\}\}/)) return true;
+    // Markdown形式の画像
+    if (trimmed.match(/!\[.*?\]\(.*?\)/)) return true;
+    // HTML形式の画像
+    if (trimmed.match(/<img[^>]*>/i)) return true;
+    // [画像]や（画像）のような表記
+    if (trimmed.match(/[【\[（(].*?画像.*?[】\]）)]/)) return true;
+    // 画像URLを含む行
+    if (trimmed.match(/\.(jpg|jpeg|png|gif|webp|svg)(\?.*)?$/i)) return true;
+    // その他の画像関連キーワード
+    if (trimmed.match(/^(図|画像|写真|イラスト)\s*[:：]?/)) return true;
+    return false;
+  };
+
   // 行ごとの表示時間を分析する関数
   const analyzeLineViewTime = (scrollData, totalTime) => {
     if (!scrollData.scrollPattern || scrollData.scrollPattern.length < 2) {
@@ -15,7 +34,7 @@ export default function ResultDisplay({ content, answers, readingData, onBack, o
     }
 
     const events = scrollData.scrollPattern;
-    const lines = content.text.split('\n').filter(line => line.trim());
+    const lines = content.text.split('\n').filter(line => line.trim() && !isImageLine(line));
     
     // 仮想的な行の高さとビューポートの高さを設定（実際の値は動的に取得すべきですが、概算として）
     const lineHeight = 40; // 1行の高さ（ピクセル）
@@ -95,7 +114,7 @@ export default function ResultDisplay({ content, answers, readingData, onBack, o
   const createTimeBasedTextSegments = (text, analysis) => {
     if (!analysis) return [];
 
-    const lines = text.split('\n').filter(line => line.trim());
+    const lines = text.split('\n').filter(line => line.trim() && !isImageLine(line));
     
     return lines.map((line, index) => {
       const lineData = analysis.lineViewTimes[index];
