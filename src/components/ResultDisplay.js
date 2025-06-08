@@ -210,40 +210,40 @@ export default function ResultDisplay({ content, answers, readingData, onBack, o
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="max-w-4xl mx-auto p-6">
+      <div className="max-w-4xl mx-auto p-4 sm:p-6">
         
         {/* ヘッダー */}
-        <div className="border-b pb-6 mb-8">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">読解練習結果</h1>
-          <p className="text-gray-600">{content.title}</p>
+        <div className="border-b pb-4 sm:pb-6 mb-6 sm:mb-8">
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">読解練習結果</h1>
+          <p className="text-sm sm:text-base text-gray-600">{content.title}</p>
         </div>
 
         {/* 基本結果 */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="border rounded-lg p-4">
-            <div className="text-sm text-gray-600 mb-1">読書時間</div>
-            <div className="text-2xl font-bold text-blue-600">{resultData.readingTime}秒</div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
+          <div className="border rounded-lg p-3 sm:p-4">
+            <div className="text-xs sm:text-sm text-gray-600 mb-1">読書時間</div>
+            <div className="text-xl sm:text-2xl font-bold text-blue-600">{resultData.readingTime}秒</div>
           </div>
           
           {resultData.accuracy !== null && (
-            <div className="border rounded-lg p-4">
-              <div className="text-sm text-gray-600 mb-1">正解率</div>
-              <div className="text-2xl font-bold text-green-600">{resultData.accuracy}%</div>
+            <div className="border rounded-lg p-3 sm:p-4">
+              <div className="text-xs sm:text-sm text-gray-600 mb-1">正解率</div>
+              <div className="text-xl sm:text-2xl font-bold text-green-600">{resultData.accuracy}%</div>
               <div className="text-xs text-gray-500">{resultData.correctAnswers}/{resultData.totalQuestions}問正解</div>
             </div>
           )}
           
-          <div className="border rounded-lg p-4">
-            <div className="text-sm text-gray-600 mb-1">レベル</div>
-            <div className="text-lg font-medium text-gray-900">{content.level}</div>
+          <div className="border rounded-lg p-3 sm:p-4">
+            <div className="text-xs sm:text-sm text-gray-600 mb-1">レベル</div>
+            <div className="text-base sm:text-lg font-medium text-gray-900">{content.level}</div>
           </div>
         </div>
 
         {/* 文章解説 */}
         {content.explanation && content.explanation.trim() && (
-          <div className="border rounded-lg p-6 mb-8">
-            <h2 className="text-lg font-bold text-gray-900 mb-4">文章解説</h2>
-            <div className="text-gray-700 leading-relaxed whitespace-pre-wrap">
+          <div className="border rounded-lg p-4 sm:p-6 mb-6 sm:mb-8">
+            <h2 className="text-base sm:text-lg font-bold text-gray-900 mb-3 sm:mb-4">文章解説</h2>
+            <div className="text-sm sm:text-base text-gray-700 leading-relaxed whitespace-pre-wrap">
               {content.explanation}
             </div>
           </div>
@@ -251,17 +251,17 @@ export default function ResultDisplay({ content, answers, readingData, onBack, o
 
         {/* 読書速度分析 */}
         {textSegments.length > 0 && (
-          <div className="border rounded-lg p-6 mb-8">
-            <h2 className="text-lg font-bold text-gray-900 mb-4">読書速度分析</h2>
+          <div className="border rounded-lg p-4 sm:p-6 mb-6 sm:mb-8">
+            <h2 className="text-base sm:text-lg font-bold text-gray-900 mb-3 sm:mb-4">読書速度分析</h2>
             <div className="space-y-1">
               {textSegments.map((segment, index) => (
                 <div
                   key={index}
-                  className="p-3 rounded flex justify-between items-center"
+                  className="p-2 sm:p-3 rounded flex flex-col sm:flex-row sm:justify-between sm:items-center"
                   style={getViewTimeStyle(segment.normalized, segment.viewTime)}
                 >
-                  <span className="flex-1">{segment.text}</span>
-                  <span className="text-xs ml-3 opacity-70 font-mono">
+                  <span className="flex-1 text-sm sm:text-base">{segment.text}</span>
+                  <span className="text-xs ml-0 sm:ml-3 mt-1 sm:mt-0 opacity-70 font-mono">
                     {segment.viewTime > 0 ? `${segment.viewTime.toFixed(1)}s` : '未表示'}
                   </span>
                 </div>
@@ -271,19 +271,19 @@ export default function ResultDisplay({ content, answers, readingData, onBack, o
         )}
 
         {/* 問題別結果 */}
-        <div className="border rounded-lg p-6 mb-8">
-          <h2 className="text-lg font-bold text-gray-900 mb-4">問題別結果</h2>
+        <div className="border rounded-lg p-4 sm:p-6 mb-6 sm:mb-8">
+          <h2 className="text-base sm:text-lg font-bold text-gray-900 mb-3 sm:mb-4">問題別結果</h2>
           {content.questions && content.questions.length > 0 ? (
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               {content.questions.map((question, index) => {
                 const isCorrect = answers[index] === question.correctAnswer;
                 return (
-                  <div key={question.id} className="border rounded-lg p-4">
-                    <div className="flex justify-between items-start mb-4">
-                      <h3 className="font-medium text-gray-900 flex-1">
+                  <div key={question.id} className="border rounded-lg p-3 sm:p-4">
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-3 sm:mb-4">
+                      <h3 className="font-medium text-gray-900 flex-1 text-sm sm:text-base mb-2 sm:mb-0">
                         問題 {index + 1}: {question.question}
                       </h3>
-                      <span className={`px-3 py-1 rounded text-sm ${
+                      <span className={`px-2 sm:px-3 py-1 rounded text-xs sm:text-sm ${
                         isCorrect 
                           ? 'bg-green-100 text-green-800' 
                           : 'bg-red-100 text-red-800'
@@ -308,8 +308,8 @@ export default function ResultDisplay({ content, answers, readingData, onBack, o
                         
                         return (
                           <div key={optionIndex} className={className}>
-                            <div className="flex items-center justify-between">
-                              <span className="flex-1">{optionIndex + 1}. {option}</span>
+                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                              <span className="flex-1 text-sm sm:text-base mb-2 sm:mb-0">{optionIndex + 1}. {option}</span>
                               <div className="flex space-x-2">
                                 {isSelected && (
                                   <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">
@@ -329,9 +329,9 @@ export default function ResultDisplay({ content, answers, readingData, onBack, o
                     </div>
 
                     {question.explanation && question.explanation.trim() && (
-                      <div className="mt-4 p-4 bg-yellow-50 rounded border-l-4 border-yellow-400">
-                        <h4 className="font-medium text-gray-900 mb-2">解説</h4>
-                        <div className="text-gray-700 whitespace-pre-wrap text-sm">
+                      <div className="mt-3 sm:mt-4 p-3 sm:p-4 bg-yellow-50 rounded border-l-4 border-yellow-400">
+                        <h4 className="font-medium text-gray-900 mb-2 text-sm sm:text-base">解説</h4>
+                        <div className="text-gray-700 whitespace-pre-wrap text-xs sm:text-sm">
                           {question.explanation}
                         </div>
                       </div>
@@ -349,31 +349,31 @@ export default function ResultDisplay({ content, answers, readingData, onBack, o
 
         {/* QRコード */}
         {qrCode && (
-          <div className="border rounded-lg p-6 text-center mb-8">
-            <h2 className="text-lg font-bold text-gray-900 mb-4">結果QRコード</h2>
+          <div className="border rounded-lg p-4 sm:p-6 text-center mb-6 sm:mb-8">
+            <h2 className="text-base sm:text-lg font-bold text-gray-900 mb-3 sm:mb-4">結果QRコード</h2>
             <img 
               src={qrCode} 
               alt="結果QRコード" 
-              className="mx-auto border rounded"
+              className="mx-auto border rounded w-32 h-32 sm:w-48 sm:h-48"
               style={{ maxWidth: '200px' }}
             />
-            <p className="mt-2 text-sm text-gray-600">
+            <p className="mt-2 text-xs sm:text-sm text-gray-600">
               スキャンして結果を共有
             </p>
           </div>
         )}
 
         {/* アクションボタン */}
-        <div className="flex justify-center space-x-4">
+        <div className="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4">
           <button
             onClick={onRetry}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded transition-colors"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 py-2 sm:py-3 rounded transition-colors text-sm sm:text-base w-full sm:w-auto"
           >
             もう一度練習
           </button>
           <button
             onClick={onBack}
-            className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded transition-colors"
+            className="bg-gray-600 hover:bg-gray-700 text-white px-4 sm:px-6 py-2 sm:py-3 rounded transition-colors text-sm sm:text-base w-full sm:w-auto"
           >
             練習選択に戻る
           </button>

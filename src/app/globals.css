@@ -249,3 +249,84 @@ body {
   }
 }
 
+/* モバイル対応 - ベース設定 */
+@media (max-width: 640px) {
+  body {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* ホバーエフェクトをタッチデバイスで無効化 */
+  .hover\\:scale-105:hover {
+    transform: none;
+  }
+
+  /* カードのパディングを調整 */
+  .border.rounded-lg {
+    padding: 0.75rem;
+  }
+
+  /* テキストのoverflow対応 */
+  .text-wrap {
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+}
+
+/* タッチデバイス用のタップターゲット */
+@media (hover: none) and (pointer: coarse) {
+  button, a {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* ホバーエフェクトを無効化 */
+  *:hover {
+    background-color: inherit !important;
+    color: inherit !important;
+    transform: none !important;
+    box-shadow: inherit !important;
+  }
+}
+
+/* 小さい画面での余白調整 */
+@media (max-width: 480px) {
+  .max-w-4xl {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  /* ナビゲーションの調整 */
+  .space-x-2 > * + * {
+    margin-left: 0.25rem;
+  }
+
+  /* ボタンサイズの調整 */
+  .px-6 {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .py-3 {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+}
+
+/* 横向きモバイルデバイス対応 */
+@media (max-height: 500px) and (orientation: landscape) {
+  .min-h-screen {
+    min-height: 100vh;
+  }
+
+  .sticky {
+    position: relative;
+  }
+
+  nav {
+    height: auto;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+}
+
