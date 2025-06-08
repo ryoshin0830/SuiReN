@@ -1,45 +1,70 @@
-// 読解コンテンツデータ
+/**
+ * contents.js - 読解練習用コンテンツデータ管理ファイル
+ * 
+ * 機能:
+ * - 読解練習用の文章・問題データの定義
+ * - レベル別コンテンツの分類管理
+ * - 問題・選択肢・正解データの構造化
+ * - コンテンツ検索・フィルタリング用ヘルパー関数
+ */
+
+// ===== 読解コンテンツデータ配列 =====
+/**
+ * 読解練習用のコンテンツデータ
+ * 各コンテンツには以下の情報が含まれる：
+ * - id: 識別用ID（レベル-番号形式）
+ * - title: 文章タイトル
+ * - level: 日本語レベル表示名
+ * - levelCode: システム内部で使用するレベルコード
+ * - text: 読解用文章
+ * - questions: 理解度確認用の問題配列
+ */
 export const readingContents = [
+  // ===== 初級修了レベル（1-X） =====
   {
-    id: '1-1',
-    title: 'ももたろう',
-    level: '初級修了レベル',
-    levelCode: 'beginner',
+    id: '1-1', // コンテンツ識別ID
+    title: 'ももたろう', // 文章タイトル
+    level: '初級修了レベル', // レベル表示名
+    levelCode: 'beginner', // システム内部レベルコード
+    // 読解用文章テキスト
     text: `むかし、むかし、あるところに、おじいさんとおばあさんがいました。
 おじいさんは山にしばかりに、おばあさんは川に洗濯に行きました。
 おばあさんが川で洗濯をしていると、大きな桃が流れてきました。
 「あら、大きな桃だこと。おじいさんのお土産にしましょう。」
 おばあさんは桃を家に持って帰りました。`,
+    // 理解度確認用問題配列
     questions: [
       {
-        id: 1,
-        question: 'おじいさんは何をしに山に行きましたか。',
-        options: [
-          'しばかりに',
+        id: 1, // 問題ID
+        question: 'おじいさんは何をしに山に行きましたか。', // 問題文
+        options: [ // 選択肢配列
+          'しばかりに', // 正解
           '桃を取りに',
           '洗濯に',
           '買い物に'
         ],
-        correctAnswer: 0
+        correctAnswer: 0 // 正解のインデックス番号（0番目）
       },
       {
         id: 2,
         question: '川に何が流れてきましたか。',
         options: [
           'りんご',
-          '桃',
+          '桃', // 正解
           'みかん',
           'なし'
         ],
-        correctAnswer: 1
+        correctAnswer: 1 // 正解のインデックス番号（1番目）
       }
     ]
   },
+  // ===== 中級レベル（2-X） =====
   {
     id: '2-1',
     title: '仏教',
     level: '中級レベル',
     levelCode: 'intermediate',
+    // より複雑な内容の文章
     text: `仏教は約2500年前にインドで始まりました。
 お釈迦様という人が悩みや苦しみから解放される方法を教えました。
 仏教は平和と慈悲の心を大切にします。
@@ -51,7 +76,7 @@ export const readingContents = [
         options: [
           '約1500年前',
           '約2000年前',
-          '約2500年前',
+          '約2500年前', // 正解
           '約3000年前'
         ],
         correctAnswer: 2
@@ -61,7 +86,7 @@ export const readingContents = [
         question: '仏教が大切にするものは何ですか。',
         options: [
           '富と名声',
-          '平和と慈悲',
+          '平和と慈悲', // 正解
           '力と権力',
           '知識と技術'
         ],
@@ -69,11 +94,13 @@ export const readingContents = [
       }
     ]
   },
+  // ===== 上級レベル（3-X） =====
   {
     id: '3-1',
     title: 'エチオピアのコーヒー',
     level: '上級レベル',
     levelCode: 'advanced',
+    // 高度な語彙と複雑な文構造を含む文章
     text: `エチオピアはコーヒーの発祥地として知られています。
 伝説によると、羊飼いの少年がコーヒーの実を食べた羊が元気になることを発見したのが始まりとされています。
 エチオピアのコーヒー文化は非常に深く、コーヒーセレモニーという伝統的な儀式があります。
@@ -84,7 +111,7 @@ export const readingContents = [
         question: 'エチオピアはコーヒーの何として知られていますか。',
         options: [
           '最大の輸出国',
-          '発祥地',
+          '発祥地', // 正解
           '最高品質の産地',
           '消費量が最も多い国'
         ],
@@ -95,7 +122,7 @@ export const readingContents = [
         question: 'エチオピアの伝統的なコーヒーの儀式を何と言いますか。',
         options: [
           'コーヒータイム',
-          'コーヒーセレモニー',
+          'コーヒーセレモニー', // 正解
           'コーヒーパーティー',
           'コーヒーフェスティバル'
         ],
@@ -105,10 +132,24 @@ export const readingContents = [
   }
 ];
 
+// ===== ヘルパー関数 =====
+
+/**
+ * IDによるコンテンツ検索
+ * 
+ * @param {string} id - 検索対象のコンテンツID
+ * @returns {Object|undefined} 該当するコンテンツオブジェクト、見つからない場合はundefined
+ */
 export const getContentById = (id) => {
   return readingContents.find(content => content.id === id);
 };
 
+/**
+ * レベルコードによるコンテンツフィルタリング
+ * 
+ * @param {string} levelCode - フィルタリング対象のレベルコード（'beginner', 'intermediate', 'advanced'）
+ * @returns {Array} 該当するレベルのコンテンツ配列
+ */
 export const getContentsByLevel = (levelCode) => {
   return readingContents.filter(content => content.levelCode === levelCode);
 };
