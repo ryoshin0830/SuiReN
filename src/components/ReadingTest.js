@@ -126,10 +126,18 @@ export default function ReadingTest({ content, onBack }) {
     if (!content.questions || content.questions.length === 0) {
       setAnswers([]); // 空の回答配列
       setPhase('results');
+      // 結果表示に移行する際はページの上部にスクロール
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+      }, 0);
     } else {
       setPhase('questions');
       // 回答配列を初期化（全てnullで埋める）
       setAnswers(new Array(content.questions.length).fill(null));
+      // 問題フェーズに移行する際もページの上部にスクロール
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+      }, 0);
     }
   };
 
@@ -151,6 +159,10 @@ export default function ReadingTest({ content, onBack }) {
    */
   const submitAnswers = () => {
     setPhase('results');
+    // 結果表示に移行する際はページの上部にスクロール
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+    }, 0);
   };
 
   // ===== 計算されたプロパティ =====
@@ -179,6 +191,10 @@ export default function ReadingTest({ content, onBack }) {
           setReadingData(null);
           setScrollProgress(0);
           trackerRef.current.reset();
+          // やり直し時もページの上部にスクロール
+          setTimeout(() => {
+            window.scrollTo(0, 0);
+          }, 0);
         }}
       />
     );

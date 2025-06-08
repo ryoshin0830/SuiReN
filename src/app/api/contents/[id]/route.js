@@ -4,7 +4,7 @@ import { prisma } from '../../../../lib/prisma';
 // GET /api/contents/[id] - 特定のコンテンツを取得
 export async function GET(request, { params }) {
   try {
-    const { id } = params;
+    const { id } = await params;
     
     const content = await prisma.content.findUnique({
       where: { id },
@@ -56,11 +56,11 @@ export async function GET(request, { params }) {
 // PUT /api/contents/[id] - コンテンツを更新
 export async function PUT(request, { params }) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const body = await request.json();
     const { title, level, levelCode, text, questions, images } = body;
 
-    // トランザクション内で更新処理
+    // トランザクション内で更新処理（タイムアウトを延長）
     const updatedContent = await prisma.$transaction(async (tx) => {
       // 既存の質問と選択肢を削除
       await tx.questionOption.deleteMany({
@@ -110,6 +110,8 @@ export async function PUT(request, { params }) {
       });
 
       return content;
+    }, {
+      timeout: 30000 // タイムアウトを30秒に延長
     });
 
     return NextResponse.json(updatedContent);
@@ -125,7 +127,7 @@ export async function PUT(request, { params }) {
 // DELETE /api/contents/[id] - コンテンツを削除
 export async function DELETE(request, { params }) {
   try {
-    const { id } = params;
+    const { id } = await params;
 
     await prisma.content.delete({
       where: { id }
