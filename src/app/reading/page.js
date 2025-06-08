@@ -13,7 +13,7 @@
 'use client';
 
 import React, { useState, useMemo, useEffect } from 'react';
-import ReadingTest from '../../components/ReadingTest';
+import { useRouter } from 'next/navigation';
 
 /**
  * 読解練習ライブラリページコンポーネント
@@ -22,7 +22,7 @@ import ReadingTest from '../../components/ReadingTest';
  */
 export default function Reading() {
   // ===== 状態管理 =====
-  const [selectedContent, setSelectedContent] = useState(null); // 選択されたコンテンツ
+  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState(''); // 検索キーワード
   const [levelFilter, setLevelFilter] = useState('all'); // レベルフィルタ（all, beginner, intermediate, advanced）
   const [sortBy, setSortBy] = useState('id'); // 並び替え基準（id, title, level, questions）
@@ -143,18 +143,14 @@ export default function Reading() {
    */
   const hasActiveFilters = searchTerm || levelFilter !== 'all' || sortBy !== 'id';
 
-  // ===== コンポーネント表示制御 =====
+  // ===== コンテンツ選択処理 =====
   /**
-   * 読解テストが選択された場合、ReadingTestコンポーネントを表示
+   * コンテンツが選択された時の処理
+   * 個別コンテンツページに遷移
    */
-  if (selectedContent) {
-    return (
-      <ReadingTest 
-        content={selectedContent} 
-        onBack={() => setSelectedContent(null)}
-      />
-    );
-  }
+  const handleContentSelect = (content) => {
+    router.push(`/content/${content.id}`);
+  };
 
   // ローディング中の表示
   if (loading) {
@@ -450,7 +446,7 @@ export default function Reading() {
                         </div>
 
                         <button
-                          onClick={() => setSelectedContent(content)}
+                          onClick={() => handleContentSelect(content)}
                           className="w-full group relative px-6 py-3 text-base font-bold text-white bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
                         >
                           <span className="flex items-center justify-center space-x-2">
@@ -492,7 +488,7 @@ export default function Reading() {
                              </div>
                            </div>
                           <button
-                            onClick={() => setSelectedContent(content)}
+                            onClick={() => handleContentSelect(content)}
                             className="px-6 py-3 text-sm font-bold text-white bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg"
                           >
                             <span className="flex items-center space-x-2">

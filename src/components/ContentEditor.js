@@ -888,7 +888,7 @@ function RubyModal({ formData, onChange, onSave, onClose }) {
               <div className="text-sm font-semibold text-yellow-800">制約事項</div>
               <ul className="text-xs text-yellow-700 mt-1 space-y-1">
                 <li>• 文字とルビはそれぞれ1～10文字まで</li>
-                <li>• 禁止文字: & " &lt; &gt;</li>
+                <li>• 禁止文字: & &quot; &lt; &gt;</li>
                 <li>• 省略記法・括弧記法は漢字+ひらがな・カタカナのみ</li>
               </ul>
             </div>

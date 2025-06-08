@@ -149,6 +149,13 @@ export default function Admin() {
         </h1>
         <div className="flex space-x-4">
           <button
+            onClick={() => window.open('/reading', '_blank')}
+            className="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors font-semibold"
+            title="速読練習ページを開く"
+          >
+            速読ページ
+          </button>
+          <button
             onClick={handleCreate}
             className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors font-semibold"
           >
@@ -207,7 +214,13 @@ export default function Admin() {
                       {content.id}
                     </td>
                     <td className="px-4 py-2 font-medium">
-                      {content.title}
+                      <button
+                        onClick={() => window.open(`/content/${content.id}`, '_blank')}
+                        className="text-blue-600 hover:text-blue-800 hover:underline transition-colors text-left"
+                        title="速読ページを開く"
+                      >
+                        {content.title}
+                      </button>
                     </td>
                     <td className="px-4 py-2">
                       <span className={`inline-block px-2 py-1 rounded text-xs ${
@@ -228,6 +241,13 @@ export default function Admin() {
                     </td>
                     <td className="px-4 py-2">
                       <div className="flex space-x-2">
+                        <button
+                          onClick={() => window.open(`/content/${content.id}`, '_blank')}
+                          className="bg-green-500 text-white px-3 py-1 rounded text-sm hover:bg-green-600 transition-colors"
+                          title="速読ページを開く"
+                        >
+                          プレビュー
+                        </button>
                         <button
                           onClick={() => handleEdit(content)}
                           className="bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600 transition-colors"
@@ -308,6 +328,14 @@ export default function Admin() {
                 <li>✅ コンテンツ編集機能</li>
                 <li>✅ ルビ（振り仮名）表示機能</li>
               </ul>
+              <div className="mt-4">
+                <button
+                  onClick={() => window.open('/reading', '_blank')}
+                  className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm"
+                >
+                  🚀 速読練習ページへ
+                </button>
+              </div>
             </div>
           </div>
         </div>
