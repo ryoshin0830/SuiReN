@@ -295,7 +295,7 @@ export default function Admin() {
           <div className="space-y-4">
             <div>
               <div className="text-sm text-gray-600">バージョン</div>
-              <div className="text-lg font-medium">0.0.2</div>
+              <div className="text-lg font-medium">0.1.0</div>
             </div>
             <div>
               <div className="text-sm text-gray-600">機能</div>
@@ -306,6 +306,7 @@ export default function Admin() {
                 <li>✅ 3段階レベル対応</li>
                 <li>✅ データベース管理</li>
                 <li>✅ コンテンツ編集機能</li>
+                <li>✅ ルビ（振り仮名）表示機能</li>
               </ul>
             </div>
           </div>

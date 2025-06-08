@@ -1,15 +1,17 @@
 /**
  * TextWithImages.js - 画像プレースホルダー付きテキストレンダリングコンポーネント
+ * ルビ（振り仮名）表示機能付き
  */
 
 'use client';
 
 import React from 'react';
+import { parseRubyText } from '../lib/ruby-utils';
 
 /**
- * 文章内の画像プレースホルダーを実際の画像に置換してレンダリング
+ * 文章内の画像プレースホルダーを実際の画像に置換し、ルビを表示してレンダリング
  * @param {Object} props 
- * @param {string} props.text - 画像プレースホルダーを含む文章
+ * @param {string} props.text - 画像プレースホルダーとルビ記法を含む文章
  * @param {Array} props.images - 画像データ配列
  * @param {string} props.className - 追加CSSクラス
  * @returns {JSX.Element}
@@ -22,6 +24,28 @@ export default function TextWithImages({ text, images = [], className = "" }) {
       return map;
     }, {});
   }, [images]);
+
+  // ルビ付きテキストを解析してReact要素に変換
+  const renderRubyText = React.useCallback((textContent) => {
+    const parts = parseRubyText(textContent);
+    
+    return parts.map((part, index) => {
+      if (part.type === 'ruby') {
+        return (
+          <ruby key={index} className="ruby-text">
+            {part.content}
+            <rt className="ruby-annotation">{part.ruby}</rt>
+          </ruby>
+        );
+      } else {
+        return (
+          <span key={index} className="whitespace-pre-line">
+            {part.content}
+          </span>
+        );
+      }
+    });
+  }, []);
 
   // 文章を画像プレースホルダーで分割し、各部分をレンダリング
   const renderTextWithImages = React.useMemo(() => {
@@ -76,18 +100,27 @@ export default function TextWithImages({ text, images = [], className = "" }) {
         }
       }
       
-      // 通常のテキストの場合
+      // 通常のテキストの場合（ルビ解析を適用）
+      if (part.trim()) {
+        return (
+          <span key={index}>
+            {renderRubyText(part)}
+          </span>
+        );
+      }
+      
+      // 空のテキスト部分
       return (
         <span key={index} className="whitespace-pre-line">
           {part}
         </span>
       );
     });
-  }, [text, imageMap]);
+  }, [text, imageMap, renderRubyText]);
 
   return (
-    <div className={`prose max-w-none ${className}`}>
-      <div className="text-lg leading-relaxed text-gray-800">
+    <div className={`prose max-w-none ruby-container ${className}`}>      
+      <div className="text-lg text-gray-800" style={{ lineHeight: '2.2' }}>
         {renderTextWithImages}
       </div>
     </div>
@@ -107,7 +140,7 @@ export function TextWithImagesPreview({ text, images = [], className = "" }) {
 }
 
 /**
- * 文章統計情報を表示するコンポーネント
+ * 文章統計情報を表示するコンポーネント（ルビ情報も含む）
  */
 export function TextStatistics({ text, images = [] }) {
   const stats = React.useMemo(() => {
@@ -116,16 +149,21 @@ export function TextStatistics({ text, images = [] }) {
     const imageCount = images.length;
     const placeholderCount = text ? (text.match(/\{\{IMAGE:[^}]+\}\}/g) || []).length : 0;
     
+    // ルビ統計の追加
+    const rubyParts = text ? parseRubyText(text) : [];
+    const rubyCount = rubyParts.filter(part => part.type === 'ruby').length;
+    
     return {
       characterCount,
       lineCount,
       imageCount,
-      placeholderCount
+      placeholderCount,
+      rubyCount
     };
   }, [text, images]);
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-blue-50 rounded-lg">
+    <div className="grid grid-cols-2 md:grid-cols-5 gap-4 p-4 bg-blue-50 rounded-lg">
       <div className="text-center">
         <div className="text-2xl font-bold text-blue-600">{stats.characterCount}</div>
         <div className="text-xs text-gray-600">文字数</div>
@@ -141,6 +179,10 @@ export function TextStatistics({ text, images = [] }) {
       <div className="text-center">
         <div className="text-2xl font-bold text-orange-600">{stats.placeholderCount}</div>
         <div className="text-xs text-gray-600">配置済み</div>
+      </div>
+      <div className="text-center">
+        <div className="text-2xl font-bold text-red-600">{stats.rubyCount}</div>
+        <div className="text-xs text-gray-600">ルビ数</div>
       </div>
     </div>
   );

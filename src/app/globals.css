@@ -193,3 +193,59 @@ body {
   background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
 }
 
+/* ルビ表示のためのスタイル */
+.ruby-container {
+  line-height: 2.2; /* ルビスペースを確保するために行間を広げる */
+}
+
+.ruby-container ruby {
+  ruby-align: center;
+  ruby-position: over;
+  display: inline-block;
+  vertical-align: baseline;
+  position: relative;
+  margin: 0;
+  padding: 0;
+}
+
+.ruby-container rt {
+  font-size: 0.5em;
+  line-height: 1;
+  text-align: center;
+  color: inherit;
+  font-weight: normal;
+  position: absolute;
+  top: -1.5em;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* ルビがない通常のテキストも同じベースラインを維持 */
+.ruby-container span {
+  vertical-align: baseline;
+  line-height: inherit;
+  display: inline;
+}
+
+/* ネイティブルビサポートがあるブラウザでの改善 */
+@supports (ruby-position: over) {
+  .ruby-container ruby {
+    display: ruby;
+    ruby-position: over;
+    vertical-align: baseline;
+    position: static;
+  }
+  
+  .ruby-container rt {
+    display: ruby-text;
+    position: static;
+    top: auto;
+    left: auto;
+    transform: none;
+    white-space: normal;
+    pointer-events: auto;
+  }
+}
+

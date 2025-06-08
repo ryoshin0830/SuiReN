@@ -9,6 +9,7 @@ import {
   validateImagePlaceholders 
 } from '../lib/image-utils';
 import { TextWithImagesPreview, TextStatistics } from './TextWithImages';
+import { formatRubyText, getRubyExamples, validateRuby } from '../lib/ruby-utils';
 
 export default function ContentEditor({ mode, content, onClose }) {
   const [formData, setFormData] = useState({
@@ -31,6 +32,12 @@ export default function ContentEditor({ mode, content, onClose }) {
   const [selectedImageId, setSelectedImageId] = useState(null);
   const [showImageModal, setShowImageModal] = useState(false);
   const [imageUploadProgress, setImageUploadProgress] = useState(null);
+  const [showRubyModal, setShowRubyModal] = useState(false);
+  const [rubyFormData, setRubyFormData] = useState({
+    baseText: '',
+    ruby: '',
+    format: 'basic'
+  });
 
   // 編集モードの場合、既存データで初期化
   useEffect(() => {
@@ -192,6 +199,61 @@ export default function ContentEditor({ mode, content, onClose }) {
           : q
       )
     }));
+  };
+
+  // ルビを挿入する関数
+  const insertRuby = (baseText, ruby, format) => {
+    try {
+      const rubyText = formatRubyText(baseText, ruby, format);
+      const textarea = document.querySelector('textarea[name="text"]');
+      if (textarea) {
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const text = formData.text;
+        const newText = text.substring(0, start) + rubyText + text.substring(end);
+        setFormData(prev => ({ ...prev, text: newText }));
+        
+        // カーソル位置を調整
+        setTimeout(() => {
+          textarea.focus();
+          textarea.setSelectionRange(start + rubyText.length, start + rubyText.length);
+        }, 0);
+      }
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+
+  // ルビモーダルを開く
+  const openRubyModal = () => {
+    const textarea = document.querySelector('textarea[name="text"]');
+    if (textarea) {
+      const selectedText = textarea.value.substring(
+        textarea.selectionStart,
+        textarea.selectionEnd
+      );
+      if (selectedText.trim()) {
+        setRubyFormData(prev => ({ ...prev, baseText: selectedText.trim() }));
+      }
+    }
+    setShowRubyModal(true);
+  };
+
+  // ルビを追加
+  const handleRubySubmit = () => {
+    if (!rubyFormData.baseText.trim() || !rubyFormData.ruby.trim()) {
+      alert('文字とルビの両方を入力してください');
+      return;
+    }
+    
+    if (!validateRuby(rubyFormData.ruby, rubyFormData.baseText)) {
+      alert('無効なルビです。文字数制限（1-10文字）や禁止文字（&, ", <, >）をご確認ください。');
+      return;
+    }
+    
+    insertRuby(rubyFormData.baseText, rubyFormData.ruby, rubyFormData.format);
+    setShowRubyModal(false);
+    setRubyFormData({ baseText: '', ruby: '', format: 'basic' });
   };
 
   // フォーム送信
@@ -443,7 +505,17 @@ export default function ContentEditor({ mode, content, onClose }) {
 
           {/* 本文入力 */}
           <div className="border-b border-gray-200 pb-8">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">本文</h2>
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-semibold text-gray-900">本文</h2>
+              <button
+                type="button"
+                onClick={openRubyModal}
+                className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors flex items-center space-x-2"
+              >
+                <span>ルビを挿入</span>
+                <span className="text-sm">㋡</span>
+              </button>
+            </div>
             
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -455,9 +527,15 @@ export default function ContentEditor({ mode, content, onClose }) {
                 onChange={(e) => setFormData(prev => ({ ...prev, text: e.target.value }))}
                 rows={12}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono"
-                placeholder="読解練習用の文章を入力してください..."
+                placeholder="読解練習用の文章を入力してください...&#10;&#10;ルビ記法:&#10;• 基本: ｜漢字《かんじ》&#10;• 省略: 漢字《かんじ》&#10;• 括弧: 漢字(かんじ)"
                 required
               />
+              
+              <div className="mt-2 text-xs text-gray-500">
+                <strong>ルビの使い方:</strong> 
+                文字を選択してから「ルビを挿入」ボタンを押すか、直接記法を入力してください
+              </div>
+              
               <div className="mt-4">
                 <TextStatistics text={formData.text} images={formData.images} />
               </div>
@@ -556,6 +634,8 @@ export default function ContentEditor({ mode, content, onClose }) {
             ))}
           </div>
 
+          
+
           {/* 保存ボタン */}
           <div className="flex justify-center pt-8 border-t border-gray-200">
             <button
@@ -583,6 +663,16 @@ export default function ContentEditor({ mode, content, onClose }) {
           onClose={() => setShowImageModal(false)}
         />
       )}
+
+             {/* ルビモーダル */}
+       {showRubyModal && (
+         <RubyModal
+           formData={rubyFormData}
+           onChange={setRubyFormData}
+           onSave={handleRubySubmit}
+           onClose={() => setShowRubyModal(false)}
+         />
+       )}
     </div>
   );
 }
@@ -666,6 +756,135 @@ function ImageEditModal({ image, onSave, onClose }) {
           >
             キャンセル
           </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ルビモーダルコンポーネント
+function RubyModal({ formData, onChange, onSave, onClose }) {
+  const examples = getRubyExamples();
+  
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg p-6 max-w-3xl w-full mx-4 max-h-screen overflow-y-auto">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-semibold">ルビ入力</h3>
+          <button
+            onClick={onClose}
+            className="text-gray-500 hover:text-gray-700"
+          >
+            ✕
+          </button>
+        </div>
+        
+        <div className="grid md:grid-cols-2 gap-6">
+          {/* 入力フォーム */}
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                基本テキスト *
+              </label>
+              <input
+                type="text"
+                value={formData.baseText}
+                onChange={(e) => onChange({ ...formData, baseText: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                placeholder="ルビを振る文字を入力"
+                maxLength={10}
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                ルビ *
+              </label>
+              <input
+                type="text"
+                value={formData.ruby}
+                onChange={(e) => onChange({ ...formData, ruby: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                placeholder="ルビを入力"
+                maxLength={10}
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                出力形式
+              </label>
+              <select
+                value={formData.format}
+                onChange={(e) => onChange({ ...formData, format: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="basic">基本記法（｜文字《ルビ》）</option>
+                <option value="short">省略記法（文字《ルビ》）</option>
+                <option value="paren">括弧記法（文字(ルビ)）</option>
+              </select>
+            </div>
+            
+            {/* プレビュー */}
+            {formData.baseText && formData.ruby && validateRuby(formData.ruby, formData.baseText) && (
+              <div className="bg-gray-50 rounded-lg p-3">
+                <div className="text-sm text-gray-600 mb-1">プレビュー:</div>
+                <div className="ruby-container text-lg">
+                  <ruby>
+                    {formData.baseText}
+                    <rt>{formData.ruby}</rt>
+                  </ruby>
+                </div>
+                <div className="text-xs text-gray-500 mt-1">
+                  記法: {formatRubyText(formData.baseText, formData.ruby, formData.format)}
+                </div>
+              </div>
+            )}
+            
+            <div className="flex space-x-3">
+              <button
+                onClick={onSave}
+                disabled={!formData.baseText.trim() || !formData.ruby.trim()}
+                className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                挿入
+              </button>
+              <button
+                onClick={onClose}
+                className="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400"
+              >
+                キャンセル
+              </button>
+            </div>
+          </div>
+          
+          {/* ヘルプ */}
+          <div>
+            <h4 className="text-md font-semibold text-gray-800 mb-3">ルビ記法について</h4>
+            <div className="space-y-3">
+              {examples.map((example, index) => (
+                <div key={index} className="bg-gray-50 rounded-lg p-3">
+                  <div className="text-sm font-semibold text-gray-700">{example.description}</div>
+                  <div className="text-xs text-gray-600 mt-1">
+                    記法: <code className="bg-gray-200 px-1 rounded">{example.format}</code>
+                  </div>
+                  <div className="text-xs text-gray-600">
+                    例: <code className="bg-gray-200 px-1 rounded">{example.example}</code>
+                  </div>
+                  <div className="text-xs text-gray-500 mt-1">{example.usage}</div>
+                </div>
+              ))}
+            </div>
+            
+            <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <div className="text-sm font-semibold text-yellow-800">制約事項</div>
+              <ul className="text-xs text-yellow-700 mt-1 space-y-1">
+                <li>• 文字とルビはそれぞれ1～10文字まで</li>
+                <li>• 禁止文字: & " &lt; &gt;</li>
+                <li>• 省略記法・括弧記法は漢字+ひらがな・カタカナのみ</li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
     </div>
