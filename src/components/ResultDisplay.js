@@ -168,7 +168,7 @@ export default function ResultDisplay({ content, answers, readingData, onBack, o
 
   useEffect(() => {
     const generateResult = async () => {
-      const data = createResultData({
+      const result = createResultData({
         contentId: content.id,
         contentTitle: content.title,
         answers,
@@ -177,13 +177,15 @@ export default function ResultDisplay({ content, answers, readingData, onBack, o
         scrollData: readingData.scrollData
       });
       
-      setResultData(data);
+      // 表示用データを設定
+      setResultData(result.displayData);
       
       // 行ごとの表示時間分析を実行
       const analysis = analyzeLineViewTime(readingData.scrollData, readingData.readingTime);
       setSpeedAnalysis(analysis);
       
-      const qrString = await generateQRCode(data);
+      // QRコードは最小限データで生成
+      const qrString = await generateQRCode(result.qrData);
       setQrCode(qrString);
     };
 
@@ -202,12 +204,6 @@ export default function ResultDisplay({ content, answers, readingData, onBack, o
   }
 
 
-  const getAccuracyMessage = (accuracy) => {
-    if (accuracy === null) return '読解練習を完了しました';
-    if (accuracy < 70) return 'もう一度挑戦してみましょう';
-    if (accuracy < 80) return 'よくできました';
-    return 'すばらしい結果です';
-  };
 
   // 時間ベースの文章セグメントを作成
   const textSegments = speedAnalysis ? createTimeBasedTextSegments(content.text, speedAnalysis) : [];
