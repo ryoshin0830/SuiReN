@@ -30,7 +30,9 @@ export default function ReadingTest({ content, onBack }) {
   const [answers, setAnswers] = useState([]); // ユーザーの回答配列
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0); // 現在の問題インデックス（未使用だが将来の機能拡張用）
   const [readingData, setReadingData] = useState(null); // 読書データ（時間・スクロール情報）
+  const [scrollProgress, setScrollProgress] = useState(0); // スクロール進捗（0-100%）
   const trackerRef = useRef(null); // 読書追跡オブジェクトのRef
+  const contentRef = useRef(null); // 読書コンテンツのRef
 
   // ===== 初期化とクリーンアップ =====
   /**
@@ -46,6 +48,48 @@ export default function ReadingTest({ content, onBack }) {
     };
   }, []);
 
+  // ===== メインページスクロール制御 =====
+  /**
+   * 読書フェーズでメインページのスクロールを無効化
+   */
+  useEffect(() => {
+    if (phase === 'reading') {
+      // 読書フェーズではメインページのスクロールを無効化
+      document.body.style.overflow = 'hidden';
+    } else {
+      // その他のフェーズではスクロールを有効化
+      document.body.style.overflow = 'auto';
+    }
+
+    // クリーンアップ
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [phase]);
+
+  // ===== スクロール進捗追跡 =====
+  /**
+   * 読書フェーズでのスクロール進捗を追跡
+   */
+  useEffect(() => {
+    if (phase !== 'reading' || !contentRef.current) return;
+
+    const handleScroll = () => {
+      const element = contentRef.current;
+      const scrollTop = element.scrollTop;
+      const scrollHeight = element.scrollHeight - element.clientHeight;
+      const progress = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+      setScrollProgress(Math.min(Math.max(progress, 0), 100));
+    };
+
+    const element = contentRef.current;
+    element.addEventListener('scroll', handleScroll);
+    
+    return () => {
+      element.removeEventListener('scroll', handleScroll);
+    };
+  }, [phase]);
+
   // ===== イベントハンドラー =====
   /**
    * 読書開始ボタンクリック時の処理
@@ -53,6 +97,7 @@ export default function ReadingTest({ content, onBack }) {
    */
   const startReading = () => {
     setPhase('reading');
+    setScrollProgress(0);
     trackerRef.current.startTracking();
   };
 
@@ -119,6 +164,7 @@ export default function ReadingTest({ content, onBack }) {
           setAnswers([]);
           setCurrentQuestionIndex(0);
           setReadingData(null);
+          setScrollProgress(0);
           trackerRef.current.reset();
         }}
       />
@@ -127,10 +173,20 @@ export default function ReadingTest({ content, onBack }) {
 
   // ===== メインUIレンダリング =====
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
+    <div className={phase === 'reading' ? '' : 'max-w-4xl mx-auto px-4 py-8'}>
       {/* ===== 説明フェーズ ===== */}
       {phase === 'instructions' && (
         <div className="bg-white rounded-lg shadow-md p-8">
+          {/* 戻るボタン（上部配置） */}
+          <div className="mb-4">
+            <button
+              onClick={onBack}
+              className="text-gray-600 hover:text-gray-900 transition-colors flex items-center"
+            >
+              ← 練習選択に戻る
+            </button>
+          </div>
+          
           {/* コンテンツタイトル */}
           <h1 className="text-2xl font-bold text-gray-900 mb-6">
             {content.title} - {content.level}
@@ -164,32 +220,84 @@ export default function ReadingTest({ content, onBack }) {
 
       {/* ===== 読書フェーズ ===== */}
       {phase === 'reading' && (
-        <div className="bg-white rounded-lg shadow-md p-8">
-          {/* ヘッダー - タイトルと完了ボタン */}
-          <div className="flex justify-between items-center mb-6">
-            <h1 className="text-2xl font-bold text-gray-900">
-              {content.title}
-            </h1>
-            {/* 読書完了ボタン */}
-            <button
-              onClick={finishReading}
-              className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors"
-            >
-              読書完了
-            </button>
+        <div className="h-screen flex flex-col">
+          {/* 上部ヘッダー（画面上部に完全固定） */}
+          <div className="bg-white shadow-md p-4 border-b flex-shrink-0">
+            <div className="max-w-6xl mx-auto flex justify-between items-center">
+              {/* 戻るボタン */}
+              <button
+                onClick={onBack}
+                className="text-gray-600 hover:text-gray-900 transition-colors flex items-center"
+              >
+                ← 練習選択に戻る
+              </button>
+              
+              {/* タイトル */}
+              <h1 className="text-lg font-bold text-gray-900">
+                {content.title}
+              </h1>
+              
+              {/* スクロール進捗表示 */}
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-gray-600">進捗:</span>
+                <div className="w-24 h-2 bg-gray-200 rounded-full">
+                  <div 
+                    className="h-2 bg-blue-600 rounded-full transition-all duration-300"
+                    style={{ width: `${scrollProgress}%` }}
+                  ></div>
+                </div>
+                <span className="text-sm text-gray-600 w-12">
+                  {Math.round(scrollProgress)}%
+                </span>
+              </div>
+            </div>
           </div>
           
-          {/* 読書テキスト表示エリア */}
-          <TextWithImages 
-            text={content.text} 
-            images={content.images || []} 
-          />
+          {/* 読書コンテンツエリア（フルスクリーン） */}
+          <div 
+            ref={contentRef}
+            className="flex-1 overflow-y-auto bg-white px-8 py-6"
+          >
+            <div className="max-w-4xl mx-auto">
+              <TextWithImages 
+                text={content.text} 
+                images={content.images || []} 
+              />
+              
+              {/* 読書完了ボタン（文章の最後に配置） */}
+              <div className="mt-12 pt-8 border-t-2 border-gray-300 bg-gray-50 rounded-lg p-6">
+                <div className="text-center">
+                  <p className="text-gray-700 mb-4 text-lg">📖 文章を読み終わりましたか？</p>
+                  <p className="text-gray-500 mb-6 text-sm">下のボタンを押して問題に進んでください</p>
+                  <button
+                    onClick={finishReading}
+                    className="bg-green-600 text-white px-10 py-4 rounded-lg text-xl font-bold hover:bg-green-700 transition-colors shadow-xl border-2 border-green-700"
+                  >
+                    ✅ 読書完了
+                  </button>
+                </div>
+              </div>
+              
+              {/* 追加の余白（スクロール確認用） */}
+              <div className="h-20"></div>
+            </div>
+          </div>
         </div>
       )}
 
       {/* ===== 問題フェーズ ===== */}
       {phase === 'questions' && (
         <div className="bg-white rounded-lg shadow-md p-8">
+          {/* 戻るボタン（上部配置） */}
+          <div className="mb-4">
+            <button
+              onClick={onBack}
+              className="text-gray-600 hover:text-gray-900 transition-colors flex items-center"
+            >
+              ← 練習選択に戻る
+            </button>
+          </div>
+          
           {/* ヘッダー - タイトルと読書時間表示 */}
           <div className="mb-6">
             <h1 className="text-2xl font-bold text-gray-900 mb-2">
@@ -250,16 +358,6 @@ export default function ReadingTest({ content, onBack }) {
           </div>
         </div>
       )}
-
-      {/* ===== 戻るボタン ===== */}
-      <div className="mt-8 text-center">
-        <button
-          onClick={onBack}
-          className="text-gray-600 hover:text-gray-900 transition-colors"
-        >
-          ← 練習選択に戻る
-        </button>
-      </div>
     </div>
   );
 }
