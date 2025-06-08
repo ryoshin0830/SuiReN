@@ -10,9 +10,7 @@ export async function getContents() {
     return await response.json();
   } catch (error) {
     console.error('Error fetching contents:', error);
-    // フォールバック：静的データを使用
-    const { readingContents } = await import('../data/contents');
-    return readingContents;
+    throw error;
   }
 }
 
@@ -26,9 +24,7 @@ export async function getContentById(id) {
     return await response.json();
   } catch (error) {
     console.error('Error fetching content:', error);
-    // フォールバック：静的データを使用
-    const { readingContents } = await import('../data/contents');
-    return readingContents.find(content => content.id === id);
+    throw error;
   }
 }
 

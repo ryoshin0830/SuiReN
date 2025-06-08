@@ -295,7 +295,7 @@ export default function Admin() {
           <div className="space-y-4">
             <div>
               <div className="text-sm text-gray-600">バージョン</div>
-              <div className="text-lg font-medium">すいすいリーダー v2.0</div>
+              <div className="text-lg font-medium">0.0.2</div>
             </div>
             <div>
               <div className="text-sm text-gray-600">機能</div>

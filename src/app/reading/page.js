@@ -41,19 +41,12 @@ export default function Reading() {
           const contents = await response.json();
           setReadingContents(contents);
         } else {
-          // フォールバック：静的データを使用
-          const { readingContents: staticContents } = await import('../../data/contents');
-          setReadingContents(staticContents);
+          console.error('Failed to fetch contents from API');
+          setReadingContents([]);
         }
       } catch (error) {
         console.error('Failed to fetch contents:', error);
-        // フォールバック：静的データを使用
-        try {
-          const { readingContents: staticContents } = await import('../../data/contents');
-          setReadingContents(staticContents);
-        } catch (fallbackError) {
-          console.error('Failed to load fallback data:', fallbackError);
-        }
+        setReadingContents([]);
       } finally {
         setLoading(false);
       }
