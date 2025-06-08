@@ -202,7 +202,7 @@ export default function ReadingTest({ content, onBack }) {
 
   // ===== メインUIレンダリング =====
   return (
-    <div className={phase === 'reading' ? '' : 'max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8'}>
+    <div className={phase === 'reading' ? '' : 'max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8 pb-safe-area-inset-bottom pb-6'}>
       {/* ===== 説明フェーズ ===== */}
       {phase === 'instructions' && (
         <div className="bg-white rounded-lg shadow-md p-4 sm:p-8">
@@ -249,9 +249,9 @@ export default function ReadingTest({ content, onBack }) {
 
       {/* ===== 読書フェーズ ===== */}
       {phase === 'reading' && (
-        <div className="h-screen flex flex-col">
+        <div className="h-[100dvh] flex flex-col">
           {/* 上部ヘッダー（画面上部に完全固定） */}
-          <div className="bg-white shadow-md p-2 sm:p-4 border-b flex-shrink-0">
+          <div className="bg-white shadow-md p-2 sm:p-4 border-b flex-shrink-0 pt-safe-area-inset-top">
             <div className="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0">
               {/* 戻るボタン */}
               <button
@@ -285,7 +285,7 @@ export default function ReadingTest({ content, onBack }) {
           {/* 読書コンテンツエリア（フルスクリーン） */}
           <div 
             ref={contentRef}
-            className="flex-1 overflow-y-auto bg-white px-4 sm:px-8 py-4 sm:py-6"
+            className="flex-1 overflow-y-auto bg-white px-4 sm:px-8 py-4 sm:py-6 pb-safe-area-inset-bottom"
           >
             <div className="max-w-4xl mx-auto">
               <TextWithImages 

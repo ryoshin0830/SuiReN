@@ -162,9 +162,9 @@ export default function Reading() {
   // ローディング中の表示
   if (loading) {
     return (
-      <div className="relative overflow-hidden min-h-screen">
+      <div className="relative overflow-hidden min-h-[calc(100vh-6rem)] pb-safe-area-inset-bottom pb-6">
         <div className="absolute inset-0 bg-gradient-to-br from-blue-400/20 via-purple-400/20 to-pink-400/20"></div>
-        <div className="relative z-10 flex items-center justify-center min-h-screen">
+        <div className="relative z-10 flex items-center justify-center min-h-[60vh]">
           <div className="text-center">
             <div className="text-6xl mb-4">📚</div>
             <h2 className="text-2xl font-bold text-gray-700 mb-2">コンテンツを読み込み中...</h2>
@@ -177,7 +177,7 @@ export default function Reading() {
 
   // ===== メインUIレンダリング =====
   return (
-    <div className="relative overflow-hidden min-h-screen bg-gray-50">
+    <div className="relative overflow-hidden min-h-[calc(100vh-6rem)] bg-gray-50 pb-safe-area-inset-bottom pb-6">
       {/* 背景要素 */}
       <div className="absolute inset-0 bg-gradient-to-br from-blue-400/10 via-purple-400/10 to-pink-400/10"></div>
       

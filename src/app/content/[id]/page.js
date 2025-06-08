@@ -42,9 +42,9 @@ export default function ContentPage() {
   // ローディング中
   if (loading) {
     return (
-      <div className="relative overflow-hidden min-h-screen">
+      <div className="relative overflow-hidden min-h-[calc(100vh-6rem)] pb-safe-area-inset-bottom pb-6">
         <div className="absolute inset-0 bg-gradient-to-br from-blue-400/20 via-purple-400/20 to-pink-400/20"></div>
-        <div className="relative z-10 flex items-center justify-center min-h-screen">
+        <div className="relative z-10 flex items-center justify-center min-h-[60vh]">
           <div className="text-center">
             <div className="text-6xl mb-4">📖</div>
             <h2 className="text-2xl font-bold text-gray-700 mb-2">コンテンツを読み込み中...</h2>
@@ -58,9 +58,9 @@ export default function ContentPage() {
   // エラー時
   if (error) {
     return (
-      <div className="relative overflow-hidden min-h-screen">
+      <div className="relative overflow-hidden min-h-[calc(100vh-6rem)] pb-safe-area-inset-bottom pb-6">
         <div className="absolute inset-0 bg-gradient-to-br from-red-400/20 via-orange-400/20 to-pink-400/20"></div>
-        <div className="relative z-10 flex items-center justify-center min-h-screen">
+        <div className="relative z-10 flex items-center justify-center min-h-[60vh]">
           <div className="text-center max-w-lg mx-auto px-4">
             <div className="text-6xl mb-4">😵</div>
             <h2 className="text-2xl font-bold text-gray-700 mb-4">{error}</h2>

@@ -93,7 +93,7 @@ export default function Admin() {
 
   if (!isAuthenticated) {
     return (
-      <div className="max-w-md mx-auto px-4 py-12">
+      <div className="max-w-md mx-auto px-4 py-8 sm:py-12 pb-safe-area-inset-bottom pb-6">
         <div className="bg-white rounded-lg shadow-md p-8">
           <h1 className="text-2xl font-bold text-gray-900 mb-6 text-center">
             管理画面ログイン
@@ -142,7 +142,7 @@ export default function Admin() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-12">
+    <div className="max-w-7xl mx-auto px-4 py-8 sm:py-12 pb-safe-area-inset-bottom pb-6">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold text-gray-900">
           コンテンツ管理画面

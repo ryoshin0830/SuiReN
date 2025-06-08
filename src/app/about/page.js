@@ -1,6 +1,6 @@
 export default function About() {
   return (
-    <div className="max-w-4xl mx-auto px-4 py-12">
+    <div className="max-w-4xl mx-auto px-4 py-8 sm:py-12 pb-safe-area-inset-bottom pb-6">
       <h1 className="text-3xl font-bold text-gray-900 mb-8">
         Fluency（流暢さ）について
       </h1>

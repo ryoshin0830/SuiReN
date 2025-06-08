@@ -18,9 +18,9 @@ import Link from 'next/link';
  */
 export default function Home() {
   return (
-    <div className="relative overflow-hidden">
+    <div className="relative overflow-hidden pb-safe-area-inset-bottom pb-6 sm:pb-8">
       {/* ===== ヒーローセクション（ツーカラム） ===== */}
-      <div className="relative min-h-screen flex items-center">
+      <div className="relative min-h-[calc(100vh-6rem)] sm:min-h-[calc(100vh-8rem)] flex items-center py-8 sm:py-12">
         {/* 背景グラデーション */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-400/20 via-purple-400/20 to-pink-400/20"></div>
         {/* アニメーション背景要素 */}
@@ -35,12 +35,12 @@ export default function Home() {
             {/* 左カラム - メインコンテンツ */}
             <div className="text-center lg:text-left">
               {/* サイトタイトル - グラデーションテキスト */}
-              <h1 className="text-5xl lg:text-6xl xl:text-7xl font-black mb-6 bg-gradient-to-r from-gray-800 via-blue-600 to-purple-600 bg-clip-text text-transparent leading-tight">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black mb-6 bg-gradient-to-r from-gray-800 via-blue-600 to-purple-600 bg-clip-text text-transparent leading-tight">
                 速読ゴリラ
               </h1>
               
               {/* サブタイトル */}
-              <p className="text-xl lg:text-2xl xl:text-3xl font-light text-gray-700 mb-8 leading-relaxed">
+              <p className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-light text-gray-700 mb-8 leading-relaxed">
                 日本語学習者のための
                 <span className="font-semibold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent block lg:inline">
                   速読練習サイト
@@ -79,7 +79,7 @@ export default function Home() {
                 <img 
                   src="/logos/gorilla-only-animated.svg" 
                   alt="速読ゴリラ" 
-                  className="h-64 lg:h-80 xl:h-96 w-auto drop-shadow-2xl"
+                  className="h-48 sm:h-64 lg:h-80 xl:h-96 w-auto drop-shadow-2xl"
                 />
               </div>
             </div>

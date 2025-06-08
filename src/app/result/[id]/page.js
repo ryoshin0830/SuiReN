@@ -130,7 +130,7 @@ export default function ResultPage({ params }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-[calc(100vh-6rem)] flex items-center justify-center bg-gray-50 pb-safe-area-inset-bottom pb-6">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-500 border-t-transparent mx-auto mb-4"></div>
           <p className="text-gray-600 text-lg">結果を読み込み中...</p>
@@ -144,8 +144,8 @@ export default function ResultPage({ params }) {
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="max-w-4xl mx-auto p-6">
+    <div className="min-h-[calc(100vh-6rem)] bg-white pb-safe-area-inset-bottom pb-6">
+      <div className="max-w-4xl mx-auto p-4 sm:p-6">
         
         {/* ヘッダー */}
         <div className="border-b pb-6 mb-8">
