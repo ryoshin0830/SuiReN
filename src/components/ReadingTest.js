@@ -98,7 +98,12 @@ export default function ReadingTest({ content, onBack }) {
   const startReading = () => {
     setPhase('reading');
     setScrollProgress(0);
-    trackerRef.current.startTracking();
+    // 次のフレームでスクロール要素が利用可能になってからトラッキングを開始
+    setTimeout(() => {
+      if (contentRef.current) {
+        trackerRef.current.startTracking(contentRef.current);
+      }
+    }, 100);
   };
 
   /**
