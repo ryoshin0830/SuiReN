@@ -113,9 +113,20 @@ export default function ResultDisplay({ content, answers, readingData, onBack, o
                   }
                 </p>
               </div>
+            ) : qrCode === null ? (
+              <div className="h-48 flex items-center justify-center">
+                <div className="text-center">
+                  <div className="text-red-500 text-4xl mb-2">⚠️</div>
+                  <p className="text-gray-500 text-sm">QRコード生成に失敗しました</p>
+                  <p className="text-gray-400 text-xs mt-1">データサイズが大きすぎる可能性があります</p>
+                </div>
+              </div>
             ) : (
               <div className="h-48 flex items-center justify-center">
-                <p className="text-gray-500">QRコード生成中...</p>
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
+                  <p className="text-gray-500">QRコード生成中...</p>
+                </div>
               </div>
             )}
           </div>

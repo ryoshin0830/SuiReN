@@ -3,6 +3,9 @@ export class ReadingTracker {
     this.startTime = null;
     this.scrollEvents = [];
     this.isTracking = false;
+    this.lastScrollTime = 0;
+    this.scrollThrottle = 200; // スクロールイベント記録の間隔（ミリ秒）
+    this.maxScrollEvents = 100; // 最大記録数を制限
   }
 
   startTracking() {
@@ -23,12 +26,25 @@ export class ReadingTracker {
     if (!this.isTracking) return;
     
     const now = Date.now();
+    
+    // スロットリング: 一定時間内のスクロールイベントは無視
+    if (now - this.lastScrollTime < this.scrollThrottle) {
+      return;
+    }
+    
+    // 最大記録数に達した場合、古いイベントを削除
+    if (this.scrollEvents.length >= this.maxScrollEvents) {
+      this.scrollEvents.shift(); // 最古のイベントを削除
+    }
+    
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
     
     this.scrollEvents.push({
       timestamp: now - this.startTime,
       scrollPosition: scrollTop
     });
+    
+    this.lastScrollTime = now;
   }
 
   getReadingTime() {
@@ -47,5 +63,6 @@ export class ReadingTracker {
     this.startTime = null;
     this.scrollEvents = [];
     this.isTracking = false;
+    this.lastScrollTime = 0;
   }
 }
