@@ -58,7 +58,7 @@ export default function Reading() {
 
   // ===== 統計データの計算 =====
   /**
-   * 文章数の統計を計算（総数・レベル別）
+   * 文章数の統計を計算（総数・レベル別・文字数）
    * useMemoを使用してパフォーマンス最適化
    */
   const stats = useMemo(() => {
@@ -66,7 +66,12 @@ export default function Reading() {
     const beginner = readingContents.filter(c => c.levelCode === 'beginner').length;
     const intermediate = readingContents.filter(c => c.levelCode === 'intermediate').length;
     const advanced = readingContents.filter(c => c.levelCode === 'advanced').length;
-    return { total, beginner, intermediate, advanced };
+    
+    // 平均文字数を計算
+    const totalCharacters = readingContents.reduce((sum, content) => sum + (content.characterCount || 0), 0);
+    const averageCharacters = total > 0 ? Math.round(totalCharacters / total) : 0;
+    
+    return { total, beginner, intermediate, advanced, averageCharacters };
   }, [readingContents]);
 
   // ===== フィルタリング・ソート処理 =====
@@ -100,6 +105,8 @@ export default function Reading() {
           return levelOrder[a.levelCode] - levelOrder[b.levelCode]; // レベル順
         case 'questions':
           return b.questions.length - a.questions.length; // 問題数順（多い順）
+        case 'characters':
+          return (b.characterCount || 0) - (a.characterCount || 0); // 文字数順（多い順）
         default: // id
           return a.id.localeCompare(b.id); // ID順
       }
@@ -243,6 +250,11 @@ export default function Reading() {
                     <span className="text-gray-600">上級レベル</span>
                     <span className="font-bold text-purple-600">{stats.advanced}</span>
                   </div>
+                  <hr className="border-gray-200" />
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">平均文字数</span>
+                    <span className="font-bold text-orange-600">{stats.averageCharacters.toLocaleString()}字</span>
+                  </div>
                 </div>
               </div>
 
@@ -330,6 +342,7 @@ export default function Reading() {
                       <option value="title">タイトル順</option>
                       <option value="level">レベル順</option>
                       <option value="questions">問題数順</option>
+                      <option value="characters">文字数順</option>
                     </select>
                   </div>
                 </div>
@@ -464,11 +477,19 @@ export default function Reading() {
                             {content.title}
                           </h2>
                           
-                          <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl mb-4">
-                            <span className="text-sm font-medium text-gray-700">問題数</span>
-                            <span className="text-lg font-bold text-blue-600">
-                              {content.questions.length}問
-                            </span>
+                          <div className="space-y-3 mb-4">
+                            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+                              <span className="text-sm font-medium text-gray-700">問題数</span>
+                              <span className="text-lg font-bold text-blue-600">
+                                {content.questions.length}問
+                              </span>
+                            </div>
+                            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+                              <span className="text-sm font-medium text-gray-700">文字数</span>
+                              <span className="text-lg font-bold text-orange-600">
+                                {(content.characterCount || 0).toLocaleString()}字
+                              </span>
+                            </div>
                           </div>
 
                           <button
@@ -531,6 +552,7 @@ export default function Reading() {
                                   {content.level}
                                 </span>
                                 <span className="text-sm text-gray-600 font-medium">{content.questions.length}問</span>
+                                <span className="text-sm text-orange-600 font-medium">{(content.characterCount || 0).toLocaleString()}字</span>
                               </div>
                             </div>
                             

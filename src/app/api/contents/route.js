@@ -25,6 +25,7 @@ export async function GET() {
       level: content.level,
       levelCode: content.levelCode,
       text: content.text,
+      characterCount: content.text.length, // 文字数を追加
       images: content.images || [],
       thumbnail: content.thumbnail || null,
       questions: content.questions.map(question => ({
