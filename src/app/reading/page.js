@@ -13,7 +13,6 @@
 'use client';
 
 import React, { useState, useMemo, useEffect } from 'react';
-import { readingContents } from '../../data/contents';
 import ReadingTest from '../../components/ReadingTest';
 
 /**
@@ -30,6 +29,38 @@ export default function Reading() {
   const [viewMode, setViewMode] = useState('grid'); // 表示モード（grid or list）
   const [currentPage, setCurrentPage] = useState(1); // 現在のページ番号
   const itemsPerPage = 9; // 1ページあたりの表示件数
+  const [readingContents, setReadingContents] = useState([]); // データベースから取得したコンテンツ
+  const [loading, setLoading] = useState(true); // ローディング状態
+
+  // ===== データベースからコンテンツを取得 =====
+  useEffect(() => {
+    const fetchContents = async () => {
+      try {
+        const response = await fetch('/api/contents');
+        if (response.ok) {
+          const contents = await response.json();
+          setReadingContents(contents);
+        } else {
+          // フォールバック：静的データを使用
+          const { readingContents: staticContents } = await import('../../data/contents');
+          setReadingContents(staticContents);
+        }
+      } catch (error) {
+        console.error('Failed to fetch contents:', error);
+        // フォールバック：静的データを使用
+        try {
+          const { readingContents: staticContents } = await import('../../data/contents');
+          setReadingContents(staticContents);
+        } catch (fallbackError) {
+          console.error('Failed to load fallback data:', fallbackError);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchContents();
+  }, []);
 
   // ===== 統計データの計算 =====
   /**
@@ -42,7 +73,7 @@ export default function Reading() {
     const intermediate = readingContents.filter(c => c.levelCode === 'intermediate').length;
     const advanced = readingContents.filter(c => c.levelCode === 'advanced').length;
     return { total, beginner, intermediate, advanced };
-  }, []);
+  }, [readingContents]);
 
   // ===== フィルタリング・ソート処理 =====
   /**
@@ -81,7 +112,7 @@ export default function Reading() {
     });
 
     return filtered;
-  }, [searchTerm, levelFilter, sortBy]);
+  }, [readingContents, searchTerm, levelFilter, sortBy]);
 
   // ===== ページネーション処理 =====
   /**
@@ -114,6 +145,22 @@ export default function Reading() {
         content={selectedContent} 
         onBack={() => setSelectedContent(null)}
       />
+    );
+  }
+
+  // ローディング中の表示
+  if (loading) {
+    return (
+      <div className="relative overflow-hidden min-h-screen">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-400/20 via-purple-400/20 to-pink-400/20"></div>
+        <div className="relative z-10 flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <div className="text-6xl mb-4">📚</div>
+            <h2 className="text-2xl font-bold text-gray-700 mb-2">コンテンツを読み込み中...</h2>
+            <p className="text-gray-600">少々お待ちください</p>
+          </div>
+        </div>
+      </div>
     );
   }
 
@@ -279,7 +326,7 @@ export default function Reading() {
             {/* ===== グリッドビュー表示 ===== */}
             {viewMode === 'grid' && (
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
-                {paginatedContents.map((content, index) => (
+                {paginatedContents.map((content) => (
                   /* 個別文章カード - グリッド表示 */
                   <div 
                     key={content.id} 
@@ -342,7 +389,7 @@ export default function Reading() {
             {/* ===== リストビュー表示 ===== */}
             {viewMode === 'list' && (
               <div className="space-y-4 mb-8">
-                {paginatedContents.map((content, index) => (
+                {paginatedContents.map((content) => (
                   /* 個別文章カード - リスト表示 */
                   <div 
                     key={content.id} 

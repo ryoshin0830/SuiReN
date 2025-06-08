@@ -1,0 +1,54 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Content {
+  id        String    @id @default(cuid())
+  title     String
+  level     String    // 表示用レベル名（例：初級修了レベル）
+  levelCode String    // システム内部レベルコード（beginner, intermediate, advanced）
+  text      String    @db.Text
+  images    Json?     // 複数画像データ（Base64形式）
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  
+  questions Question[]
+  
+  @@map("contents")
+}
+
+model Question {
+  id            String   @id @default(cuid())
+  contentId     String
+  question      String
+  correctAnswer Int      // 正解の選択肢インデックス（0から始まる）
+  orderIndex    Int      // 問題の表示順序
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  content Content @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  options QuestionOption[]
+  
+  @@map("questions")
+}
+
+model QuestionOption {
+  id         String   @id @default(cuid())
+  questionId String
+  optionText String
+  orderIndex Int      // 選択肢の表示順序
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  
+  @@map("question_options")
+}

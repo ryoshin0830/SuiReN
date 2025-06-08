@@ -14,6 +14,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { ReadingTracker } from '../lib/reading-tracker';
 import ResultDisplay from './ResultDisplay';
+import TextWithImages from './TextWithImages';
 
 /**
  * 読解テストコンポーネント
@@ -179,11 +180,10 @@ export default function ReadingTest({ content, onBack }) {
           </div>
           
           {/* 読書テキスト表示エリア */}
-          <div className="prose max-w-none">
-            <div className="text-lg leading-relaxed text-gray-800 whitespace-pre-line">
-              {content.text}
-            </div>
-          </div>
+          <TextWithImages 
+            text={content.text} 
+            images={content.images || []} 
+          />
         </div>
       )}
 
