@@ -242,6 +242,7 @@ export function TextWithImagesPreview({ text, images = [], className = "" }) {
     textLength: text?.length || 0,
     imagesCount: images.length,
     imageIds: images.map(img => img.id),
+    imagePlaceholders: text ? text.match(/\{\{IMAGES?:[^}]+\}\}/g) || [] : [],
     text: text ? text.substring(0, 200) + '...' : 'empty'
   });
 

@@ -621,7 +621,7 @@ export default function ContentEditor({ mode, content, onClose }) {
               </div>
               
               <div className="mt-4">
-                <TextStatistics text={formData.text} images={imageManager.getAllImages()} />
+                <TextStatistics text={formData.text} images={formData.images} />
               </div>
             </div>
 
@@ -630,7 +630,7 @@ export default function ContentEditor({ mode, content, onClose }) {
               <div className="mt-6">
                 <TextWithImagesPreview 
                   text={formData.text} 
-                  images={imageManager.getAllImages()} 
+                  images={formData.images} 
                 />
               </div>
             )}
