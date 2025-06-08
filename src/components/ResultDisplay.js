@@ -137,165 +137,37 @@ export default function ResultDisplay({ content, answers, readingData, onBack, o
     if (viewTime === 0) {
       // 表示されなかった行：グレーアウト
       return {
-        backgroundColor: 'rgba(156, 163, 175, 0.1)',
-        color: 'rgb(156, 163, 175)',
-        borderLeft: '4px solid rgb(156, 163, 175)',
-        opacity: 0.5
+        backgroundColor: '#f8fafc',
+        color: '#64748b',
+        borderLeft: '3px solid #e2e8f0'
       };
     } else if (normalized > 1.5) {
       // 長時間表示=読むのが遅い：赤色
-      const intensity = Math.min(1, (normalized - 1) / 2);
       return {
-        backgroundColor: `rgba(239, 68, 68, ${0.2 + intensity * 0.3})`,
-        color: `rgb(185, 28, 28)`,
-        borderLeft: '4px solid rgb(239, 68, 68)'
+        backgroundColor: '#fef2f2',
+        color: '#dc2626',
+        borderLeft: '3px solid #ef4444'
       };
     } else if (normalized < 0.7) {
       // 短時間表示=読むのが速い：緑色
-      const intensity = Math.min(1, (0.7 - normalized) / 0.7);
       return {
-        backgroundColor: `rgba(34, 197, 94, ${0.2 + intensity * 0.3})`,
-        color: `rgb(21, 128, 61)`,
-        borderLeft: '4px solid rgb(34, 197, 94)'
+        backgroundColor: '#f0fdf4',
+        color: '#16a34a',
+        borderLeft: '3px solid #22c55e'
       };
     } else {
       // 通常の表示時間：ニュートラル
       return {
-        backgroundColor: 'rgba(156, 163, 175, 0.1)',
-        color: 'rgb(75, 85, 99)',
-        borderLeft: '4px solid rgb(156, 163, 175)'
+        backgroundColor: '#ffffff',
+        color: '#374151',
+        borderLeft: '3px solid #d1d5db'
       };
     }
   };
 
-  // 折れ線グラフコンポーネント（表示時間ベース）
-  const ViewTimeChart = ({ analysis }) => {
-    if (!analysis || analysis.progressPoints.length === 0) return null;
-
-    const width = 800;
-    const height = 200;
-    const padding = 40;
-    const chartWidth = width - padding * 2;
-    const chartHeight = height - padding * 2;
-
-    const maxViewTime = analysis.maxViewTime;
-    const minViewTime = 0; // 最小は0秒
-    const timeRange = maxViewTime - minViewTime;
-
-    const points = analysis.progressPoints.map(point => {
-      const x = padding + (point.progress / 100) * chartWidth;
-      const y = padding + chartHeight - ((point.viewTime - minViewTime) / timeRange) * chartHeight;
-      return `${x},${y}`;
-    }).join(' ');
-
-    return (
-      <div className="bg-white rounded-lg p-6 shadow-md border">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
-          行ごとの表示時間推移
-        </h3>
-        <svg width={width} height={height} className="border rounded">
-          {/* グリッドライン */}
-          <defs>
-            <pattern id="grid" width="40" height="20" patternUnits="userSpaceOnUse">
-              <path d="M 40 0 L 0 0 0 20" fill="none" stroke="#f3f4f6" strokeWidth="1"/>
-            </pattern>
-          </defs>
-          <rect width={width} height={height} fill="url(#grid)" />
-          
-          {/* 軸 */}
-          <line x1={padding} y1={padding} x2={padding} y2={height - padding} stroke="#374151" strokeWidth="2"/>
-          <line x1={padding} y1={height - padding} x2={width - padding} y2={height - padding} stroke="#374151" strokeWidth="2"/>
-          
-          {/* Y軸ラベル */}
-          <text x="15" y={padding + 5} textAnchor="middle" className="text-xs fill-gray-600">
-            {maxViewTime.toFixed(1)}s
-          </text>
-          <text x="15" y={height - padding + 5} textAnchor="middle" className="text-xs fill-gray-600">
-            0s
-          </text>
-          
-          {/* X軸ラベル */}
-          <text x={padding} y={height - 10} textAnchor="middle" className="text-xs fill-gray-600">
-            開始
-          </text>
-          <text x={width - padding} y={height - 10} textAnchor="middle" className="text-xs fill-gray-600">
-            終了
-          </text>
-          <text x={width / 2} y={height - 10} textAnchor="middle" className="text-xs fill-gray-600">
-            文章の進捗
-          </text>
-          
-          {/* 平均表示時間ライン */}
-          <line 
-            x1={padding} 
-            y1={padding + chartHeight - ((analysis.avgViewTime - minViewTime) / timeRange) * chartHeight}
-            x2={width - padding} 
-            y2={padding + chartHeight - ((analysis.avgViewTime - minViewTime) / timeRange) * chartHeight}
-            stroke="#6b7280" 
-            strokeWidth="1" 
-            strokeDasharray="5,5"
-          />
-          
-          {/* 表示時間曲線 */}
-          <polyline
-            points={points}
-            fill="none"
-            stroke="#3b82f6"
-            strokeWidth="3"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-          
-          {/* データポイント */}
-          {analysis.progressPoints.map((point, index) => {
-            const x = padding + (point.progress / 100) * chartWidth;
-            const y = padding + chartHeight - ((point.viewTime - minViewTime) / timeRange) * chartHeight;
-            const color = point.viewTime > analysis.avgViewTime * 1.5 ? '#ef4444' : 
-                         point.viewTime < analysis.avgViewTime * 0.7 ? '#22c55e' : '#6b7280';
-            
-            return (
-              <circle
-                key={index}
-                cx={x}
-                cy={y}
-                r="4"
-                fill={color}
-                stroke="white"
-                strokeWidth="2"
-              />
-            );
-          })}
-        </svg>
-        
-        <div className="mt-4 flex justify-center space-x-6 text-sm">
-          <div className="flex items-center">
-            <div className="w-3 h-3 bg-red-500 rounded-full mr-2"></div>
-            <span>読むのが遅い行</span>
-          </div>
-          <div className="flex items-center">
-            <div className="w-3 h-3 bg-gray-500 rounded-full mr-2"></div>
-            <span>通常の読書速度</span>
-          </div>
-          <div className="flex items-center">
-            <div className="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
-            <span>読むのが速い行</span>
-          </div>
-          <div className="flex items-center">
-            <div className="w-3 h-0.5 bg-gray-500 mr-2" style={{borderTop: '1px dashed #6b7280'}}></div>
-            <span>平均表示時間</span>
-          </div>
-        </div>
-      </div>
-    );
-  };
 
   useEffect(() => {
     const generateResult = async () => {
-      // デバッグ：読書データの内容を確認
-      console.log('ReadingData:', readingData);
-      console.log('ScrollData:', readingData?.scrollData);
-      console.log('ScrollPattern:', readingData?.scrollData?.scrollPattern);
-      
       const data = createResultData({
         contentId: content.id,
         contentTitle: content.title,
@@ -309,7 +181,6 @@ export default function ResultDisplay({ content, answers, readingData, onBack, o
       
       // 行ごとの表示時間分析を実行
       const analysis = analyzeLineViewTime(readingData.scrollData, readingData.readingTime);
-      console.log('Line View Time Analysis:', analysis); // デバッグ
       setSpeedAnalysis(analysis);
       
       const qrString = await generateQRCode(data);
@@ -321,354 +192,197 @@ export default function ResultDisplay({ content, answers, readingData, onBack, o
 
   if (!resultData) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-8">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">結果を生成中...</p>
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-500 border-t-transparent mx-auto mb-4"></div>
+          <p className="text-gray-600 text-lg">結果を生成中...</p>
         </div>
       </div>
     );
   }
 
-  const getAccuracyColor = (accuracy) => {
-    if (accuracy === null) return 'text-gray-600 bg-gray-50'; // 問題なしの場合
-    if (accuracy < 70) return 'text-red-600 bg-red-50';
-    if (accuracy < 80) return 'text-blue-600 bg-blue-50';
-    return 'text-green-600 bg-green-50';
-  };
 
   const getAccuracyMessage = (accuracy) => {
-    if (accuracy === null) return '読解練習を完了しました！';
+    if (accuracy === null) return '読解練習を完了しました';
     if (accuracy < 70) return 'もう一度挑戦してみましょう';
-    if (accuracy < 80) return 'よくできました！';
-    return 'すばらしい結果です！';
+    if (accuracy < 80) return 'よくできました';
+    return 'すばらしい結果です';
   };
 
   // 時間ベースの文章セグメントを作成
   const textSegments = speedAnalysis ? createTimeBasedTextSegments(content.text, speedAnalysis) : [];
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
-      <div className="bg-white rounded-lg shadow-md p-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6 text-center">
-          読解練習結果
-        </h1>
+    <div className="min-h-screen bg-white">
+      <div className="max-w-4xl mx-auto p-6">
+        
+        {/* ヘッダー */}
+        <div className="border-b pb-6 mb-8">
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">読解練習結果</h1>
+          <p className="text-gray-600">{content.title}</p>
+        </div>
 
-        {/* 表示時間グラフ */}
-        {speedAnalysis && (
-          <div className="mb-8">
-            <ViewTimeChart analysis={speedAnalysis} />
+        {/* 基本結果 */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="border rounded-lg p-4">
+            <div className="text-sm text-gray-600 mb-1">読書時間</div>
+            <div className="text-2xl font-bold text-blue-600">{resultData.readingTime}秒</div>
           </div>
-        )}
-
-        <div className="grid lg:grid-cols-2 gap-8 mb-8">
-          {/* 左カラム：基本結果 */}
-          <div className="space-y-6">
-            <div>
-              <h2 className="text-lg font-semibold text-gray-900 mb-2">
-                練習内容
-              </h2>
-              <p className="text-gray-700 mb-4">{content.title} ({content.level})</p>
-              
-              {/* 文章解説カード */}
-              {content.explanation && content.explanation.trim() && (
-                <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 border border-blue-100 shadow-lg hover:shadow-xl transition-all duration-300 group">
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 to-purple-600/5"></div>
-                  <div className="relative p-6">
-                    <div className="flex items-center space-x-3 mb-4">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center shadow-lg">
-                        <span className="text-white text-lg">📖</span>
-                      </div>
-                      <h3 className="text-xl font-bold bg-gradient-to-r from-blue-700 to-purple-700 bg-clip-text text-transparent">
-                        文章解説
-                      </h3>
-                    </div>
-                    <div className="prose prose-gray max-w-none">
-                      <p className="text-gray-700 leading-relaxed whitespace-pre-wrap font-medium">
-                        {content.explanation}
-                      </p>
-                    </div>
-                    <div className="absolute top-4 right-4 opacity-20 group-hover:opacity-30 transition-opacity duration-300">
-                      <div className="w-16 h-16 rounded-full bg-gradient-to-r from-blue-400 to-purple-400 blur-xl"></div>
-                    </div>
-                  </div>
-                </div>
-              )}
+          
+          {resultData.accuracy !== null && (
+            <div className="border rounded-lg p-4">
+              <div className="text-sm text-gray-600 mb-1">正解率</div>
+              <div className="text-2xl font-bold text-green-600">{resultData.accuracy}%</div>
+              <div className="text-xs text-gray-500">{resultData.correctAnswers}/{resultData.totalQuestions}問正解</div>
             </div>
-
-            <div>
-              <h2 className="text-lg font-semibold text-gray-900 mb-2">
-                読書時間
-              </h2>
-              <p className="text-2xl font-bold text-blue-600">
-                {resultData.readingTime}秒
-              </p>
-            </div>
-
-            <div>
-              <h2 className="text-lg font-semibold text-gray-900 mb-2">
-                正解率
-              </h2>
-              {resultData.accuracy !== null ? (
-                <div>
-                  <div className={`inline-block px-4 py-2 rounded-lg ${getAccuracyColor(resultData.accuracy)}`}>
-                    <span className="text-2xl font-bold">
-                      {resultData.accuracy}%
-                    </span>
-                    <span className="text-sm ml-2">
-                      ({resultData.correctAnswers}/{resultData.totalQuestions}問正解)
-                    </span>
-                  </div>
-                  <p className="mt-2 text-gray-600">
-                    {getAccuracyMessage(resultData.accuracy)}
-                  </p>
-                </div>
-              ) : (
-                <div>
-                  <div className={`inline-block px-4 py-2 rounded-lg ${getAccuracyColor(null)}`}>
-                    <span className="text-lg font-bold">
-                      問題なし
-                    </span>
-                  </div>
-                  <p className="mt-2 text-gray-600">
-                    {getAccuracyMessage(null)}
-                  </p>
-                </div>
-              )}
-            </div>
-
-            {/* 表示時間統計 */}
-            {speedAnalysis && (
-              <div>
-                <h2 className="text-lg font-semibold text-gray-900 mb-2">
-                  読書速度統計
-                </h2>
-                <div className="bg-gray-50 rounded-lg p-4 space-y-2">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">平均表示時間:</span>
-                    <span className="font-semibold">{speedAnalysis.avgViewTime.toFixed(2)}秒/行</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">最長表示時間:</span>
-                    <span className="font-semibold text-red-600">{speedAnalysis.maxViewTime.toFixed(2)}秒/行</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">最短表示時間:</span>
-                    <span className="font-semibold text-green-600">{speedAnalysis.minViewTime.toFixed(2)}秒/行</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">分析対象行数:</span>
-                    <span className="font-semibold">{speedAnalysis.analyzedLines}/{speedAnalysis.totalLines}行</span>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* 右カラム：QRコード */}
-          <div className="text-center">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
-              結果QRコード
-            </h2>
-            {qrCode ? (
-              <div>
-                <img 
-                  src={qrCode} 
-                  alt="結果QRコード" 
-                  className="mx-auto border-4 rounded-lg"
-                  style={{ borderColor: resultData.color }}
-                />
-                <p className="mt-2 text-sm text-gray-600">
-                  QRコードの色: {
-                    resultData.accuracy < 70 ? '赤（70%未満）' :
-                    resultData.accuracy < 80 ? '青（70-80%）' :
-                    '緑（80%以上）'
-                  }
-                </p>
-              </div>
-            ) : qrCode === null ? (
-              <div className="h-48 flex items-center justify-center">
-                <div className="text-center">
-                  <div className="text-red-500 text-4xl mb-2">⚠️</div>
-                  <p className="text-gray-500 text-sm">QRコード生成に失敗しました</p>
-                  <p className="text-gray-400 text-xs mt-1">データサイズが大きすぎる可能性があります</p>
-                </div>
-              </div>
-            ) : (
-              <div className="h-48 flex items-center justify-center">
-                <div className="text-center">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
-                  <p className="text-gray-500">QRコード生成中...</p>
-                </div>
-              </div>
-            )}
+          )}
+          
+          <div className="border rounded-lg p-4">
+            <div className="text-sm text-gray-600 mb-1">レベル</div>
+            <div className="text-lg font-medium text-gray-900">{content.level}</div>
           </div>
         </div>
 
-        {/* 表示時間別文章表示 */}
+        {/* 文章解説 */}
+        {content.explanation && content.explanation.trim() && (
+          <div className="border rounded-lg p-6 mb-8">
+            <h2 className="text-lg font-bold text-gray-900 mb-4">文章解説</h2>
+            <div className="text-gray-700 leading-relaxed whitespace-pre-wrap">
+              {content.explanation}
+            </div>
+          </div>
+        )}
+
+        {/* 読書速度分析 */}
         {textSegments.length > 0 && (
-          <div className="mb-8">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
-              読書速度分析 - 文章内容
-            </h2>
-            <div className="bg-gray-50 rounded-lg p-6">
-              <div className="mb-4 text-sm text-gray-600">
-                <p className="mb-2">
-                  <span className="inline-block w-4 h-4 bg-red-200 border-l-4 border-red-500 mr-2"></span>
-                  赤色の背景: 長時間表示された行（読むのが遅い）
-                </p>
-                <p className="mb-2">
-                  <span className="inline-block w-4 h-4 bg-green-200 border-l-4 border-green-500 mr-2"></span>
-                  緑色の背景: 短時間表示された行（読むのが速い）
-                </p>
-                <p className="mb-2">
-                  <span className="inline-block w-4 h-4 bg-gray-100 border-l-4 border-gray-400 mr-2"></span>
-                  グレーの背景: 通常の表示時間
-                </p>
-                <p>
-                  <span className="inline-block w-4 h-4 bg-gray-100 border-l-4 border-gray-400 mr-2 opacity-50"></span>
-                  薄いグレー: 画面に表示されなかった行
-                </p>
-              </div>
-              
-              <div className="space-y-3 text-base leading-relaxed">
-                {textSegments.map((segment, index) => (
-                  <div
-                    key={index}
-                    className="p-3 rounded transition-all duration-200 flex justify-between items-center"
-                    style={getViewTimeStyle(segment.normalized, segment.viewTime)}
-                  >
-                    <span className="flex-1">{segment.text}</span>
-                    <span className="text-xs ml-4 opacity-75">
-                      {segment.viewTime > 0 ? `${segment.viewTime.toFixed(2)}s` : '未表示'}
-                    </span>
-                  </div>
-                ))}
-              </div>
+          <div className="border rounded-lg p-6 mb-8">
+            <h2 className="text-lg font-bold text-gray-900 mb-4">読書速度分析</h2>
+            <div className="space-y-1">
+              {textSegments.map((segment, index) => (
+                <div
+                  key={index}
+                  className="p-3 rounded flex justify-between items-center"
+                  style={getViewTimeStyle(segment.normalized, segment.viewTime)}
+                >
+                  <span className="flex-1">{segment.text}</span>
+                  <span className="text-xs ml-3 opacity-70 font-mono">
+                    {segment.viewTime > 0 ? `${segment.viewTime.toFixed(1)}s` : '未表示'}
+                  </span>
+                </div>
+              ))}
             </div>
           </div>
         )}
 
         {/* 問題別結果 */}
-        <div className="mb-8">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
-            問題別結果
-          </h2>
+        <div className="border rounded-lg p-6 mb-8">
+          <h2 className="text-lg font-bold text-gray-900 mb-4">問題別結果</h2>
           {content.questions && content.questions.length > 0 ? (
             <div className="space-y-4">
               {content.questions.map((question, index) => {
                 const isCorrect = answers[index] === question.correctAnswer;
                 return (
-                  <div key={question.id} className="relative overflow-hidden rounded-2xl bg-white border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300">
-                    <div className="p-6">
-                      <div className="flex items-start justify-between mb-4">
-                        <h3 className="text-lg font-bold text-gray-900 flex-1 leading-relaxed">
-                          問題 {index + 1}: {question.question}
-                        </h3>
-                        <span className={`px-4 py-2 rounded-full text-sm font-bold shadow-md transition-all duration-300 ${
-                          isCorrect 
-                            ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-green-200' 
-                            : 'bg-gradient-to-r from-red-500 to-pink-500 text-white shadow-red-200'
-                        }`}>
-                          {isCorrect ? '✓ 正解' : '✗ 不正解'}
-                        </span>
-                      </div>
-                      
-                      <div className="space-y-3 mb-6">
-                        {question.options.map((option, optionIndex) => {
-                          const isSelected = answers[index] === optionIndex;
-                          const isCorrectOption = optionIndex === question.correctAnswer;
-                          
-                          let className = 'p-4 rounded-xl transition-all duration-300 border-2 ';
-                          let iconClassName = 'w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ';
-                          
-                          if (isCorrectOption) {
-                            className += 'bg-gradient-to-r from-green-50 to-emerald-50 border-green-300 shadow-md shadow-green-100';
-                            iconClassName += 'bg-gradient-to-r from-green-500 to-emerald-500 text-white';
-                          } else if (isSelected) {
-                            className += 'bg-gradient-to-r from-red-50 to-pink-50 border-red-300 shadow-md shadow-red-100';
-                            iconClassName += 'bg-gradient-to-r from-red-500 to-pink-500 text-white';
-                          } else {
-                            className += 'bg-gradient-to-r from-gray-50 to-slate-50 border-gray-200 hover:border-gray-300';
-                            iconClassName += 'bg-gray-200 text-gray-600';
-                          }
-                          
-                          return (
-                            <div key={optionIndex} className={className}>
-                              <div className="flex items-center space-x-4">
-                                <div className={iconClassName}>
-                                  {optionIndex + 1}
-                                </div>
-                                <span className="flex-1 font-medium text-gray-800">{option}</span>
-                                <div className="flex space-x-2">
-                                  {isSelected && (
-                                    <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full font-medium">
-                                      あなたの回答
-                                    </span>
-                                  )}
-                                  {isCorrectOption && (
-                                    <span className="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full font-medium">
-                                      正解
-                                    </span>
-                                  )}
-                                </div>
+                  <div key={question.id} className="border rounded-lg p-4">
+                    <div className="flex justify-between items-start mb-4">
+                      <h3 className="font-medium text-gray-900 flex-1">
+                        問題 {index + 1}: {question.question}
+                      </h3>
+                      <span className={`px-3 py-1 rounded text-sm ${
+                        isCorrect 
+                          ? 'bg-green-100 text-green-800' 
+                          : 'bg-red-100 text-red-800'
+                      }`}>
+                        {isCorrect ? '正解' : '不正解'}
+                      </span>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      {question.options.map((option, optionIndex) => {
+                        const isSelected = answers[index] === optionIndex;
+                        const isCorrectOption = optionIndex === question.correctAnswer;
+                        
+                        let className = 'p-3 rounded border';
+                        if (isCorrectOption) {
+                          className += ' bg-green-50 border-green-200';
+                        } else if (isSelected) {
+                          className += ' bg-red-50 border-red-200';
+                        } else {
+                          className += ' bg-gray-50 border-gray-200';
+                        }
+                        
+                        return (
+                          <div key={optionIndex} className={className}>
+                            <div className="flex items-center justify-between">
+                              <span className="flex-1">{optionIndex + 1}. {option}</span>
+                              <div className="flex space-x-2">
+                                {isSelected && (
+                                  <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">
+                                    回答
+                                  </span>
+                                )}
+                                {isCorrectOption && (
+                                  <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded">
+                                    正解
+                                  </span>
+                                )}
                               </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-
-                      {/* 問題解説カード */}
-                      {question.explanation && question.explanation.trim() && (
-                        <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 border border-amber-200 p-5 mt-4">
-                          <div className="absolute inset-0 bg-gradient-to-r from-amber-600/5 to-orange-600/5"></div>
-                          <div className="relative">
-                            <div className="flex items-center space-x-3 mb-3">
-                              <div className="w-8 h-8 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 flex items-center justify-center shadow-md">
-                                <span className="text-white text-sm">💡</span>
-                              </div>
-                              <h4 className="text-lg font-bold bg-gradient-to-r from-amber-700 to-orange-700 bg-clip-text text-transparent">
-                                解説
-                              </h4>
-                            </div>
-                            <div className="prose prose-amber max-w-none">
-                              <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
-                                {question.explanation}
-                              </p>
                             </div>
                           </div>
-                        </div>
-                      )}
+                        );
+                      })}
                     </div>
+
+                    {question.explanation && question.explanation.trim() && (
+                      <div className="mt-4 p-4 bg-yellow-50 rounded border-l-4 border-yellow-400">
+                        <h4 className="font-medium text-gray-900 mb-2">解説</h4>
+                        <div className="text-gray-700 whitespace-pre-wrap text-sm">
+                          {question.explanation}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 );
               })}
             </div>
           ) : (
-            <div className="text-center py-8 bg-gray-50 rounded-lg">
-              <div className="text-gray-500 text-lg mb-2">📖</div>
-              <p className="text-gray-600">このコンテンツには問題が設定されていません。</p>
-              <p className="text-sm text-gray-500 mt-1">読解練習のみを行いました。</p>
+            <div className="text-center py-8 text-gray-500">
+              このコンテンツには問題が設定されていません
             </div>
           )}
         </div>
 
-        <div className="text-center space-x-4">
+        {/* QRコード */}
+        {qrCode && (
+          <div className="border rounded-lg p-6 text-center mb-8">
+            <h2 className="text-lg font-bold text-gray-900 mb-4">結果QRコード</h2>
+            <img 
+              src={qrCode} 
+              alt="結果QRコード" 
+              className="mx-auto border rounded"
+              style={{ maxWidth: '200px' }}
+            />
+            <p className="mt-2 text-sm text-gray-600">
+              スキャンして結果を共有
+            </p>
+          </div>
+        )}
+
+        {/* アクションボタン */}
+        <div className="flex justify-center space-x-4">
           <button
             onClick={onRetry}
-            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded transition-colors"
           >
             もう一度練習
           </button>
           <button
             onClick={onBack}
-            className="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+            className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded transition-colors"
           >
             練習選択に戻る
           </button>
         </div>
       </div>
-
     </div>
   );
 }
