@@ -29,6 +29,7 @@ export default function ContentEditor({ mode, content, onClose }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [imageManager] = useState(new ImageManager());
+  const [imageManagerVersion, setImageManagerVersion] = useState(0); // 再レンダリング用
   const [selectedImageId, setSelectedImageId] = useState(null);
   const [showImageModal, setShowImageModal] = useState(false);
   const [imageUploadProgress, setImageUploadProgress] = useState(null);
@@ -57,6 +58,7 @@ export default function ContentEditor({ mode, content, onClose }) {
           correctAnswer: q.correctAnswer
         }))
       });
+      setImageManagerVersion(prev => prev + 1); // 再レンダリングを強制
     }
   }, [mode, content, imageManager]);
 
@@ -108,6 +110,7 @@ export default function ContentEditor({ mode, content, onClose }) {
 
       const newImage = imageManager.addImage(imageData);
       setFormData(prev => ({ ...prev, images: imageManager.getAllImages() }));
+      setImageManagerVersion(prev => prev + 1); // 再レンダリングを強制
       setSelectedImageId(newImage.id);
       setShowImageModal(true);
       setImageUploadProgress(null);
@@ -122,12 +125,14 @@ export default function ContentEditor({ mode, content, onClose }) {
   const updateImage = (id, updates) => {
     imageManager.updateImage(id, updates);
     setFormData(prev => ({ ...prev, images: imageManager.getAllImages() }));
+    setImageManagerVersion(prev => prev + 1); // 再レンダリングを強制
   };
 
   // 画像削除
   const removeImage = (id) => {
     imageManager.removeImage(id);
     setFormData(prev => ({ ...prev, images: imageManager.getAllImages() }));
+    setImageManagerVersion(prev => prev + 1); // 再レンダリングを強制
   };
 
   // テキストに画像プレースホルダーを挿入
@@ -537,14 +542,17 @@ export default function ContentEditor({ mode, content, onClose }) {
               </div>
               
               <div className="mt-4">
-                <TextStatistics text={formData.text} images={formData.images} />
+                <TextStatistics text={formData.text} images={imageManager.getAllImages()} />
               </div>
             </div>
 
             {/* テキストプレビュー */}
             {formData.text && (
               <div className="mt-6">
-                <TextWithImagesPreview text={formData.text} images={formData.images} />
+                <TextWithImagesPreview 
+                  text={formData.text} 
+                  images={imageManager.getAllImages()} 
+                />
               </div>
             )}
           </div>

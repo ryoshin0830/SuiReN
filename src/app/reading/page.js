@@ -6,7 +6,7 @@
  * - グリッド・リスト表示モードの切り替え
  * - ページネーション（9件ずつ表示）
  * - 統計ダッシュボード
- * - モダンUI/UXデザイン
+ * - モダンUI/UXデザイン（2カラムレイアウト）
  * - 研究配慮（文章内容を事前に表示しない）
  */
 
@@ -31,6 +31,7 @@ export default function Reading() {
   const itemsPerPage = 9; // 1ページあたりの表示件数
   const [readingContents, setReadingContents] = useState([]); // データベースから取得したコンテンツ
   const [loading, setLoading] = useState(true); // ローディング状態
+  const [sidebarOpen, setSidebarOpen] = useState(false); // モバイル用サイドバー開閉状態
 
   // ===== データベースからコンテンツを取得 =====
   useEffect(() => {
@@ -128,6 +129,20 @@ export default function Reading() {
     setCurrentPage(1);
   }, [searchTerm, levelFilter, sortBy]);
 
+  /**
+   * フィルターをクリアする関数
+   */
+  const clearFilters = () => {
+    setSearchTerm('');
+    setLevelFilter('all');
+    setSortBy('id');
+  };
+
+  /**
+   * アクティブなフィルターがあるかチェック
+   */
+  const hasActiveFilters = searchTerm || levelFilter !== 'all' || sortBy !== 'id';
+
   // ===== コンポーネント表示制御 =====
   /**
    * 読解テストが選択された場合、ReadingTestコンポーネントを表示
@@ -159,324 +174,385 @@ export default function Reading() {
 
   // ===== メインUIレンダリング =====
   return (
-    <div className="relative overflow-hidden min-h-screen">
-      {/* 背景要素 - グラデーションとアニメーション */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-400/20 via-purple-400/20 to-pink-400/20"></div>
-      <div className="absolute inset-0">
-        {/* アニメーション背景ボール */}
-        <div className="absolute top-20 left-20 w-72 h-72 bg-gradient-to-r from-blue-400/30 to-purple-400/30 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-20 w-96 h-96 bg-gradient-to-r from-purple-400/30 to-pink-400/30 rounded-full blur-3xl animate-pulse delay-700"></div>
+    <div className="relative overflow-hidden min-h-screen bg-gray-50">
+      {/* 背景要素 */}
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-400/10 via-purple-400/10 to-pink-400/10"></div>
+      
+      {/* ===== ヘッダーセクション ===== */}
+      <div className="relative z-10 bg-white/80 backdrop-blur-sm border-b border-gray-200 sticky top-0">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            {/* ロゴとタイトル */}
+            <div className="flex items-center space-x-4">
+              <img 
+                src="/logos/gorilla-only-animated.svg" 
+                alt="速読ゴリラ" 
+                className="h-12 w-auto drop-shadow-lg"
+              />
+              <div>
+                <h1 className="text-2xl font-black bg-gradient-to-r from-gray-800 via-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  読解練習ライブラリ
+                </h1>
+                <p className="text-sm text-gray-600">お好みの文章を選んでください</p>
+              </div>
+            </div>
+            
+            {/* モバイル用メニューボタン */}
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="lg:hidden p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors duration-200"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+          </div>
+        </div>
       </div>
 
-      {/* メインコンテンツエリア */}
-      <div className="relative z-10 max-w-7xl mx-auto px-6 py-12">
-        {/* ===== ヘッダーセクション ===== */}
-        <div className="text-center mb-12">
-          {/* ゴリラロゴ - ホバーアニメーション付き */}
-          <div className="mb-6 transform hover:scale-105 transition-all duration-500">
-            <img 
-              src="/logos/gorilla-only-animated.svg" 
-              alt="速読ゴリラ" 
-              className="h-20 w-auto mx-auto drop-shadow-2xl"
-            />
-          </div>
-          {/* ページタイトル - グラデーションテキスト */}
-          <h1 className="text-4xl lg:text-5xl font-black mb-4 bg-gradient-to-r from-gray-800 via-blue-600 to-purple-600 bg-clip-text text-transparent leading-tight">
-            読解練習ライブラリ
-          </h1>
-          {/* サブタイトル */}
-          <p className="text-lg text-gray-700 font-medium">
-            お好みの<span className="font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">文章</span>を選んでください
-          </p>
-        </div>
-
-        {/* ===== 統計ダッシュボード ===== */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          {/* 総文章数 */}
-          <div className="backdrop-blur-xl bg-white/80 rounded-2xl p-4 border border-white/30 shadow-lg text-center">
-            <div className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              {stats.total}
-            </div>
-            <div className="text-sm text-gray-600 font-medium">総文章数</div>
-          </div>
-          {/* 初級レベル文章数 */}
-          <div className="backdrop-blur-xl bg-white/80 rounded-2xl p-4 border border-white/30 shadow-lg text-center">
-            <div className="text-2xl font-bold text-blue-600">{stats.beginner}</div>
-            <div className="text-sm text-gray-600 font-medium">初級レベル</div>
-          </div>
-          {/* 中級レベル文章数 */}
-          <div className="backdrop-blur-xl bg-white/80 rounded-2xl p-4 border border-white/30 shadow-lg text-center">
-            <div className="text-2xl font-bold text-emerald-600">{stats.intermediate}</div>
-            <div className="text-sm text-gray-600 font-medium">中級レベル</div>
-          </div>
-          {/* 上級レベル文章数 */}
-          <div className="backdrop-blur-xl bg-white/80 rounded-2xl p-4 border border-white/30 shadow-lg text-center">
-            <div className="text-2xl font-bold text-purple-600">{stats.advanced}</div>
-            <div className="text-sm text-gray-600 font-medium">上級レベル</div>
-          </div>
-        </div>
-
-        {/* ===== コントロールパネル ===== */}
-        <div className="backdrop-blur-xl bg-white/80 rounded-3xl p-6 border border-white/30 shadow-2xl mb-8">
-          <div className="grid md:grid-cols-4 gap-4 items-end">
-            {/* 検索入力欄 */}
-            <div className="md:col-span-2">
-              <label className="block text-sm font-semibold text-gray-700 mb-2">検索</label>
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="タイトルやIDで検索..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full px-4 py-3 pl-10 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
-                />
-                {/* 検索アイコン */}
-                <svg className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              </div>
-            </div>
-
-            {/* レベルフィルタ */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">レベル</label>
-              <select
-                value={levelFilter}
-                onChange={(e) => setLevelFilter(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
-              >
-                <option value="all">すべて</option>
-                <option value="beginner">初級レベル</option>
-                <option value="intermediate">中級レベル</option>
-                <option value="advanced">上級レベル</option>
-              </select>
-            </div>
-
-            {/* ソート選択 */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">並び替え</label>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
-              >
-                <option value="id">ID順</option>
-                <option value="title">タイトル順</option>
-                <option value="level">レベル順</option>
-                <option value="questions">問題数順</option>
-              </select>
-            </div>
-          </div>
-
-          {/* 表示モード切り替えと検索結果情報 */}
-          <div className="flex items-center justify-between mt-6 pt-6 border-t border-gray-200">
-            {/* 検索結果件数表示 */}
-            <div className="text-sm text-gray-600 font-medium">
-              {filteredContents.length}件の文章が見つかりました
-            </div>
-            {/* 表示モード切り替えボタン */}
-            <div className="flex items-center space-x-2">
-              {/* グリッドビューボタン */}
-              <button
-                onClick={() => setViewMode('grid')}
-                className={`p-2 rounded-lg transition-all duration-300 ${
-                  viewMode === 'grid'
-                    ? 'bg-blue-500 text-white shadow-lg' // アクティブ状態
-                    : 'bg-gray-200 text-gray-600 hover:bg-gray-300' // 非アクティブ状態
-                }`}
-              >
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                </svg>
-              </button>
-              {/* リストビューボタン */}
-              <button
-                onClick={() => setViewMode('list')}
-                className={`p-2 rounded-lg transition-all duration-300 ${
-                  viewMode === 'list'
-                    ? 'bg-blue-500 text-white shadow-lg' // アクティブ状態
-                    : 'bg-gray-200 text-gray-600 hover:bg-gray-300' // 非アクティブ状態
-                }`}
-              >
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
-        
-        {/* ===== コンテンツ表示エリア ===== */}
-        {paginatedContents.length === 0 ? (
-          /* 検索結果なしの場合の表示 */
-          <div className="text-center py-16">
-            <div className="text-6xl mb-4">🔍</div>
-            <h3 className="text-2xl font-bold text-gray-700 mb-2">該当する文章が見つかりません</h3>
-            <p className="text-gray-600">検索条件を変更してもう一度お試しください</p>
-          </div>
-        ) : (
-          <>
-            {/* ===== グリッドビュー表示 ===== */}
-            {viewMode === 'grid' && (
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
-                {paginatedContents.map((content) => (
-                  /* 個別文章カード - グリッド表示 */
-                  <div 
-                    key={content.id} 
-                    className="group relative backdrop-blur-xl bg-white/80 rounded-3xl p-6 border border-white/30 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 hover:bg-white/90"
-                  >
-                    {/* ホバー時のグロー効果 */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 rounded-3xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    
-                    <div className="relative z-10">
-                      {/* カードヘッダー - レベルバッジとID */}
-                      <div className="flex justify-between items-start mb-4">
-                        {/* レベルバッジ - レベル別色分け */}
-                        <span className={`inline-flex items-center px-3 py-1 rounded-2xl text-xs font-bold ${
-                          content.levelCode === 'beginner' 
-                            ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white' // 初級レベル
-                            : content.levelCode === 'intermediate'
-                            ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white' // 中級レベル
-                            : 'bg-gradient-to-r from-purple-500 to-purple-600 text-white' // 上級レベル
-                        }`}>
-                          {content.level}
-                        </span>
-                        {/* コンテンツID表示 */}
-                        <div className="text-xs text-gray-500 font-mono bg-gray-100 px-2 py-1 rounded-lg">
-                          {content.id}
-                        </div>
-                      </div>
-
-                      {/* 文章タイトル */}
-                      <h2 className="text-xl font-bold text-gray-800 mb-4 leading-tight">
-                        {content.title}
-                      </h2>
-                      
-                      {/* 問題数表示エリア */}
-                      <div className="flex items-center justify-between p-3 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-100 mb-4">
-                        <span className="text-sm font-semibold text-gray-700">問題数</span>
-                        <span className="text-lg font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                          {content.questions.length}問
-                        </span>
-                      </div>
-
-                      {/* 練習開始ボタン */}
-                      <button
-                        onClick={() => setSelectedContent(content)}
-                        className="w-full group relative inline-flex items-center justify-center px-6 py-3 text-base font-bold text-white bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 rounded-xl hover:from-blue-700 hover:via-purple-700 hover:to-blue-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
-                      >
-                        <span className="relative z-10 flex items-center space-x-2">
-                          <span>練習開始</span>
-                          {/* 右矢印アイコン - ホバーでアニメーション */}
-                          <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                          </svg>
-                        </span>
-                      </button>
-                    </div>
+      {/* ===== メインコンテンツエリア（2カラムレイアウト） ===== */}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 py-6">
+        <div className="flex gap-8">
+          
+          {/* ===== 左サイドバー - フィルター&設定 ===== */}
+          <div className={`lg:w-96 flex-shrink-0 transition-all duration-300 ${
+            sidebarOpen ? 'block' : 'hidden lg:block'
+          }`}>
+            <div className="sticky top-24 space-y-6">
+              
+              {/* 統計カード */}
+              <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+                <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                  <svg className="w-5 h-5 mr-2 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" />
+                  </svg>
+                  文章統計
+                </h3>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">総文章数</span>
+                    <span className="font-bold text-xl bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                      {stats.total}
+                    </span>
                   </div>
-                ))}
-              </div>
-            )}
-
-            {/* ===== リストビュー表示 ===== */}
-            {viewMode === 'list' && (
-              <div className="space-y-4 mb-8">
-                {paginatedContents.map((content) => (
-                  /* 個別文章カード - リスト表示 */
-                  <div 
-                    key={content.id} 
-                    className="group backdrop-blur-xl bg-white/80 rounded-2xl p-6 border border-white/30 shadow-lg hover:shadow-xl transition-all duration-300 hover:bg-white/90"
-                  >
-                    <div className="flex items-center justify-between">
-                      {/* 左側 - 文章情報 */}
-                      <div className="flex items-center space-x-6">
-                        {/* コンテンツID */}
-                        <div className="text-sm text-gray-500 font-mono bg-gray-100 px-3 py-1 rounded-lg">
-                          {content.id}
-                        </div>
-                        {/* タイトルとメタ情報 */}
-                        <div>
-                          <h3 className="text-lg font-bold text-gray-800">{content.title}</h3>
-                          <div className="flex items-center space-x-4 mt-1">
-                            {/* レベルバッジ - リスト表示用（控えめなスタイル） */}
-                            <span className={`inline-flex items-center px-2 py-1 rounded-xl text-xs font-bold ${
-                              content.levelCode === 'beginner' 
-                                ? 'bg-blue-100 text-blue-700' // 初級レベル
-                                : content.levelCode === 'intermediate'
-                                ? 'bg-emerald-100 text-emerald-700' // 中級レベル
-                                : 'bg-purple-100 text-purple-700' // 上級レベル
-                            }`}>
-                              {content.level}
-                            </span>
-                            {/* 問題数表示 */}
-                            <span className="text-sm text-gray-600">{content.questions.length}問</span>
-                          </div>
-                        </div>
-                      </div>
-                      {/* 右側 - 練習開始ボタン */}
-                      <button
-                        onClick={() => setSelectedContent(content)}
-                        className="group relative inline-flex items-center justify-center px-6 py-3 text-sm font-bold text-white bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
-                      >
-                        <span className="relative z-10 flex items-center space-x-2">
-                          <span>開始</span>
-                          {/* 右矢印アイコン - ホバーでアニメーション */}
-                          <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                          </svg>
-                        </span>
-                      </button>
-                    </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">初級レベル</span>
+                    <span className="font-bold text-blue-600">{stats.beginner}</span>
                   </div>
-                ))}
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">中級レベル</span>
+                    <span className="font-bold text-emerald-600">{stats.intermediate}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">上級レベル</span>
+                    <span className="font-bold text-purple-600">{stats.advanced}</span>
+                  </div>
+                </div>
               </div>
-            )}
 
-            {/* ===== ページネーション ===== */}
-            {totalPages > 1 && (
-              <div className="flex items-center justify-center space-x-2">
-                {/* 前のページボタン */}
-                <button
-                  onClick={() => setCurrentPage(currentPage - 1)}
-                  disabled={currentPage === 1}
-                  className="px-4 py-2 text-sm font-medium text-gray-600 bg-white rounded-lg border border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
-                >
-                  前へ
-                </button>
-                
-                {/* ページ番号ボタン（最大5ページ表示） */}
-                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                  const page = i + Math.max(1, currentPage - 2);
-                  if (page > totalPages) return null;
-                  
-                  return (
+              {/* フィルターカード */}
+              <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-bold text-gray-800 flex items-center">
+                    <svg className="w-5 h-5 mr-2 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h16a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h16a1 1 0 110 2H4a1 1 0 01-1-1z" />
+                    </svg>
+                    フィルター
+                  </h3>
+                  {hasActiveFilters && (
                     <button
-                      key={page}
-                      onClick={() => setCurrentPage(page)}
-                      className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-300 ${
-                        currentPage === page
-                          ? 'bg-blue-500 text-white shadow-lg' // 現在のページ
-                          : 'text-gray-600 bg-white border border-gray-300 hover:bg-gray-50' // その他のページ
-                      }`}
+                      onClick={clearFilters}
+                      className="text-sm text-red-500 hover:text-red-700 font-medium transition-colors duration-200"
                     >
-                      {page}
+                      クリア
                     </button>
-                  );
-                })}
+                  )}
+                </div>
                 
-                {/* 次のページボタン */}
-                <button
-                  onClick={() => setCurrentPage(currentPage + 1)}
-                  disabled={currentPage === totalPages}
-                  className="px-4 py-2 text-sm font-medium text-gray-600 bg-white rounded-lg border border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
-                >
-                  次へ
-                </button>
+                <div className="space-y-4">
+                  {/* 検索入力 */}
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">検索</label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        placeholder="タイトルやIDで検索..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full px-4 py-3 pl-10 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                      />
+                      <svg className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                      </svg>
+                    </div>
+                  </div>
+
+                  {/* レベルフィルタ */}
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">レベル</label>
+                    <div className="space-y-2">
+                      {[
+                        { value: 'all', label: 'すべて', count: stats.total },
+                        { value: 'beginner', label: '初級レベル', count: stats.beginner, color: 'blue' },
+                        { value: 'intermediate', label: '中級レベル', count: stats.intermediate, color: 'emerald' },
+                        { value: 'advanced', label: '上級レベル', count: stats.advanced, color: 'purple' }
+                                             ].map((option) => (
+                         <label key={option.value} className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors duration-200">
+                           <div className="flex items-center min-w-0">
+                             <input
+                               type="radio"
+                               name="level"
+                               value={option.value}
+                               checked={levelFilter === option.value}
+                               onChange={(e) => setLevelFilter(e.target.value)}
+                               className="mr-3 text-blue-500 focus:ring-blue-500 flex-shrink-0"
+                             />
+                             <span className="text-gray-700 font-medium whitespace-nowrap">{option.label}</span>
+                           </div>
+                           <span className={`text-sm font-bold flex-shrink-0 ml-2 ${
+                             option.color === 'blue' ? 'text-blue-600' :
+                             option.color === 'emerald' ? 'text-emerald-600' :
+                             option.color === 'purple' ? 'text-purple-600' :
+                             'text-gray-600'
+                           }`}>
+                             {option.count}
+                           </span>
+                         </label>
+                       ))}
+                    </div>
+                  </div>
+
+                  {/* ソート選択 */}
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">並び替え</label>
+                    <select
+                      value={sortBy}
+                      onChange={(e) => setSortBy(e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                    >
+                      <option value="id">ID順</option>
+                      <option value="title">タイトル順</option>
+                      <option value="level">レベル順</option>
+                      <option value="questions">問題数順</option>
+                    </select>
+                  </div>
+                </div>
               </div>
+
+              {/* 表示モード */}
+              <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+                <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                  <svg className="w-5 h-5 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                  </svg>
+                  表示モード
+                </h3>
+                <div className="flex space-x-2">
+                  <button
+                    onClick={() => setViewMode('grid')}
+                    className={`flex-1 p-3 rounded-xl transition-all duration-300 ${
+                      viewMode === 'grid'
+                        ? 'bg-blue-500 text-white shadow-lg'
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    }`}
+                  >
+                    <svg className="w-5 h-5 mx-auto mb-1" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                    </svg>
+                    <span className="text-sm font-medium">グリッド</span>
+                  </button>
+                  <button
+                    onClick={() => setViewMode('list')}
+                    className={`flex-1 p-3 rounded-xl transition-all duration-300 ${
+                      viewMode === 'list'
+                        ? 'bg-blue-500 text-white shadow-lg'
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    }`}
+                  >
+                    <svg className="w-5 h-5 mx-auto mb-1" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
+                    </svg>
+                    <span className="text-sm font-medium">リスト</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* ===== 右メインエリア - コンテンツ ===== */}
+          <div className="flex-1 min-w-0">
+            
+            {/* 結果ヘッダー */}
+            <div className="bg-white rounded-2xl p-4 shadow-lg border border-gray-100 mb-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <span className="text-lg font-bold text-gray-800">
+                    {filteredContents.length}件の文章
+                  </span>
+                  {hasActiveFilters && (
+                    <span className="text-sm text-blue-600 bg-blue-50 px-3 py-1 rounded-full font-medium">
+                      フィルター適用中
+                    </span>
+                  )}
+                </div>
+                <div className="text-sm text-gray-600">
+                  {currentPage} / {totalPages} ページ
+                </div>
+              </div>
+            </div>
+
+            {/* コンテンツエリア */}
+            {paginatedContents.length === 0 ? (
+              <div className="bg-white rounded-2xl p-16 shadow-lg border border-gray-100 text-center">
+                <div className="text-6xl mb-4">🔍</div>
+                <h3 className="text-2xl font-bold text-gray-700 mb-2">該当する文章が見つかりません</h3>
+                <p className="text-gray-600 mb-4">検索条件を変更してもう一度お試しください</p>
+                {hasActiveFilters && (
+                  <button
+                    onClick={clearFilters}
+                    className="px-6 py-3 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-colors duration-200 font-medium"
+                  >
+                    フィルターをクリア
+                  </button>
+                )}
+              </div>
+            ) : (
+              <>
+                {/* グリッドビュー */}
+                {viewMode === 'grid' && (
+                  <div className="grid gap-6 grid-cols-1 md:grid-cols-2 xl:grid-cols-3 mb-8">
+                    {paginatedContents.map((content) => (
+                      <div 
+                        key={content.id} 
+                        className="group bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+                      >
+                                                 <div className="flex justify-start items-start mb-4">
+                           <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold ${
+                             content.levelCode === 'beginner' 
+                               ? 'bg-blue-100 text-blue-700'
+                               : content.levelCode === 'intermediate'
+                               ? 'bg-emerald-100 text-emerald-700'
+                               : 'bg-purple-100 text-purple-700'
+                           }`}>
+                             {content.level}
+                           </span>
+                         </div>
+
+                        <h2 className="text-xl font-bold text-gray-800 mb-4 leading-tight">
+                          {content.title}
+                        </h2>
+                        
+                        <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl mb-4">
+                          <span className="text-sm font-medium text-gray-700">問題数</span>
+                          <span className="text-lg font-bold text-blue-600">
+                            {content.questions.length}問
+                          </span>
+                        </div>
+
+                        <button
+                          onClick={() => setSelectedContent(content)}
+                          className="w-full group relative px-6 py-3 text-base font-bold text-white bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+                        >
+                          <span className="flex items-center justify-center space-x-2">
+                            <span>練習開始</span>
+                            <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                            </svg>
+                          </span>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* リストビュー */}
+                {viewMode === 'list' && (
+                  <div className="space-y-4 mb-8">
+                    {paginatedContents.map((content) => (
+                      <div 
+                        key={content.id} 
+                        className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300"
+                      >
+                                                 <div className="flex items-center justify-between">
+                           <div className="flex items-center space-x-6">
+                             <div>
+                               <h3 className="text-lg font-bold text-gray-800">{content.title}</h3>
+                               <div className="flex items-center space-x-4 mt-1">
+                                 <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-bold ${
+                                   content.levelCode === 'beginner' 
+                                     ? 'bg-blue-100 text-blue-700'
+                                     : content.levelCode === 'intermediate'
+                                     ? 'bg-emerald-100 text-emerald-700'
+                                     : 'bg-purple-100 text-purple-700'
+                                 }`}>
+                                   {content.level}
+                                 </span>
+                                 <span className="text-sm text-gray-600">{content.questions.length}問</span>
+                               </div>
+                             </div>
+                           </div>
+                          <button
+                            onClick={() => setSelectedContent(content)}
+                            className="px-6 py-3 text-sm font-bold text-white bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg"
+                          >
+                            <span className="flex items-center space-x-2">
+                              <span>開始</span>
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                              </svg>
+                            </span>
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* ページネーション */}
+                {totalPages > 1 && (
+                  <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+                    <div className="flex items-center justify-center space-x-2">
+                      <button
+                        onClick={() => setCurrentPage(currentPage - 1)}
+                        disabled={currentPage === 1}
+                        className="px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+                      >
+                        前へ
+                      </button>
+                      
+                      {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                        const page = i + Math.max(1, currentPage - 2);
+                        if (page > totalPages) return null;
+                        
+                        return (
+                          <button
+                            key={page}
+                            onClick={() => setCurrentPage(page)}
+                            className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-300 ${
+                              currentPage === page
+                                ? 'bg-blue-500 text-white shadow-lg'
+                                : 'text-gray-600 bg-gray-100 hover:bg-gray-200'
+                            }`}
+                          >
+                            {page}
+                          </button>
+                        );
+                      })}
+                      
+                      <button
+                        onClick={() => setCurrentPage(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                        className="px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+                      >
+                        次へ
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </>
             )}
-          </>
-        )}
+          </div>
+        </div>
       </div>
     </div>
   );

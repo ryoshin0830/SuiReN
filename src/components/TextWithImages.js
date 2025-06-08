@@ -69,7 +69,11 @@ export default function TextWithImages({ text, images = [], className = "" }) {
                 alt={image.alt || '文章内の画像'}
                 className="max-w-full h-auto max-h-96 mx-auto rounded-lg shadow-lg"
                 onError={(e) => {
-                  console.error(`画像の読み込みに失敗しました: ${imageId}`);
+                  console.error(`画像の読み込みに失敗しました: ${imageId}`, {
+                    imageId,
+                    image,
+                    base64Length: image?.base64?.length || 0
+                  });
                   e.target.style.display = 'none';
                   e.target.nextSibling?.style && (e.target.nextSibling.style.display = 'block');
                 }}
@@ -87,12 +91,20 @@ export default function TextWithImages({ text, images = [], className = "" }) {
           );
         } else {
           // 画像が見つからない場合の警告表示
-          console.warn(`画像が見つかりません: ${imageId}`);
+          console.warn(`画像が見つかりません: ${imageId}`, {
+            imageId,
+            image,
+            imageMap,
+            allImageIds: Object.keys(imageMap)
+          });
           return (
             <div key={index} className="my-6 text-center">
               <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                 <p className="text-yellow-700 text-sm">
                   ⚠️ 画像が見つかりません (ID: {imageId})
+                </p>
+                <p className="text-xs text-gray-500 mt-1">
+                  利用可能な画像ID: {Object.keys(imageMap).join(', ') || 'なし'}
                 </p>
               </div>
             </div>
@@ -131,9 +143,21 @@ export default function TextWithImages({ text, images = [], className = "" }) {
  * プレビューモード用のコンポーネント（編集時のプレビュー表示用）
  */
 export function TextWithImagesPreview({ text, images = [], className = "" }) {
+  // デバッグ情報を表示
+  console.log('TextWithImagesPreview render:', {
+    textLength: text?.length || 0,
+    imagesCount: images.length,
+    imageIds: images.map(img => img.id),
+    text: text ? text.substring(0, 200) + '...' : 'empty'
+  });
+
   return (
     <div className={`border border-gray-300 rounded-lg p-4 bg-gray-50 ${className}`}>
       <div className="text-sm text-gray-600 mb-2 font-semibold">📖 プレビュー</div>
+      <div className="text-xs text-gray-500 mb-2">
+        画像数: {images.length}個 | 
+        画像ID: {images.map(img => img.id).join(', ') || 'なし'}
+      </div>
       <TextWithImages text={text} images={images} />
     </div>
   );
