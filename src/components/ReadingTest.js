@@ -347,11 +347,11 @@ export default function ReadingTest({ content, onBack }) {
                 </h3>
                 
                 {/* 選択肢一覧 */}
-                <div className="space-y-2">
+                <div className="space-y-1">
                   {question.options.map((option, optionIndex) => (
                     <label 
                       key={optionIndex}
-                      className="flex items-start p-2 sm:p-3 rounded-lg hover:bg-gray-50 cursor-pointer"
+                      className="flex items-start p-2 rounded-lg hover:bg-gray-50 cursor-pointer"
                     >
                       {/* ラジオボタン */}
                       <input
@@ -360,7 +360,7 @@ export default function ReadingTest({ content, onBack }) {
                         value={optionIndex}
                         checked={answers[questionIndex] === optionIndex}
                         onChange={() => handleAnswer(questionIndex, optionIndex)}
-                        className="mr-2 sm:mr-3 mt-1 text-blue-600 flex-shrink-0"
+                        className="mr-3 mt-1 text-blue-600 flex-shrink-0"
                       />
                       {/* 選択肢テキスト */}
                       <span className="text-sm sm:text-base text-gray-700">{option}</span>
