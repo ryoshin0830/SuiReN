@@ -34,6 +34,7 @@ export async function GET(request, { params }) {
       level: content.level,
       levelCode: content.levelCode,
       text: content.text,
+      explanation: content.explanation || '', // 文章の解説
       characterCount: content.text.length, // 文字数を追加
       images: content.images || [],
       thumbnail: content.thumbnail || null,
@@ -41,7 +42,8 @@ export async function GET(request, { params }) {
         id: question.orderIndex + 1,
         question: question.question,
         options: question.options.map(option => option.optionText),
-        correctAnswer: question.correctAnswer
+        correctAnswer: question.correctAnswer,
+        explanation: question.explanation || '' // 問題の解説
       }))
     };
 
@@ -60,7 +62,7 @@ export async function PUT(request, { params }) {
   try {
     const { id } = await params;
     const body = await request.json();
-    const { title, level, levelCode, text, questions, images, thumbnail } = body;
+    const { title, level, levelCode, text, explanation, questions, images, thumbnail } = body;
 
     // トランザクション内で更新処理（タイムアウトを延長）
     const updatedContent = await prisma.$transaction(async (tx) => {
@@ -84,12 +86,14 @@ export async function PUT(request, { params }) {
           level,
           levelCode,
           text,
+          explanation: explanation || null, // 文章の解説
           images: images || [],
           thumbnail: thumbnail || null,
           questions: {
             create: questions.map((question, questionIndex) => ({
               question: question.question,
               correctAnswer: question.correctAnswer,
+              explanation: question.explanation || null, // 問題の解説
               orderIndex: questionIndex,
               options: {
                 create: question.options.map((optionText, optionIndex) => ({

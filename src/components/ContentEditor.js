@@ -17,13 +17,15 @@ export default function ContentEditor({ mode, content, onClose }) {
     level: '初級修了レベル',
     levelCode: 'beginner',
     text: '',
+    explanation: '', // 文章の解説
     images: [],
     thumbnail: null, // サムネイル画像
     questions: [
       {
         question: '',
         options: ['', '', '', ''],
-        correctAnswer: 0
+        correctAnswer: 0,
+        explanation: '' // 問題の解説
       }
     ]
   });
@@ -52,12 +54,14 @@ export default function ContentEditor({ mode, content, onClose }) {
         level: content.level,
         levelCode: content.levelCode,
         text: content.text,
+        explanation: content.explanation || '', // 文章の解説も初期化
         images: images,
         thumbnail: content.thumbnail || null, // サムネイルも初期化
         questions: content.questions.map(q => ({
           question: q.question,
           options: [...q.options],
-          correctAnswer: q.correctAnswer
+          correctAnswer: q.correctAnswer,
+          explanation: q.explanation || '' // 問題の解説も初期化
         }))
       });
       setImageManagerVersion(prev => prev + 1); // 再レンダリングを強制
@@ -205,7 +209,8 @@ export default function ContentEditor({ mode, content, onClose }) {
         {
           question: '',
           options: ['', ''], // 最初は2つの選択肢から始める
-          correctAnswer: 0
+          correctAnswer: 0,
+          explanation: '' // 問題の解説
         }
       ]
     }));
@@ -756,6 +761,23 @@ export default function ContentEditor({ mode, content, onClose }) {
                 />
               </div>
             )}
+
+            {/* 文章の解説 */}
+            <div className="mt-6">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                文章の解説（オプション）
+              </label>
+              <textarea
+                value={formData.explanation}
+                onChange={(e) => setFormData(prev => ({ ...prev, explanation: e.target.value }))}
+                rows={4}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="文章の背景情報、重要なポイント、文化的な説明など...&#10;読解練習結果で表示される解説文です。"
+              />
+              <div className="mt-2 text-xs text-gray-500">
+                この解説は読解練習結果画面で表示されます。文章の理解を深めるための補足情報を記載してください。
+              </div>
+            </div>
           </div>
 
           {/* 質問設定 */}
@@ -894,6 +916,23 @@ export default function ContentEditor({ mode, content, onClose }) {
                       </option>
                     ))}
                   </select>
+                </div>
+
+                {/* 問題の解説 */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    問題の解説（オプション）
+                  </label>
+                  <textarea
+                    value={question.explanation || ''}
+                    onChange={(e) => updateQuestion(questionIndex, 'explanation', e.target.value)}
+                    rows={3}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="なぜこの答えが正解なのか、問題のポイント、関連情報など..."
+                  />
+                  <div className="mt-1 text-xs text-gray-500">
+                    この解説は結果画面で各問題と一緒に表示されます。
+                  </div>
                 </div>
               </div>
             ))}

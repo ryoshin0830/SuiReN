@@ -11,15 +11,16 @@ datasource db {
 }
 
 model Content {
-  id        String    @id @default(cuid())
-  title     String
-  level     String    // 表示用レベル名（例：初級修了レベル）
-  levelCode String    // システム内部レベルコード（beginner, intermediate, advanced）
-  text      String    @db.Text
-  images    Json?     // 複数画像データ（Base64形式）
-  thumbnail Json?     // サムネイル画像データ（Base64形式）
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id          String    @id @default(cuid())
+  title       String
+  level       String    // 表示用レベル名（例：初級修了レベル）
+  levelCode   String    // システム内部レベルコード（beginner, intermediate, advanced）
+  text        String    @db.Text
+  explanation String?   @db.Text // 文章の解説（オプション）
+  images      Json?     // 複数画像データ（Base64形式）
+  thumbnail   Json?     // サムネイル画像データ（Base64形式）
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
   
   questions Question[]
   
@@ -31,6 +32,7 @@ model Question {
   contentId     String
   question      String
   correctAnswer Int      // 正解の選択肢インデックス（0から始まる）
+  explanation   String?  @db.Text // 問題の解説（オプション）
   orderIndex    Int      // 問題の表示順序
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
