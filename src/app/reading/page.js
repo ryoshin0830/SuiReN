@@ -430,43 +430,6 @@ export default function Reading() {
                 </div>
               </div>
 
-              {/* 表示モード */}
-              <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
-                <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center">
-                  <svg className="w-5 h-5 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                  </svg>
-                  表示モード
-                </h3>
-                <div className="flex space-x-2">
-                  <button
-                    onClick={() => setViewMode('grid')}
-                    className={`flex-1 p-3 rounded-xl transition-all duration-300 ${
-                      viewMode === 'grid'
-                        ? 'bg-blue-500 text-white shadow-lg'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                    }`}
-                  >
-                    <svg className="w-5 h-5 mx-auto mb-1" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                    </svg>
-                    <span className="text-sm font-medium">グリッド</span>
-                  </button>
-                  <button
-                    onClick={() => setViewMode('list')}
-                    className={`flex-1 p-3 rounded-xl transition-all duration-300 ${
-                      viewMode === 'list'
-                        ? 'bg-blue-500 text-white shadow-lg'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                    }`}
-                  >
-                    <svg className="w-5 h-5 mx-auto mb-1" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
-                    </svg>
-                    <span className="text-sm font-medium">リスト</span>
-                  </button>
-                </div>
-              </div>
             </div>
           </div>
 
@@ -486,8 +449,37 @@ export default function Reading() {
                     </span>
                   )}
                 </div>
-                <div className="text-sm text-gray-600">
-                  {currentPage} / {totalPages} ページ
+                <div className="flex items-center space-x-4">
+                  {/* 表示モード切り替え */}
+                  <div className="flex bg-gray-100 rounded-lg p-1">
+                    <button
+                      onClick={() => setViewMode('grid')}
+                      className={`p-1.5 rounded text-xs ${
+                        viewMode === 'grid'
+                          ? 'bg-blue-600 text-white shadow'
+                          : 'text-gray-700 hover:text-gray-900 hover:bg-gray-200'
+                      }`}
+                    >
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                      </svg>
+                    </button>
+                    <button
+                      onClick={() => setViewMode('list')}
+                      className={`p-1.5 rounded text-xs ${
+                        viewMode === 'list'
+                          ? 'bg-blue-600 text-white shadow'
+                          : 'text-gray-700 hover:text-gray-900 hover:bg-gray-200'
+                      }`}
+                    >
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
+                      </svg>
+                    </button>
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    {currentPage} / {totalPages} ページ
+                  </div>
                 </div>
               </div>
             </div>
@@ -599,10 +591,10 @@ export default function Reading() {
                         key={content.id} 
                         className="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300"
                       >
-                        <div className="flex">
+                        <div className="flex items-center">
                           {/* サムネイル */}
                           <div 
-                            className="w-32 h-24 flex-shrink-0 bg-gradient-to-br from-gray-100 to-gray-200 relative overflow-hidden"
+                            className="w-20 sm:w-24 h-12 sm:h-16 flex-shrink-0 bg-gradient-to-br from-gray-100 to-gray-200 relative overflow-hidden"
                             style={{
                               backgroundImage: content.thumbnail 
                                 ? `linear-gradient(to bottom right, rgba(0,0,0,0.2), rgba(0,0,0,0.4)), url(${content.thumbnail.base64})`
@@ -614,17 +606,17 @@ export default function Reading() {
                           >
                             {!content.thumbnail && (
                               <div className="absolute inset-0 flex items-center justify-center">
-                                <div className="text-2xl text-white/60">📚</div>
+                                <div className="text-lg sm:text-2xl text-white/60">📚</div>
                               </div>
                             )}
                           </div>
 
                           {/* コンテンツ情報 */}
-                          <div className="flex-1 p-6 flex items-center justify-between min-w-0">
-                            <div className="flex-1 min-w-0 mr-6">
-                              <h3 className="text-lg font-bold text-gray-800 mb-2 line-clamp-1">{content.title}</h3>
-                              <div className="flex items-center space-x-4">
-                                <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold ${
+                          <div className="flex-1 py-1 px-2 sm:py-2 sm:px-3 flex items-center justify-between min-w-0">
+                            <div className="flex-1 min-w-0 mr-2 sm:mr-3">
+                              <h3 className="text-xs sm:text-sm font-bold text-gray-800 mb-0.5 line-clamp-1">{content.title}</h3>
+                              <div className="flex items-center space-x-1 sm:space-x-2 flex-wrap">
+                                <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-xs font-bold ${
                                   content.levelCode === 'beginner' 
                                     ? 'bg-blue-100 text-blue-700'
                                     : content.levelCode === 'intermediate'
@@ -633,22 +625,17 @@ export default function Reading() {
                                 }`}>
                                   {content.level}
                                 </span>
-                                <span className="text-sm text-orange-600 font-medium">{(content.characterCount || 0).toLocaleString()}字</span>
-                                <span className="text-sm text-gray-600 font-medium">{content.questions.length}問</span>
+                                <span className="text-xs text-orange-600 font-medium">{(content.characterCount || 0).toLocaleString()}字</span>
+                                <span className="text-xs text-gray-600 font-medium">{content.questions.length}問</span>
                               </div>
                             </div>
                             
                             <div className="flex-shrink-0">
                               <button
                                 onClick={() => handleContentSelect(content)}
-                                className="px-6 py-3 text-sm font-bold text-white bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg"
+                                className="px-2 py-1 sm:px-3 sm:py-1.5 text-xs font-bold text-white bg-gradient-to-r from-blue-600 to-purple-600 rounded hover:from-blue-700 hover:to-purple-700 transition-all duration-300"
                               >
-                                <span className="flex items-center space-x-2">
-                                  <span>開始</span>
-                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                                  </svg>
-                                </span>
+                                開始
                               </button>
                             </div>
                           </div>
