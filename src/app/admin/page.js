@@ -149,13 +149,6 @@ export default function Admin() {
         </h1>
         <div className="flex space-x-4">
           <button
-            onClick={() => window.open('/reading', '_blank')}
-            className="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors font-semibold"
-            title="速読練習ページを開く"
-          >
-            速読ページ
-          </button>
-          <button
             onClick={handleCreate}
             className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors font-semibold"
           >

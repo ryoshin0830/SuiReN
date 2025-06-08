@@ -1,12 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import ReadingTest from '../../../components/ReadingTest';
 import Link from 'next/link';
 
 export default function ContentPage() {
   const { id } = useParams();
+  const router = useRouter();
   const [content, setContent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -86,12 +87,17 @@ export default function ContentPage() {
     );
   }
 
+  // 読解練習ライブラリに戻る関数
+  const handleBack = () => {
+    router.push('/reading');
+  };
+
   // コンテンツが読み込まれた場合、ReadingTestコンポーネントを表示
   if (content) {
     return (
       <ReadingTest 
         content={content} 
-        onBack={() => window.history.back()}
+        onBack={handleBack}
       />
     );
   }
