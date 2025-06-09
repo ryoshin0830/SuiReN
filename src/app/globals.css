@@ -169,6 +169,24 @@ body {
   transition-duration: 150ms;
 }
 
+/* Default form element styling for better visibility */
+input, textarea, select {
+  color: #1f2937 !important; /* text-gray-800 */
+}
+
+input::placeholder, textarea::placeholder {
+  color: #6b7280 !important; /* text-gray-500 */
+}
+
+/* Ensure proper text contrast on white backgrounds */
+.bg-white input, .bg-white textarea, .bg-white select {
+  color: #1f2937 !important;
+}
+
+.bg-white input::placeholder, .bg-white textarea::placeholder {
+  color: #6b7280 !important;
+}
+
 /* Selection styling */
 ::selection {
   background: rgba(59, 130, 246, 0.3);

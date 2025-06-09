@@ -468,7 +468,7 @@ export default function ContentEditor({ mode, content, onClose }) {
                   type="text"
                   value={formData.title}
                   onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
                   placeholder="例：ももたろう"
                   required
                 />
@@ -481,7 +481,7 @@ export default function ContentEditor({ mode, content, onClose }) {
                 <select
                   value={formData.level}
                   onChange={(e) => handleLevelChange(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
                   required
                 >
                   <option value="初級修了レベル">初級修了レベル</option>
@@ -737,7 +737,7 @@ export default function ContentEditor({ mode, content, onClose }) {
                 value={formData.text}
                 onChange={(e) => setFormData(prev => ({ ...prev, text: e.target.value }))}
                 rows={12}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-gray-900 placeholder-gray-500"
                 placeholder="読解練習用の文章を入力してください...&#10;&#10;ルビ記法:&#10;• 基本: ｜漢字《かんじ》&#10;• 省略: 漢字《かんじ》&#10;• 括弧: 漢字(かんじ)"
                 required
               />
@@ -771,7 +771,7 @@ export default function ContentEditor({ mode, content, onClose }) {
                 value={formData.explanation}
                 onChange={(e) => setFormData(prev => ({ ...prev, explanation: e.target.value }))}
                 rows={4}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
                 placeholder="文章の背景情報、重要なポイント、文化的な説明など...&#10;読解練習結果で表示される解説文です。"
               />
               <div className="mt-2 text-xs text-gray-500">
@@ -839,7 +839,7 @@ export default function ContentEditor({ mode, content, onClose }) {
                     type="text"
                     value={question.question}
                     onChange={(e) => updateQuestion(questionIndex, 'question', e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
                     placeholder="例：おじいさんは何をしに山に行きましたか。"
                     required
                   />
@@ -877,7 +877,7 @@ export default function ContentEditor({ mode, content, onClose }) {
                             type="text"
                             value={option}
                             onChange={(e) => updateOption(questionIndex, optionIndex, e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-gray-900 placeholder-gray-500"
                             placeholder={`選択肢${optionIndex + 1}を入力`}
                             required
                           />
@@ -908,7 +908,7 @@ export default function ContentEditor({ mode, content, onClose }) {
                   <select
                     value={question.correctAnswer}
                     onChange={(e) => updateQuestion(questionIndex, 'correctAnswer', parseInt(e.target.value))}
-                    className="w-full md:w-auto px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full md:w-auto px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
                   >
                     {question.options.map((_, optionIndex) => (
                       <option key={optionIndex} value={optionIndex}>
@@ -927,7 +927,7 @@ export default function ContentEditor({ mode, content, onClose }) {
                     value={question.explanation || ''}
                     onChange={(e) => updateQuestion(questionIndex, 'explanation', e.target.value)}
                     rows={3}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
                     placeholder="なぜこの答えが正解なのか、問題のポイント、関連情報など..."
                   />
                   <div className="mt-1 text-xs text-gray-500">
@@ -1022,7 +1022,7 @@ function ImageEditModal({ image, onSave, onClose }) {
               type="text"
               value={formData.alt}
               onChange={(e) => setFormData(prev => ({ ...prev, alt: e.target.value }))}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-500"
               placeholder="画像の内容を説明してください"
             />
           </div>
@@ -1035,7 +1035,7 @@ function ImageEditModal({ image, onSave, onClose }) {
               type="text"
               value={formData.caption}
               onChange={(e) => setFormData(prev => ({ ...prev, caption: e.target.value }))}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-500"
               placeholder="画像の説明文（表示されます）"
             />
           </div>
@@ -1094,7 +1094,7 @@ function RubyModal({ formData, onChange, onSave, onClose }) {
                 type="text"
                 value={formData.baseText}
                 onChange={(e) => onChange({ ...formData, baseText: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-500"
                 placeholder="ルビを振る文字を入力"
                 maxLength={10}
               />
@@ -1108,7 +1108,7 @@ function RubyModal({ formData, onChange, onSave, onClose }) {
                 type="text"
                 value={formData.ruby}
                 onChange={(e) => onChange({ ...formData, ruby: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-500"
                 placeholder="ルビを入力"
                 maxLength={10}
               />
@@ -1121,7 +1121,7 @@ function RubyModal({ formData, onChange, onSave, onClose }) {
               <select
                 value={formData.format}
                 onChange={(e) => onChange({ ...formData, format: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900"
               >
                 <option value="basic">基本記法（｜文字《ルビ》）</option>
                 <option value="short">省略記法（文字《ルビ》）</option>

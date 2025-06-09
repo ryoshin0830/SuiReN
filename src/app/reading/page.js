@@ -216,14 +216,14 @@ export default function Reading() {
                 placeholder="タイトルやIDで検索"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-gray-900 placeholder-gray-700 bg-white"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-gray-900 placeholder-gray-500 bg-white"
               />
             </div>
             {/* レベルフィルター */}
             <select
               value={levelFilter}
               onChange={(e) => setLevelFilter(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-gray-900 bg-white font-medium"
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-gray-800 bg-white font-medium"
             >
               <option value="all">全レベル</option>
               <option value="beginner">初級</option>
@@ -234,7 +234,7 @@ export default function Reading() {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-gray-900 bg-white font-medium"
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-gray-800 bg-white font-medium"
             >
               <option value="id">ID順</option>
               <option value="title">タイトル順</option>
@@ -261,7 +261,7 @@ export default function Reading() {
                 className={`p-1.5 rounded text-xs ${
                   viewMode === 'grid'
                     ? 'bg-blue-600 text-white shadow'
-                    : 'text-gray-700 hover:text-gray-900 hover:bg-gray-200'
+                    : 'text-gray-800 hover:text-gray-900 hover:bg-gray-200'
                 }`}
               >
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -273,7 +273,7 @@ export default function Reading() {
                 className={`p-1.5 rounded text-xs ${
                   viewMode === 'list'
                     ? 'bg-blue-600 text-white shadow'
-                    : 'text-gray-700 hover:text-gray-900 hover:bg-gray-200'
+                    : 'text-gray-800 hover:text-gray-900 hover:bg-gray-200'
                 }`}
               >
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -457,7 +457,7 @@ export default function Reading() {
                       className={`p-1.5 rounded text-xs ${
                         viewMode === 'grid'
                           ? 'bg-blue-600 text-white shadow'
-                          : 'text-gray-700 hover:text-gray-900 hover:bg-gray-200'
+                          : 'text-gray-800 hover:text-gray-900 hover:bg-gray-200'
                       }`}
                     >
                       <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -469,7 +469,7 @@ export default function Reading() {
                       className={`p-1.5 rounded text-xs ${
                         viewMode === 'list'
                           ? 'bg-blue-600 text-white shadow'
-                          : 'text-gray-700 hover:text-gray-900 hover:bg-gray-200'
+                          : 'text-gray-800 hover:text-gray-900 hover:bg-gray-200'
                       }`}
                     >
                       <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">

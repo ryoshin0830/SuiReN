@@ -101,14 +101,14 @@ export default function Admin() {
           
           <form onSubmit={handleLogin}>
             <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2">
+              <label className="block text-gray-800 text-sm font-bold mb-2">
                 パスワード
               </label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 text-gray-900 placeholder-gray-500"
                 placeholder="パスワードを入力してください"
               />
             </div>
@@ -192,21 +192,21 @@ export default function Admin() {
             <table className="w-full table-auto">
               <thead>
                 <tr className="bg-gray-50">
-                  <th className="px-4 py-2 text-left">ID</th>
-                  <th className="px-4 py-2 text-left">タイトル</th>
-                  <th className="px-4 py-2 text-left">レベル</th>
-                  <th className="px-4 py-2 text-left">問題数</th>
-                  <th className="px-4 py-2 text-left">文字数</th>
-                  <th className="px-4 py-2 text-left">操作</th>
+                  <th className="px-4 py-2 text-left text-gray-800 font-semibold">ID</th>
+                  <th className="px-4 py-2 text-left text-gray-800 font-semibold">タイトル</th>
+                  <th className="px-4 py-2 text-left text-gray-800 font-semibold">レベル</th>
+                  <th className="px-4 py-2 text-left text-gray-800 font-semibold">問題数</th>
+                  <th className="px-4 py-2 text-left text-gray-800 font-semibold">文字数</th>
+                  <th className="px-4 py-2 text-left text-gray-800 font-semibold">操作</th>
                 </tr>
               </thead>
               <tbody>
                 {contents.map((content) => (
                   <tr key={content.id} className="border-t hover:bg-gray-50">
-                    <td className="px-4 py-2 font-mono text-sm">
+                    <td className="px-4 py-2 font-mono text-sm text-gray-800">
                       {content.id}
                     </td>
-                    <td className="px-4 py-2 font-medium">
+                    <td className="px-4 py-2 font-medium text-gray-800">
                       <button
                         onClick={() => window.open(`/content/${content.id}`, '_blank')}
                         className="text-blue-600 hover:text-blue-800 hover:underline transition-colors text-left"
@@ -226,10 +226,10 @@ export default function Admin() {
                         {content.level}
                       </span>
                     </td>
-                    <td className="px-4 py-2">
+                    <td className="px-4 py-2 text-gray-800">
                       {content.questions.length}問
                     </td>
-                    <td className="px-4 py-2">
+                    <td className="px-4 py-2 text-gray-800">
                       {content.text.length}文字
                     </td>
                     <td className="px-4 py-2">
@@ -261,7 +261,7 @@ export default function Admin() {
             </table>
             
             {contents.length === 0 && (
-              <div className="text-center py-8 text-gray-500">
+              <div className="text-center py-8 text-gray-600">
                 コンテンツがありません
               </div>
             )}
@@ -284,15 +284,15 @@ export default function Admin() {
             <div>
               <div className="text-sm text-gray-600">レベル別内訳</div>
               <div className="space-y-1">
-                <div className="flex justify-between">
+                <div className="flex justify-between text-gray-800">
                   <span>初級レベル</span>
                   <span>{contents.filter(c => c.levelCode === 'beginner').length}</span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex justify-between text-gray-800">
                   <span>中級レベル</span>
                   <span>{contents.filter(c => c.levelCode === 'intermediate').length}</span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex justify-between text-gray-800">
                   <span>上級レベル</span>
                   <span>{contents.filter(c => c.levelCode === 'advanced').length}</span>
                 </div>
@@ -308,11 +308,11 @@ export default function Admin() {
           <div className="space-y-4">
             <div>
               <div className="text-sm text-gray-600">バージョン</div>
-              <div className="text-lg font-medium">0.1.0</div>
+              <div className="text-lg font-medium text-gray-800">0.1.0</div>
             </div>
             <div>
               <div className="text-sm text-gray-600">機能</div>
-              <ul className="text-sm space-y-1">
+              <ul className="text-sm space-y-1 text-gray-800">
                 <li>✅ 読解速度測定</li>
                 <li>✅ 理解度テスト</li>
                 <li>✅ QRコード結果出力</li>
@@ -321,14 +321,6 @@ export default function Admin() {
                 <li>✅ コンテンツ編集機能</li>
                 <li>✅ ルビ（振り仮名）表示機能</li>
               </ul>
-              <div className="mt-4">
-                <button
-                  onClick={() => window.open('/reading', '_blank')}
-                  className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm"
-                >
-                  🚀 速読練習ページへ
-                </button>
-              </div>
             </div>
           </div>
         </div>
