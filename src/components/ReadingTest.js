@@ -129,12 +129,37 @@ export default function ReadingTest({ content, onBack }) {
   useEffect(() => {
     if (phase !== 'reading' || !contentRef.current || paragraphRefs.current.length === 0) return;
 
-    // スクロール進捗計算
+    // スクロール進捗計算（段落部分のみ）
     const handleScroll = () => {
       const element = contentRef.current;
       const scrollTop = element.scrollTop;
-      const scrollHeight = element.scrollHeight - element.clientHeight;
-      const progress = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+      const containerHeight = element.clientHeight;
+      
+      // 最初と最後の段落の位置を取得
+      const firstParagraph = paragraphRefs.current[0]?.current;
+      const lastParagraph = paragraphRefs.current[paragraphRefs.current.length - 1]?.current;
+      
+      if (!firstParagraph || !lastParagraph) return;
+      
+      // 段落エリアの開始位置と終了位置を計算
+      const firstParagraphTop = firstParagraph.offsetTop;
+      const lastParagraphBottom = lastParagraph.offsetTop + lastParagraph.offsetHeight;
+      const contentHeight = lastParagraphBottom - firstParagraphTop;
+      
+      // 現在のスクロール位置が段落エリア内のどこにあるかを計算
+      const adjustedScrollTop = scrollTop - firstParagraphTop + (containerHeight / 2);
+      const adjustedScrollableHeight = contentHeight;
+      
+      // 進捗を計算（0-100%）
+      let progress = 0;
+      if (adjustedScrollTop <= 0) {
+        progress = 0;
+      } else if (adjustedScrollTop >= adjustedScrollableHeight) {
+        progress = 100;
+      } else {
+        progress = (adjustedScrollTop / adjustedScrollableHeight) * 100;
+      }
+      
       setScrollProgress(Math.min(Math.max(progress, 0), 100));
     };
 
@@ -152,6 +177,12 @@ export default function ReadingTest({ content, onBack }) {
       let newFocusedParagraph = null; // フォーカスなしの状態も許可
       
       // フォーカスエリアと重なっている段落を見つける
+      const viewportTop = container.scrollTop;
+      const viewportBottom = viewportTop + containerRect.height;
+      
+      
+      // すべての段落をチェックし、フォーカスエリアと重なっているものを探す
+      let foundParagraph = false;
       for (let i = 0; i < paragraphRefs.current.length; i++) {
         const ref = paragraphRefs.current[i];
         if (ref && ref.current) {
@@ -162,30 +193,36 @@ export default function ReadingTest({ content, onBack }) {
           
           if (isInFocusArea) {
             newFocusedParagraph = i;
-            console.log(`段落${i + 1}がフォーカスエリアと重複`);
+            foundParagraph = true;
             break; // 最初に見つかった段落をフォーカス
           }
         }
+      }
+      
+      // 明示的にフォーカスなしを設定
+      if (!foundParagraph) {
+        console.log('フォーカスエリアに段落なし - フォーカスを解除');
+        newFocusedParagraph = null;
       }
       
       // デバッグ情報
       console.log(`フォーカスエリア: ${Math.round(focusAreaTop)}px - ${Math.round(focusAreaBottom)}px, フォーカス段落: ${newFocusedParagraph !== null ? newFocusedParagraph + 1 : 'なし'}`);
       
       // フォーカスが変わった場合の処理
-      if (newFocusedParagraph !== focusedParagraph) {
+      const currentFocused = focusedParagraphRef.current;
+      if (newFocusedParagraph !== currentFocused) {
         // ログ出力
-        if (focusedParagraph !== null && paragraphTimes[focusedParagraph]) {
-          console.log(`段落${focusedParagraph + 1}フォーカスアウト: 累積${paragraphTimes[focusedParagraph].toFixed(2)}秒`);
+        if (currentFocused !== null && paragraphTimes[currentFocused]) {
+          console.log(`段落${currentFocused + 1}フォーカスアウト: 累積${paragraphTimes[currentFocused].toFixed(2)}秒`);
         }
         
-        // 新しい段落にフォーカス
+        console.log(`フォーカス変更: 段落${currentFocused !== null ? currentFocused + 1 : 'なし'} → 段落${newFocusedParagraph !== null ? newFocusedParagraph + 1 : 'なし'}`);
+        setFocusedParagraph(newFocusedParagraph);
+        focusedParagraphRef.current = newFocusedParagraph;
+        
         if (newFocusedParagraph !== null) {
-          console.log(`フォーカス変更: 段落${focusedParagraph !== null ? focusedParagraph + 1 : 'なし'} → 段落${newFocusedParagraph + 1}`);
-          setFocusedParagraph(newFocusedParagraph);
           console.log(`段落${newFocusedParagraph + 1}フォーカスイン開始`);
         } else {
-          console.log(`フォーカス変更: 段落${focusedParagraph !== null ? focusedParagraph + 1 : 'なし'} → フォーカスなし`);
-          setFocusedParagraph(null);
           console.log(`フォーカスアウト（フォーカスエリア外）`);
         }
       }
@@ -203,7 +240,7 @@ export default function ReadingTest({ content, onBack }) {
       
       scrollTimeout = setTimeout(() => {
         handleScrollChange();
-      }, 50); // 50ms間隔でフォーカス判定
+      }, 10); // 10ms間隔でフォーカス判定（より高頻度に更新）
     };
 
     // スクロールイベントリスナー追加
@@ -212,8 +249,10 @@ export default function ReadingTest({ content, onBack }) {
     
     // 初期フォーカス設定（読書開始時のみ時刻を記録）
     if (phase === 'reading') {
-      handleScrollChange();
-      // フォーカス時刻は読書開始時にstartReading()で設定される
+      // 初期状態での判定を確実に行う
+      setTimeout(() => {
+        handleScrollChange();
+      }, 100);
     }
     
     return () => {
@@ -222,7 +261,7 @@ export default function ReadingTest({ content, onBack }) {
         clearTimeout(scrollTimeout);
       }
     };
-  }, [phase]);
+  }, [phase, focusedParagraph, paragraphTimes]);
 
   // ===== イベントハンドラー =====
   /**
@@ -464,7 +503,7 @@ export default function ReadingTest({ content, onBack }) {
               {/* 段落分割されたテキスト表示 */}
               <div className="space-y-8">
                 {/* 段落1の前の大きな空白エリア（段落1を画面中央に持ってくるため） */}
-                <div className="h-96 flex items-center justify-center">
+                <div className="h-screen flex items-center justify-center">
                   <div className="text-gray-300 text-sm">
                     ↓ スクロールして読書を開始してください ↓
                   </div>
@@ -528,7 +567,7 @@ export default function ReadingTest({ content, onBack }) {
                 })}
                 
                 {/* 最後の段落の後の大きな空白エリア（最後の段落を画面中央に持ってくるため） */}
-                <div className="h-96 flex items-center justify-center">
+                <div className="h-screen flex items-center justify-center">
                   <div className="text-gray-300 text-sm">
                     ↓ 下にスクロールして読書完了ボタンへ ↓
                   </div>
