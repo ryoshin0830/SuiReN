@@ -308,7 +308,7 @@ export default function Admin() {
           <div className="space-y-4">
             <div>
               <div className="text-sm text-gray-600">バージョン</div>
-              <div className="text-lg font-medium text-gray-800">0.1.0</div>
+              <div className="text-lg font-medium text-gray-800">0.1.2</div>
             </div>
             <div>
               <div className="text-sm text-gray-600">機能</div>
