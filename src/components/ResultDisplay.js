@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { generateQRCode, createResultData } from '../lib/qr-generator';
+import { downloadScoreSheet } from '../lib/pdf-generator';
 
 export default function ResultDisplay({ content, answers, readingData, onBack, onRetry }) {
   const [qrCode, setQrCode] = useState(null);
@@ -231,6 +232,29 @@ export default function ResultDisplay({ content, answers, readingData, onBack, o
         borderLeft: '3px solid #d1d5db'
       };
     }
+  };
+
+  // 記録用紙をダウンロードする関数
+  const handleDownloadScoreSheet = () => {
+    // 文字数を計算（画像行を除外）
+    const lines = content.text.split('\n').filter(line => line.trim() && !isImageLine(line));
+    const characterCount = lines.join('').length;
+
+    // 時間ベースの文章セグメントを作成（関数内で作成）
+    const currentTextSegments = speedAnalysis ? createTimeBasedTextSegments(content.text, speedAnalysis) : [];
+
+    const pdfData = {
+      ...resultData,
+      contentTitle: content.title,
+      level: content.level,
+      questions: content.questions,
+      answers: answers,
+      characterCount: characterCount,
+      speedAnalysis: speedAnalysis,
+      textSegments: currentTextSegments
+    };
+
+    downloadScoreSheet(pdfData);
   };
 
 
@@ -554,6 +578,43 @@ export default function ResultDisplay({ content, answers, readingData, onBack, o
             </p>
           </div>
         )}
+
+        {/* 記録用紙ダウンロード */}
+        <div className="backdrop-blur-xl bg-white/70 rounded-2xl p-6 sm:p-8 shadow-xl border border-white/20 text-center mb-8 sm:mb-12 animate-slide-up">
+          <div className="flex items-center justify-center mb-4 sm:mb-6">
+            <div className="w-8 h-8 bg-gradient-to-r from-amber-500 to-amber-600 rounded-lg flex items-center justify-center mr-3">
+              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-amber-800 to-amber-900 bg-clip-text text-transparent">記録用紙</h2>
+          </div>
+          <p className="text-sm sm:text-base text-gray-600 font-medium mb-6">
+            練習結果を記録・管理するための用紙をダウンロードできます
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button
+              onClick={handleDownloadScoreSheet}
+              className="inline-flex items-center bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white px-6 py-3 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl text-base font-semibold"
+            >
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              今回の結果詳細 (PDF)
+            </button>
+            <a
+              href="http://www17408ui.sakura.ne.jp/tatsum/PersonalWeb-site/%E9%80%9F%E8%AA%AD%E6%8E%88%E6%A5%AD%E7%94%A8%E5%BE%97%E7%82%B9%E3%83%BB%E6%99%82%E9%96%93%E3%82%B7%E3%83%BC%E3%83%88.xlsx"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white px-6 py-3 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl text-base font-semibold"
+            >
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              得点/時間記録シート (Excel)
+            </a>
+          </div>
+        </div>
 
         {/* アクションボタン */}
         <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-6">
