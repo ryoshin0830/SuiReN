@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { generateQRCode, createResultData, getQRColor } from '../lib/qr-generator';
+import { generateQRCode, createResultData } from '../lib/qr-generator';
 
 export default function ResultDisplay({ content, answers, readingData, onBack, onRetry }) {
   const [qrCode, setQrCode] = useState(null);
@@ -28,7 +28,7 @@ export default function ResultDisplay({ content, answers, readingData, onBack, o
   };
 
   // 段落ごとの表示時間を分析する関数
-  const analyzeParagraphViewTime = (scrollData, totalTime) => {
+  const analyzeParagraphViewTime = (scrollData) => {
     // 段落別データがある場合はそれを使用
     if (scrollData.paragraphTimes) {
       const paragraphs = content.text.split('\n').filter(paragraph => paragraph.trim());
@@ -37,23 +37,24 @@ export default function ResultDisplay({ content, answers, readingData, onBack, o
       // 各段落のデータを処理
       paragraphs.forEach((paragraph, index) => {
         const paragraphData = scrollData.paragraphTimes[index];
-        if (paragraphData) {
-          paragraphAnalysis.push({
-            index: index,
-            text: paragraph,
-            totalViewTime: paragraphData.totalTime / 1000, // ミリ秒から秒に変換
-            firstSeen: paragraphData.firstSeen,
-            lastSeen: paragraphData.lastSeen
-          });
-        } else {
-          paragraphAnalysis.push({
-            index: index,
-            text: paragraph,
-            totalViewTime: 0,
-            firstSeen: null,
-            lastSeen: null
-          });
+        let viewTime = 0;
+        
+        if (paragraphData !== undefined && paragraphData !== null) {
+          // 新しい形式の段落時間データ（既に秒単位）
+          viewTime = typeof paragraphData === 'number' 
+            ? paragraphData // 単純な数値の場合は既に秒単位
+            : paragraphData.totalTime || 0; // オブジェクトの場合
         }
+        
+        console.log(`段落${index + 1}: 原データ=${paragraphData}, 表示時間=${viewTime.toFixed(2)}秒`);
+            
+        paragraphAnalysis.push({
+          index: index,
+          text: paragraph,
+          totalViewTime: viewTime,
+          firstSeen: typeof paragraphData === 'object' ? paragraphData.firstSeen : null,
+          lastSeen: typeof paragraphData === 'object' ? paragraphData.lastSeen : null
+        });
       });
       
       // 統計情報を計算
@@ -73,11 +74,11 @@ export default function ResultDisplay({ content, answers, readingData, onBack, o
     }
     
     // フォールバック: 旧来の行ベース分析
-    return analyzeLineViewTime(scrollData, totalTime);
+    return analyzeLineViewTime(scrollData);
   };
   
   // 行ごとの表示時間を分析する関数（フォールバック用）
-  const analyzeLineViewTime = (scrollData, totalTime) => {
+  const analyzeLineViewTime = (scrollData) => {
     if (!scrollData.scrollPattern || scrollData.scrollPattern.length < 2) {
       return null;
     }
@@ -248,7 +249,7 @@ export default function ResultDisplay({ content, answers, readingData, onBack, o
       setResultData(result.displayData);
       
       // 段落ごとの表示時間分析を実行
-      const analysis = analyzeParagraphViewTime(readingData.scrollData, readingData.readingTime);
+      const analysis = analyzeParagraphViewTime(readingData.scrollData);
       setSpeedAnalysis(analysis);
       
       // QRコードは最小限データで生成

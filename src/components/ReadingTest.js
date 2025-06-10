@@ -11,7 +11,7 @@
 
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ReadingTracker } from '../lib/reading-tracker';
 import ResultDisplay from './ResultDisplay';
 import TextWithImages from './TextWithImages';
@@ -31,8 +31,13 @@ export default function ReadingTest({ content, onBack }) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0); // 現在の問題インデックス（未使用だが将来の機能拡張用）
   const [readingData, setReadingData] = useState(null); // 読書データ（時間・スクロール情報）
   const [scrollProgress, setScrollProgress] = useState(0); // スクロール進捗（0-100%）
+  const [focusedParagraph, setFocusedParagraph] = useState(null); // 現在フォーカス中の段落（nullはフォーカスなし）
+  const [paragraphTimes, setParagraphTimes] = useState({}); // 段落別累積読書時間（秒）
+  const currentFocusStartTime = useRef(null); // 現在フォーカス中の段落の開始時刻
   const trackerRef = useRef(null); // 読書追跡オブジェクトのRef
   const contentRef = useRef(null); // 読書コンテンツのRef
+  const paragraphRefs = useRef([]); // 各段落のRef配列
+  const scrollTimeoutRef = useRef(null); // スクロール処理のスロットリング用
 
   // ===== 初期化とクリーンアップ =====
   /**
@@ -41,12 +46,20 @@ export default function ReadingTest({ content, onBack }) {
    */
   useEffect(() => {
     trackerRef.current = new ReadingTracker();
+    
+    // 段落数だけRef配列を初期化
+    const paragraphCount = content.text.split('\n').filter(p => p.trim()).length;
+    paragraphRefs.current = Array(paragraphCount).fill(null).map(() => React.createRef());
+    
     return () => {
       if (trackerRef.current) {
         trackerRef.current.stopTracking();
       }
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
     };
-  }, []);
+  }, [content]);
 
   // ===== メインページスクロール制御 =====
   /**
@@ -67,13 +80,14 @@ export default function ReadingTest({ content, onBack }) {
     };
   }, [phase]);
 
-  // ===== スクロール進捗追跡 =====
+  // ===== 中央フォーカスシステム =====
   /**
-   * 読書フェーズでのスクロール進捗を追跡
+   * Intersection Observerで中央に最も近い段落を追跡
    */
   useEffect(() => {
-    if (phase !== 'reading' || !contentRef.current) return;
+    if (phase !== 'reading' || !contentRef.current || paragraphRefs.current.length === 0) return;
 
+    // スクロール進捗計算
     const handleScroll = () => {
       const element = contentRef.current;
       const scrollTop = element.scrollTop;
@@ -82,11 +96,103 @@ export default function ReadingTest({ content, onBack }) {
       setScrollProgress(Math.min(Math.max(progress, 0), 100));
     };
 
+
+    const handleScrollChange = () => {
+      const container = contentRef.current;
+      const containerRect = container.getBoundingClientRect();
+      const viewportCenterY = containerRect.top + containerRect.height / 2;
+      
+      // フォーカスエリアを画面中央の±96px（h-48の半分）に設定
+      const focusAreaHeight = 192; // h-48 = 12rem = 192px
+      const focusAreaTop = viewportCenterY - focusAreaHeight / 2;
+      const focusAreaBottom = viewportCenterY + focusAreaHeight / 2;
+      
+      let newFocusedParagraph = null; // フォーカスなしの状態も許可
+      
+      // フォーカスエリアと重なっている段落を見つける
+      for (let i = 0; i < paragraphRefs.current.length; i++) {
+        const ref = paragraphRefs.current[i];
+        if (ref && ref.current) {
+          const rect = ref.current.getBoundingClientRect();
+          
+          // 段落がフォーカスエリアと重なっているかチェック
+          const isInFocusArea = rect.bottom > focusAreaTop && rect.top < focusAreaBottom;
+          
+          if (isInFocusArea) {
+            newFocusedParagraph = i;
+            console.log(`段落${i + 1}がフォーカスエリアと重複`);
+            break; // 最初に見つかった段落をフォーカス
+          }
+        }
+      }
+      
+      // デバッグ情報
+      console.log(`フォーカスエリア: ${Math.round(focusAreaTop)}px - ${Math.round(focusAreaBottom)}px, フォーカス段落: ${newFocusedParagraph !== null ? newFocusedParagraph + 1 : 'なし'}`);
+      
+      // フォーカスが変わった場合の処理
+      if (newFocusedParagraph !== focusedParagraph) {
+        const now = Date.now();
+        
+        // 現在フォーカス中の段落の時間を記録（フォーカスアウト）
+        if (currentFocusStartTime.current !== null && focusedParagraph !== null) {
+          const duration = (now - currentFocusStartTime.current) / 1000; // 秒に変換
+          console.log(`段落${focusedParagraph + 1}フォーカスアウト: ${duration.toFixed(2)}秒`);
+          
+          setParagraphTimes(prev => {
+            const newTimes = {
+              ...prev,
+              [focusedParagraph]: (prev[focusedParagraph] || 0) + duration
+            };
+            console.log(`段落${focusedParagraph + 1}累積時間: ${newTimes[focusedParagraph].toFixed(2)}秒`);
+            return newTimes;
+          });
+        }
+        
+        // 新しい段落にフォーカス（フォーカスイン）
+        if (newFocusedParagraph !== null) {
+          console.log(`フォーカス変更: 段落${focusedParagraph !== null ? focusedParagraph + 1 : 'なし'} → 段落${newFocusedParagraph + 1}`);
+          setFocusedParagraph(newFocusedParagraph);
+          currentFocusStartTime.current = now;
+          console.log(`段落${newFocusedParagraph + 1}フォーカスイン開始`);
+        } else {
+          console.log(`フォーカス変更: 段落${focusedParagraph !== null ? focusedParagraph + 1 : 'なし'} → フォーカスなし`);
+          setFocusedParagraph(null);
+          currentFocusStartTime.current = null;
+          console.log(`フォーカスアウト（フォーカスエリア外）`);
+        }
+      }
+    };
+
+    // スクロールイベントとフォーカス処理を統合（スロットリング付き）
+    let scrollTimeout = null;
+    const combinedScrollHandler = () => {
+      handleScroll(); // 進捗は即座に更新
+      
+      // フォーカス処理はスロットリング
+      if (scrollTimeout) {
+        clearTimeout(scrollTimeout);
+      }
+      
+      scrollTimeout = setTimeout(() => {
+        handleScrollChange();
+      }, 50); // 50ms間隔でフォーカス判定
+    };
+
+    // スクロールイベントリスナー追加
     const element = contentRef.current;
-    element.addEventListener('scroll', handleScroll);
+    element.addEventListener('scroll', combinedScrollHandler);
+    
+    // 初期フォーカス設定（読書開始時のみ時刻を記録）
+    if (phase === 'reading') {
+      handleScrollChange();
+      // フォーカス時刻は読書開始時にstartReading()で設定される
+    }
     
     return () => {
-      element.removeEventListener('scroll', handleScroll);
+      element.removeEventListener('scroll', combinedScrollHandler);
+      if (scrollTimeout) {
+        clearTimeout(scrollTimeout);
+      }
     };
   }, [phase]);
 
@@ -98,10 +204,15 @@ export default function ReadingTest({ content, onBack }) {
   const startReading = () => {
     setPhase('reading');
     setScrollProgress(0);
+    setFocusedParagraph(null); // 最初はフォーカスなし
+    setParagraphTimes({});
+    
     // 次のフレームでスクロール要素が利用可能になってからトラッキングを開始
     setTimeout(() => {
       if (contentRef.current) {
         trackerRef.current.startTracking(contentRef.current);
+        currentFocusStartTime.current = null;
+        console.log('読書開始：フォーカスなし状態でスタート');
       }
     }, 100);
   };
@@ -112,14 +223,38 @@ export default function ReadingTest({ content, onBack }) {
    * 問題がない場合は直接結果フェーズに移行
    */
   const finishReading = () => {
+    const now = Date.now();
+    
+    // 最後にフォーカス中の段落の時間を記録（最終フォーカスアウト）
+    let finalParagraphTimes = { ...paragraphTimes };
+    if (currentFocusStartTime.current !== null) {
+      const duration = (now - currentFocusStartTime.current) / 1000; // 秒に変換
+      finalParagraphTimes[focusedParagraph] = (finalParagraphTimes[focusedParagraph] || 0) + duration;
+      console.log(`読書完了：段落${focusedParagraph + 1}最終フォーカスアウト: ${duration.toFixed(2)}秒`);
+      console.log(`段落${focusedParagraph + 1}最終累積時間: ${finalParagraphTimes[focusedParagraph].toFixed(2)}秒`);
+    }
+    
+    // 最終的な段落別時間をログ出力
+    console.log('=== 最終段落別読書時間 ===');
+    Object.keys(finalParagraphTimes).forEach(key => {
+      console.log(`段落${parseInt(key) + 1}: ${finalParagraphTimes[key].toFixed(2)}秒`);
+    });
+    
+    // 状態を即座に更新
+    setParagraphTimes(finalParagraphTimes);
+    currentFocusStartTime.current = null;
+    
     trackerRef.current.stopTracking();
     const readingTime = trackerRef.current.getReadingTime();
     const scrollData = trackerRef.current.getScrollData();
     
-    // 読書データを状態に保存
+    // 読書データを状態に保存（段落別時間を含む）
     setReadingData({
       readingTime,
-      scrollData
+      scrollData: {
+        ...scrollData,
+        paragraphTimes: finalParagraphTimes
+      }
     });
     
     // 問題がない場合は直接結果フェーズに移行
@@ -190,6 +325,9 @@ export default function ReadingTest({ content, onBack }) {
           setCurrentQuestionIndex(0);
           setReadingData(null);
           setScrollProgress(0);
+          setFocusedParagraph(null);
+          setParagraphTimes({});
+          currentFocusStartTime.current = null;
           trackerRef.current.reset();
           // やり直し時もページの上部にスクロール
           setTimeout(() => {
@@ -266,62 +404,118 @@ export default function ReadingTest({ content, onBack }) {
                 {content.title}
               </h1>
               
-              {/* スクロール進捗表示 */}
-              <div className="flex items-center space-x-2">
-                <span className="text-xs sm:text-sm text-gray-600">進捗:</span>
-                <div className="w-16 sm:w-24 h-2 bg-gray-200 rounded-full">
-                  <div 
-                    className="h-2 bg-blue-600 rounded-full transition-all duration-300"
-                    style={{ width: `${scrollProgress}%` }}
-                  ></div>
+              {/* フォーカス情報と進捗表示 */}
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-2">
+                  <div className={`w-3 h-3 rounded-full ${focusedParagraph !== null ? 'bg-blue-500 animate-pulse' : 'bg-gray-400'}`}></div>
+                  <span className={`text-xs sm:text-sm font-medium ${focusedParagraph !== null ? 'text-blue-600' : 'text-gray-500'}`}>
+                    {focusedParagraph !== null ? `段落 ${focusedParagraph + 1}` : 'フォーカスなし'}
+                  </span>
                 </div>
-                <span className="text-xs sm:text-sm text-gray-600 w-8 sm:w-12">
-                  {Math.round(scrollProgress)}%
-                </span>
+                <div className="flex items-center space-x-2">
+                  <span className="text-xs sm:text-sm text-gray-600">進捗:</span>
+                  <div className="w-16 sm:w-24 h-2 bg-gray-200 rounded-full">
+                    <div 
+                      className="h-2 bg-blue-600 rounded-full transition-all duration-300"
+                      style={{ width: `${scrollProgress}%` }}
+                    ></div>
+                  </div>
+                  <span className="text-xs sm:text-sm text-gray-600 w-8 sm:w-12">
+                    {Math.round(scrollProgress)}%
+                  </span>
+                </div>
               </div>
             </div>
           </div>
           
-          {/* 読書ガイドエリア（画面上部固定） */}
-          <div className="bg-blue-50 border-b-2 border-blue-200 px-4 sm:px-8 py-2">
-            <div className="max-w-4xl mx-auto">
-              <div className="flex items-center justify-center space-x-3">
-                <div className="w-4 h-4 bg-blue-500 rounded-full animate-pulse"></div>
-                <span className="text-sm sm:text-base text-blue-700 font-medium">
-                  💡 この青い部分を中心に読み進めることをお勧めします
-                </span>
-                <div className="w-4 h-4 bg-blue-500 rounded-full animate-pulse"></div>
-              </div>
-            </div>
-          </div>
           
           {/* 読書コンテンツエリア（フルスクリーン） */}
           <div 
             ref={contentRef}
-            className="flex-1 overflow-y-auto bg-white px-4 sm:px-8 py-4 sm:py-6 pb-safe-area-inset-bottom"
+            className="flex-1 overflow-y-auto bg-white px-4 sm:px-8 py-4 sm:py-6 pb-safe-area-inset-bottom relative"
           >
-            <div className="max-w-4xl mx-auto">
+            {/* フォーカスエリアの視覚的表示 */}
+            <div className="fixed left-0 right-0 pointer-events-none z-10" style={{ top: '50%', transform: 'translateY(-50%)' }}>
+              <div className="max-w-4xl mx-auto px-4 sm:px-8">
+                <div className="h-48 border-2 border-dashed border-blue-400 bg-blue-50 bg-opacity-20 rounded-lg flex items-center justify-center">
+                  <span className="text-blue-600 text-xs font-medium opacity-50">フォーカスエリア</span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="max-w-4xl mx-auto relative">
               {/* 段落分割されたテキスト表示 */}
-              <div className="space-y-4">
-                {content.text.split('\n').filter(paragraph => paragraph.trim()).map((paragraph, index) => (
-                  <div 
-                    key={index}
-                    className="paragraph-block p-4 rounded-lg bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 shadow-sm transition-all duration-300 hover:shadow-md"
-                    data-paragraph-index={index}
-                  >
-                    <div className="flex items-start space-x-3">
-                      <div className="flex-shrink-0 w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">
+              <div className="space-y-8">
+                {/* 段落1の前の大きな空白エリア（段落1を画面中央に持ってくるため） */}
+                <div className="h-96 flex items-center justify-center">
+                  <div className="text-gray-300 text-sm">
+                    ↓ スクロールして読書を開始してください ↓
+                  </div>
+                </div>
+                {content.text.split('\n').filter(paragraph => paragraph.trim()).map((paragraph, index) => {
+                  const isFocused = focusedParagraph !== null && index === focusedParagraph;
+                  const totalParagraphs = content.text.split('\n').filter(p => p.trim()).length;
+                  const isFirst = index === 0;
+                  const isLast = index === totalParagraphs - 1;
+                  
+                  // フォーカス状態に応じたスタイル計算
+                  let blurClass = '';
+                  let opacityClass = '';
+                  let scaleClass = '';
+                  
+                  if (isFocused) {
+                    blurClass = '';
+                    opacityClass = 'opacity-100';
+                    scaleClass = 'scale-100';
+                  } else {
+                    blurClass = 'blur-[4px]';
+                    opacityClass = 'opacity-30';
+                    scaleClass = 'scale-95';
+                  }
+                  
+                  return (
+                    <div 
+                      key={index}
+                      ref={paragraphRefs.current[index]}
+                      className={`paragraph-block p-6 rounded-lg transition-all duration-700 ease-in-out transform relative ${opacityClass} ${blurClass} ${scaleClass}`}
+                      data-paragraph-index={index}
+                      style={{
+                        backgroundColor: isFocused ? '#f0f9ff' : 'transparent',
+                        border: isFocused ? '3px solid #3b82f6' : '1px solid transparent',
+                        boxShadow: isFocused ? '0 20px 40px rgba(59, 130, 246, 0.2)' : 'none',
+                        filter: !isFocused ? 'blur(4px) grayscale(30%)' : 'none'
+                      }}
+                    >
+                      <TextWithImages 
+                        text={paragraph} 
+                        images={content.images || []} 
+                      />
+                      
+                      {/* フォーカスインジケーター */}
+                      {isFocused && (
+                        <div className="absolute -left-4 top-1/2 transform -translate-y-1/2">
+                          <div className="w-4 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-r-full animate-pulse shadow-lg"></div>
+                        </div>
+                      )}
+                      
+                      {/* 段落番号表示 */}
+                      <div className={`absolute -top-2 -left-2 w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-500 ${
+                        isFocused 
+                          ? 'bg-blue-500 text-white shadow-lg scale-110' 
+                          : 'bg-gray-400 text-white scale-90'
+                      }`}>
                         {index + 1}
                       </div>
-                      <div className="flex-1">
-                        <TextWithImages 
-                          text={paragraph} 
-                          images={content.images || []} 
-                        />
-                      </div>
                     </div>
+                  );
+                })}
+                
+                {/* 最後の段落の後の大きな空白エリア（最後の段落を画面中央に持ってくるため） */}
+                <div className="h-96 flex items-center justify-center">
+                  <div className="text-gray-300 text-sm">
+                    ↓ 下にスクロールして読書完了ボタンへ ↓
                   </div>
-                ))}
+                </div>
               </div>
               
               {/* 読書完了ボタン（文章の最後に配置） */}
