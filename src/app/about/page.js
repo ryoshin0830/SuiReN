@@ -83,11 +83,11 @@ export default function About() {
 
       <div className="bg-white rounded-lg shadow-md p-8">
         <h2 className="text-2xl font-semibold text-gray-900 mb-6">
-          すいすいリーダーの役割
+          速読ゴリラの役割
         </h2>
         <div className="text-gray-700 space-y-4">
           <p>
-            すいすいリーダーは、速読練習を通じて日本語学習者の読解fluencyを向上させることを目的としています。
+            速読ゴリラは、速読練習を通じて日本語学習者の読解fluencyを向上させることを目的としています。
           </p>
           <p>
             レベル別に設計されたコンテンツにより、学習者は自分のレベルに適した速読練習を行うことができます。
