@@ -467,8 +467,13 @@ export default function ReadingTest({ content, onBack }) {
               {/* フォーカス情報と進捗表示 */}
               <div className="flex items-center space-x-4">
                 <div className="flex items-center space-x-2">
-                  <div className={`w-3 h-3 rounded-full ${focusedParagraph !== null ? 'bg-blue-500 animate-pulse' : 'bg-gray-400'}`}></div>
-                  <span className={`text-xs sm:text-sm font-medium ${focusedParagraph !== null ? 'text-blue-600' : 'text-gray-500'}`}>
+                  <div className="relative">
+                    <div className={`w-3 h-3 rounded-full transition-all duration-500 ${focusedParagraph !== null ? 'bg-gradient-to-r from-blue-500 to-purple-500' : 'bg-gray-400'}`}></div>
+                    {focusedParagraph !== null && (
+                      <div className="absolute inset-0 w-3 h-3 rounded-full bg-blue-500 animate-ping"></div>
+                    )}
+                  </div>
+                  <span className={`text-xs sm:text-sm font-medium transition-colors duration-500 ${focusedParagraph !== null ? 'text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600' : 'text-gray-500'}`}>
                     {focusedParagraph !== null ? `段落 ${focusedParagraph + 1}` : 'フォーカスなし'}
                   </span>
                 </div>
@@ -500,39 +505,50 @@ export default function ReadingTest({ content, onBack }) {
               <div className="space-y-8">
                 {/* 段落1の前の大きな空白エリア（段落1を画面中央に持ってくるため） */}
                 <div className="h-screen flex items-center justify-center">
-                  <div className="text-gray-300 text-sm">
-                    ↓ スクロールして読書を開始してください ↓
+                  <div className="text-center space-y-4">
+                    <div className="text-gray-600 text-xl font-medium bg-white/90 backdrop-blur-sm px-8 py-4 rounded-2xl shadow-lg border-2 border-gray-200">
+                      📖 下にスクロールして読書を開始してください
+                    </div>
+                    <div className="animate-bounce">
+                      <svg className="w-10 h-10 mx-auto text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                      </svg>
+                    </div>
                   </div>
                 </div>
                 {content.text.split('\n').filter(paragraph => paragraph.trim()).map((paragraph, index) => {
                   const isFocused = focusedParagraph !== null && index === focusedParagraph;
                   
                   // フォーカス状態に応じたスタイル計算
-                  let blurClass = '';
-                  let opacityClass = '';
-                  let scaleClass = '';
-                  
-                  if (isFocused) {
-                    blurClass = '';
-                    opacityClass = 'opacity-100';
-                    scaleClass = 'scale-100';
-                  } else {
-                    blurClass = 'blur-[4px]';
-                    opacityClass = 'opacity-30';
-                    scaleClass = 'scale-95';
-                  }
+                  const distance = focusedParagraph !== null ? Math.abs(index - focusedParagraph) : 0;
+                  const isNearFocus = focusedParagraph !== null && distance <= 1;
                   
                   return (
                     <div 
                       key={index}
                       ref={paragraphRefs.current[index]}
-                      className={`paragraph-block p-6 rounded-lg transition-all duration-700 ease-in-out transform relative ${opacityClass} ${blurClass} ${scaleClass}`}
+                      className={`paragraph-block p-6 rounded-2xl transition-all duration-1000 ease-out transform relative`}
                       data-paragraph-index={index}
                       style={{
-                        backgroundColor: isFocused ? '#f0f9ff' : 'transparent',
-                        border: isFocused ? '3px solid #3b82f6' : '1px solid transparent',
-                        boxShadow: isFocused ? '0 20px 40px rgba(59, 130, 246, 0.2)' : 'none',
-                        filter: !isFocused ? 'blur(4px) grayscale(30%)' : 'none'
+                        opacity: isFocused ? 1 : (isNearFocus ? 0.6 : (focusedParagraph === null ? 1 : 0.3)),
+                        transform: `
+                          translateY(${isFocused ? '-2px' : '0px'})
+                          scale(${isFocused ? 1.02 : (isNearFocus ? 0.98 : 0.95)})
+                        `,
+                        filter: isFocused 
+                          ? 'blur(0px) brightness(1.05)' 
+                          : (isNearFocus 
+                              ? 'blur(1px) brightness(0.95)' 
+                              : (focusedParagraph === null ? 'blur(0px)' : 'blur(3px) brightness(0.9)')),
+                        backgroundColor: isFocused 
+                          ? 'rgba(239, 246, 255, 0.9)' 
+                          : 'transparent',
+                        border: isFocused 
+                          ? '2px solid rgba(59, 130, 246, 0.3)' 
+                          : '2px solid transparent',
+                        boxShadow: isFocused 
+                          ? '0 10px 40px rgba(59, 130, 246, 0.15), 0 0 80px rgba(59, 130, 246, 0.1) inset' 
+                          : 'none'
                       }}
                     >
                       <TextWithImages 
@@ -540,18 +556,25 @@ export default function ReadingTest({ content, onBack }) {
                         images={content.images || []} 
                       />
                       
-                      {/* フォーカスインジケーター */}
+                      {/* モダンなフォーカスインジケーター */}
+                      <div className={`absolute -left-1 top-0 bottom-0 w-1 rounded-full transition-all duration-1000 ease-out ${
+                        isFocused ? 'opacity-100' : 'opacity-0'
+                      }`}>
+                        <div className="h-full w-full bg-gradient-to-b from-blue-400 via-blue-500 to-purple-500 rounded-full animate-pulse"></div>
+                      </div>
+                      
+                      {/* グロー効果 */}
                       {isFocused && (
-                        <div className="absolute -left-4 top-1/2 transform -translate-y-1/2">
-                          <div className="w-4 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-r-full animate-pulse shadow-lg"></div>
+                        <div className="absolute inset-0 rounded-2xl opacity-50 pointer-events-none">
+                          <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-purple-400/20 rounded-2xl blur-xl animate-pulse"></div>
                         </div>
                       )}
                       
                       {/* 段落番号表示 */}
-                      <div className={`absolute -top-2 -left-2 w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-500 ${
+                      <div className={`absolute -top-3 -left-3 w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-700 ease-out backdrop-blur-sm ${
                         isFocused 
-                          ? 'bg-blue-500 text-white shadow-lg scale-110' 
-                          : 'bg-gray-400 text-white scale-90'
+                          ? 'bg-gradient-to-br from-blue-500 to-purple-500 text-white shadow-xl scale-110 rotate-0' 
+                          : 'bg-gray-300/50 text-gray-600 scale-90 -rotate-12'
                       }`}>
                         {index + 1}
                       </div>
@@ -561,8 +584,15 @@ export default function ReadingTest({ content, onBack }) {
                 
                 {/* 最後の段落の後の大きな空白エリア（最後の段落を画面中央に持ってくるため） */}
                 <div className="h-screen flex items-center justify-center">
-                  <div className="text-gray-300 text-sm">
-                    ↓ 下にスクロールして読書完了ボタンへ ↓
+                  <div className="text-center space-y-4">
+                    <div className="text-gray-600 text-xl font-medium bg-white/90 backdrop-blur-sm px-8 py-4 rounded-2xl shadow-lg border-2 border-gray-200">
+                      ✅ 下にスクロールして読書完了ボタンを押してください
+                    </div>
+                    <div className="animate-bounce">
+                      <svg className="w-10 h-10 mx-auto text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                      </svg>
+                    </div>
                   </div>
                 </div>
               </div>
