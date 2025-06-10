@@ -4,13 +4,10 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: #ffffff;
+  --color-foreground: #171717;
   --font-sans: 'UD デジタル 教科書体 N-R', 'UD デジタル 教科書体 NK-R', 'BIZ UDPGothic', 'BIZ UDGothic', 'Yu Gothic UI', 'Yu Gothic', 'Meiryo UI', 'Meiryo', 'Inter', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono);
+  --font-mono: monospace;
 }
 
 @media (prefers-color-scheme: dark) {
