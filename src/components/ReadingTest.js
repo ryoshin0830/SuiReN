@@ -11,7 +11,7 @@
 
 'use client';
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ReadingTracker } from '../lib/reading-tracker';
 import ResultDisplay from './ResultDisplay';
 import TextWithImages from './TextWithImages';
@@ -28,7 +28,6 @@ export default function ReadingTest({ content, onBack }) {
   // ===== 状態管理 =====
   const [phase, setPhase] = useState('instructions'); // テストの進行段階（instructions, reading, questions, results）
   const [answers, setAnswers] = useState([]); // ユーザーの回答配列
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0); // 現在の問題インデックス（未使用だが将来の機能拡張用）
   const [readingData, setReadingData] = useState(null); // 読書データ（時間・スクロール情報）
   const [scrollProgress, setScrollProgress] = useState(0); // スクロール進捗（0-100%）
   const [focusedParagraph, setFocusedParagraph] = useState(null); // 現在フォーカス中の段落（nullはフォーカスなし）
@@ -177,8 +176,6 @@ export default function ReadingTest({ content, onBack }) {
       let newFocusedParagraph = null; // フォーカスなしの状態も許可
       
       // フォーカスエリアと重なっている段落を見つける
-      const viewportTop = container.scrollTop;
-      const viewportBottom = viewportTop + containerRect.height;
       
       
       // すべての段落をチェックし、フォーカスエリアと重なっているものを探す
@@ -382,7 +379,6 @@ export default function ReadingTest({ content, onBack }) {
           // テストをリセットして最初からやり直し
           setPhase('instructions');
           setAnswers([]);
-          setCurrentQuestionIndex(0);
           setReadingData(null);
           setScrollProgress(0);
           setFocusedParagraph(null);
@@ -510,9 +506,6 @@ export default function ReadingTest({ content, onBack }) {
                 </div>
                 {content.text.split('\n').filter(paragraph => paragraph.trim()).map((paragraph, index) => {
                   const isFocused = focusedParagraph !== null && index === focusedParagraph;
-                  const totalParagraphs = content.text.split('\n').filter(p => p.trim()).length;
-                  const isFirst = index === 0;
-                  const isLast = index === totalParagraphs - 1;
                   
                   // フォーカス状態に応じたスタイル計算
                   let blurClass = '';
