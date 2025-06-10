@@ -27,7 +27,56 @@ export default function ResultDisplay({ content, answers, readingData, onBack, o
     return false;
   };
 
-  // 行ごとの表示時間を分析する関数
+  // 段落ごとの表示時間を分析する関数
+  const analyzeParagraphViewTime = (scrollData, totalTime) => {
+    // 段落別データがある場合はそれを使用
+    if (scrollData.paragraphTimes) {
+      const paragraphs = content.text.split('\n').filter(paragraph => paragraph.trim());
+      const paragraphAnalysis = [];
+      
+      // 各段落のデータを処理
+      paragraphs.forEach((paragraph, index) => {
+        const paragraphData = scrollData.paragraphTimes[index];
+        if (paragraphData) {
+          paragraphAnalysis.push({
+            index: index,
+            text: paragraph,
+            totalViewTime: paragraphData.totalTime / 1000, // ミリ秒から秒に変換
+            firstSeen: paragraphData.firstSeen,
+            lastSeen: paragraphData.lastSeen
+          });
+        } else {
+          paragraphAnalysis.push({
+            index: index,
+            text: paragraph,
+            totalViewTime: 0,
+            firstSeen: null,
+            lastSeen: null
+          });
+        }
+      });
+      
+      // 統計情報を計算
+      const viewTimes = paragraphAnalysis.map(p => p.totalViewTime).filter(time => time > 0);
+      const avgViewTime = viewTimes.length > 0 ? viewTimes.reduce((a, b) => a + b, 0) / viewTimes.length : 0;
+      const maxViewTime = viewTimes.length > 0 ? Math.max(...viewTimes) : 0;
+      const minViewTime = viewTimes.length > 0 ? Math.min(...viewTimes) : 0;
+      
+      return {
+        paragraphAnalysis,
+        avgViewTime,
+        maxViewTime,
+        minViewTime,
+        totalParagraphs: paragraphs.length,
+        analyzedParagraphs: viewTimes.length
+      };
+    }
+    
+    // フォールバック: 旧来の行ベース分析
+    return analyzeLineViewTime(scrollData, totalTime);
+  };
+  
+  // 行ごとの表示時間を分析する関数（フォールバック用）
   const analyzeLineViewTime = (scrollData, totalTime) => {
     if (!scrollData.scrollPattern || scrollData.scrollPattern.length < 2) {
       return null;
@@ -110,10 +159,27 @@ export default function ResultDisplay({ content, answers, readingData, onBack, o
     };
   };
 
-  // 行ごとの表示時間に基づく文章セグメントを作成
+  // 段落ごとの表示時間に基づく文章セグメントを作成
   const createTimeBasedTextSegments = (text, analysis) => {
     if (!analysis) return [];
-
+    
+    // 段落ベースの分析がある場合
+    if (analysis.paragraphAnalysis) {
+      return analysis.paragraphAnalysis.map((paragraph) => {
+        // 平均表示時間に対する比率を計算
+        const normalized = analysis.avgViewTime > 0 ? paragraph.totalViewTime / analysis.avgViewTime : 1;
+        
+        return {
+          text: paragraph.text,
+          viewTime: paragraph.totalViewTime,
+          normalized: normalized,
+          isParagraph: true,
+          paragraphIndex: paragraph.index
+        };
+      });
+    }
+    
+    // フォールバック: 行ベース分析
     const lines = text.split('\n').filter(line => line.trim() && !isImageLine(line));
     
     return lines.map((line, index) => {
@@ -127,7 +193,8 @@ export default function ResultDisplay({ content, answers, readingData, onBack, o
         text: line,
         viewTime: viewTime,
         normalized: normalized,
-        intervals: lineData ? lineData.intervals : []
+        intervals: lineData ? lineData.intervals : [],
+        isParagraph: false
       };
     });
   };
@@ -180,8 +247,8 @@ export default function ResultDisplay({ content, answers, readingData, onBack, o
       // 表示用データを設定
       setResultData(result.displayData);
       
-      // 行ごとの表示時間分析を実行
-      const analysis = analyzeLineViewTime(readingData.scrollData, readingData.readingTime);
+      // 段落ごとの表示時間分析を実行
+      const analysis = analyzeParagraphViewTime(readingData.scrollData, readingData.readingTime);
       setSpeedAnalysis(analysis);
       
       // QRコードは最小限データで生成
@@ -285,7 +352,7 @@ export default function ResultDisplay({ content, answers, readingData, onBack, o
           </div>
         )}
 
-        {/* 読書速度分析 */}
+        {/* 段落別読書速度分析 */}
         {textSegments.length > 0 && (
           <div className="backdrop-blur-xl bg-white/70 rounded-2xl p-6 sm:p-8 shadow-xl border border-white/20 mb-8 sm:mb-12 animate-slide-up">
             <div className="flex items-center mb-4 sm:mb-6">
@@ -294,22 +361,75 @@ export default function ResultDisplay({ content, answers, readingData, onBack, o
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                 </svg>
               </div>
-              <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-orange-800 to-orange-900 bg-clip-text text-transparent">読書速度分析</h2>
+              <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-orange-800 to-orange-900 bg-clip-text text-transparent">
+                {textSegments[0]?.isParagraph ? '段落別読書速度分析' : '読書速度分析'}
+              </h2>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-3">
               {textSegments.map((segment, index) => (
                 <div
                   key={index}
-                  className="p-3 sm:p-4 rounded-xl flex flex-col sm:flex-row sm:justify-between sm:items-center transition-all duration-200 hover:scale-[1.01]"
+                  className="p-4 sm:p-6 rounded-xl border transition-all duration-200 hover:scale-[1.01]"
                   style={getViewTimeStyle(segment.normalized, segment.viewTime)}
                 >
-                  <span className="flex-1 text-sm sm:text-base leading-relaxed">{segment.text}</span>
-                  <span className="text-xs ml-0 sm:ml-4 mt-2 sm:mt-0 px-2 py-1 bg-black/5 rounded-lg font-mono font-medium">
-                    {segment.viewTime > 0 ? `${segment.viewTime.toFixed(1)}s` : '未表示'}
-                  </span>
+                  <div className="flex flex-col space-y-3">
+                    <div className="flex justify-between items-start">
+                      <div className="flex items-center space-x-2">
+                        {segment.isParagraph && (
+                          <div className="flex-shrink-0 w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold">
+                            {segment.paragraphIndex + 1}
+                          </div>
+                        )}
+                        <span className="text-xs font-medium px-2 py-1 bg-black/10 rounded-lg">
+                          {segment.isParagraph ? '段落' : '行'} {index + 1}
+                        </span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-xs px-2 py-1 bg-black/10 rounded-lg font-mono font-medium">
+                          {segment.viewTime > 0 ? `${segment.viewTime.toFixed(1)}s` : '未表示'}
+                        </span>
+                        {segment.normalized > 1.5 && (
+                          <span className="text-xs px-2 py-1 bg-red-200 text-red-800 rounded-lg font-medium">
+                            速度遅い
+                          </span>
+                        )}
+                        {segment.normalized < 0.7 && segment.viewTime > 0 && (
+                          <span className="text-xs px-2 py-1 bg-green-200 text-green-800 rounded-lg font-medium">
+                            速度速い
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="text-sm sm:text-base leading-relaxed">
+                      {segment.text.length > 200 ? segment.text.substring(0, 200) + '...' : segment.text}
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
+            {speedAnalysis?.avgViewTime && (
+              <div className="mt-6 p-4 bg-blue-50 rounded-xl border border-blue-200">
+                <h3 className="text-sm font-bold text-blue-900 mb-2">統計情報</h3>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs text-blue-800">
+                  <div>
+                    <span className="font-medium">平均時間:</span><br/>
+                    {speedAnalysis.avgViewTime.toFixed(1)}s
+                  </div>
+                  <div>
+                    <span className="font-medium">最長時間:</span><br/>
+                    {speedAnalysis.maxViewTime.toFixed(1)}s
+                  </div>
+                  <div>
+                    <span className="font-medium">最短時間:</span><br/>
+                    {speedAnalysis.minViewTime.toFixed(1)}s
+                  </div>
+                  <div>
+                    <span className="font-medium">分析数:</span><br/>
+                    {speedAnalysis.analyzedParagraphs || speedAnalysis.analyzedLines}/{speedAnalysis.totalParagraphs || speedAnalysis.totalLines}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
 

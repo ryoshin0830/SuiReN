@@ -282,16 +282,47 @@ export default function ReadingTest({ content, onBack }) {
             </div>
           </div>
           
+          {/* 読書ガイドエリア（画面上部固定） */}
+          <div className="bg-blue-50 border-b-2 border-blue-200 px-4 sm:px-8 py-2">
+            <div className="max-w-4xl mx-auto">
+              <div className="flex items-center justify-center space-x-3">
+                <div className="w-4 h-4 bg-blue-500 rounded-full animate-pulse"></div>
+                <span className="text-sm sm:text-base text-blue-700 font-medium">
+                  💡 この青い部分を中心に読み進めることをお勧めします
+                </span>
+                <div className="w-4 h-4 bg-blue-500 rounded-full animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+          
           {/* 読書コンテンツエリア（フルスクリーン） */}
           <div 
             ref={contentRef}
             className="flex-1 overflow-y-auto bg-white px-4 sm:px-8 py-4 sm:py-6 pb-safe-area-inset-bottom"
           >
             <div className="max-w-4xl mx-auto">
-              <TextWithImages 
-                text={content.text} 
-                images={content.images || []} 
-              />
+              {/* 段落分割されたテキスト表示 */}
+              <div className="space-y-4">
+                {content.text.split('\n').filter(paragraph => paragraph.trim()).map((paragraph, index) => (
+                  <div 
+                    key={index}
+                    className="paragraph-block p-4 rounded-lg bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 shadow-sm transition-all duration-300 hover:shadow-md"
+                    data-paragraph-index={index}
+                  >
+                    <div className="flex items-start space-x-3">
+                      <div className="flex-shrink-0 w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                        {index + 1}
+                      </div>
+                      <div className="flex-1">
+                        <TextWithImages 
+                          text={paragraph} 
+                          images={content.images || []} 
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
               
               {/* 読書完了ボタン（文章の最後に配置） */}
               <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t-2 border-gray-300 bg-gray-50 rounded-lg p-4 sm:p-6">
