@@ -52,10 +52,38 @@ export async function POST(request) {
       } else if (row[0] === '本文') {
         // Collect all text from subsequent rows until we hit another section
         let textRows = [];
+        let foundActualText = false;
         for (let j = i + 1; j < contentData.length; j++) {
-          if (contentData[j][0] === '文章の解説（任意）') break;
-          if (contentData[j][0] || contentData[j][1]) {
-            textRows.push(contentData[j].join(' ').trim());
+          const currentRow = contentData[j];
+          if (!currentRow) continue;
+          
+          // Stop if we hit the next section
+          if (currentRow[0] === '文章の解説（任意）') break;
+          
+          // Skip ruby notation examples
+          const firstCell = currentRow[0] ? currentRow[0].toString() : '';
+          if (firstCell.includes('ルビを振る場合') || 
+              firstCell.includes('基本記法:') || 
+              firstCell.includes('省略記法:') || 
+              firstCell.includes('括弧記法:') ||
+              firstCell.startsWith('・')) {
+            continue;
+          }
+          
+          // Skip empty rows between instructions and actual text
+          const rowContent = currentRow.join('').trim();
+          if (!rowContent) {
+            if (foundActualText) {
+              // Include empty lines within the actual text
+              textRows.push('');
+            }
+            continue;
+          }
+          
+          // This is actual text content
+          foundActualText = true;
+          if (currentRow[0] || currentRow[1]) {
+            textRows.push(currentRow.join(' ').trim());
           }
         }
         text = textRows.join('\n').trim();
