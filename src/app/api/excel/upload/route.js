@@ -60,13 +60,17 @@ export async function POST(request) {
           // Stop if we hit the next section
           if (currentRow[0] === '文章の解説（任意）') break;
           
-          // Skip ruby notation examples
-          const firstCell = currentRow[0] ? currentRow[0].toString() : '';
-          if (firstCell.includes('ルビを振る場合') || 
-              firstCell.includes('基本記法:') || 
-              firstCell.includes('省略記法:') || 
-              firstCell.includes('括弧記法:') ||
-              firstCell.startsWith('・')) {
+          // Skip ruby notation examples and instructions
+          const rowText = currentRow.join(' ').toString();
+          // Check if this row contains ruby notation instructions
+          if (rowText.includes('※ルビの記法') ||
+              rowText.includes('ルビを振る場合') || 
+              rowText.includes('基本記法') || 
+              rowText.includes('省略記法') || 
+              rowText.includes('括弧記法') ||
+              rowText.includes('｜漢字《') || // Check for actual ruby notation examples
+              rowText.includes('漢字(かんじ)') || // Check for parenthesis notation example
+              (currentRow[0] && currentRow[0].toString().startsWith('・'))) {
             continue;
           }
           
