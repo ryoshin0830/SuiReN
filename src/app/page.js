@@ -120,7 +120,7 @@ export default function Home() {
               </p>
               
               <p className="text-lg">
-                「<span className="font-bold text-blue-600">すいすいリーダー</span>」の練習では、とても簡単な文章を、なるべく速く読みます。でも、速すぎてはだめです。だいたいの意味がわかるように、そして、速く読んでください。何回もこの練習をしていると、楽しく速く読めるようになりますよ。
+                「<span className="font-bold text-blue-600">速読ゴリラ</span>」の練習では、とても簡単な文章を、なるべく速く読みます。でも、速すぎてはだめです。だいたいの意味がわかるように、そして、速く読んでください。何回もこの練習をしていると、楽しく速く読めるようになりますよ。
               </p>
               
               <div className="text-center mt-8">
@@ -128,7 +128,7 @@ export default function Home() {
                   みなさん、がんばって！
                 </p>
                 <p className="text-lg text-gray-600">
-                  すいすいリーダー・チーム
+                  速読ゴリラ・チーム
                 </p>
               </div>
             </div>
