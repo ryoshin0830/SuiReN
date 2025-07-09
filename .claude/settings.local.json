@@ -1,0 +1,39 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3:*)",
+      "Bash(pip3 install:*)",
+      "Bash(git add:*)",
+      "Bash(npm install:*)",
+      "Bash(mkdir:*)",
+      "Bash(npm run dev:*)",
+      "Bash(gh repo create:*)",
+      "Bash(git remote add:*)",
+      "Bash(git push:*)",
+      "Bash(uv venv:*)",
+      "Bash(source:*)",
+      "Bash(uv pip install:*)",
+      "Bash(python:*)",
+      "Bash(git remote set-url:*)",
+      "Bash(npx vercel:*)",
+      "Bash(ls:*)",
+      "Bash(rm:*)",
+      "Bash(npx prisma:*)",
+      "Bash(DATABASE_URL=\"postgres://neondb_owner:npg_47zjrBksytRL@ep-yellow-river-a4iye64q-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require\" npx prisma db push)",
+      "Bash(DATABASE_URL=\"postgres://neondb_owner:npg_47zjrBksytRL@ep-yellow-river-a4iye64q-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require\" node scripts/seed.js)",
+      "Bash(curl:*)",
+      "Bash(pkill:*)",
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "Bash(npm run build:*)",
+      "Bash(vercel deploy:*)",
+      "Bash(npm uninstall:*)",
+      "mcp__zenn-qiita-sync__init",
+      "mcp__zenn-qiita-sync__create_article",
+      "mcp__zenn-qiita-sync__edit_article",
+      "mcp__zenn-qiita-sync__post_article",
+      "mcp__zenn-qiita-sync__post_to_x"
+    ],
+    "deny": []
+  }
+}

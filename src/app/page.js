@@ -100,6 +100,42 @@ export default function Home() {
         </div>
       </div>
 
+      {/* ===== このサイトについてセクション ===== */}
+      <div className="relative py-20 px-6 bg-gradient-to-b from-white to-gray-50">
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-white rounded-3xl p-10 shadow-xl border border-gray-100">
+            <h2 className="text-4xl lg:text-5xl font-bold text-center mb-8">
+              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                このサイトについて
+              </span>
+            </h2>
+            
+            <div className="text-gray-700 space-y-6 leading-relaxed">
+              <p className="text-lg">
+                このウェブサイトでは、日本語を「速く読む練習」ができます。
+              </p>
+              
+              <p className="text-lg">
+                私たちは、海や川で、すいすいと楽しく泳いでいるように、みなさんに日本語の文章を、楽しく速く読んでほしいと思います。
+              </p>
+              
+              <p className="text-lg">
+                「<span className="font-bold text-blue-600">速読ゴリラ</span>」の練習では、とても簡単な文章を、なるべく速く読みます。でも、速すぎてはだめです。だいたいの意味がわかるように、そして、速く読んでください。何回もこの練習をしていると、楽しく速く読めるようになりますよ。
+              </p>
+              
+              <div className="text-center mt-8">
+                <p className="text-xl font-semibold text-gray-800 mb-2">
+                  みなさん、がんばって！
+                </p>
+                <p className="text-lg text-gray-600">
+                  速読ゴリラ・チーム
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* ===== 3ステップ練習方法セクション ===== */}
       <div id="how-to" className="relative py-20 px-6 bg-gradient-to-b from-gray-50 to-white">
         <div className="max-w-6xl mx-auto">
