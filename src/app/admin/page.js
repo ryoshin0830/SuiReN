@@ -223,13 +223,7 @@ export default function Admin() {
             onClick={() => setShowExcelUpload(true)}
             className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors font-semibold"
           >
-            Excelから作成
-          </button>
-          <button
-            onClick={handleDownloadTemplate}
-            className="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors font-semibold"
-          >
-            テンプレートダウンロード
+            Excelで作成
           </button>
           <button
             onClick={() => setIsAuthenticated(false)}
@@ -406,69 +400,104 @@ export default function Admin() {
       {/* Excel Upload Modal */}
       {showExcelUpload && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-bold text-gray-900">Excelファイルからコンテンツ作成</h3>
+          <div className="bg-white rounded-lg p-6 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-bold text-gray-900">Excelでコンテンツ作成</h3>
               <button
                 onClick={() => setShowExcelUpload(false)}
-                className="text-gray-500 hover:text-gray-700"
+                className="text-gray-500 hover:text-gray-700 text-2xl font-bold"
               >
                 ✕
               </button>
             </div>
 
-            <div className="space-y-6">
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <h4 className="text-lg font-semibold text-blue-800 mb-2">📝 使用方法</h4>
-                <ol className="list-decimal list-inside space-y-2 text-sm text-blue-700">
-                  <li>「テンプレートダウンロード」ボタンからExcelテンプレートをダウンロード</li>
-                  <li>テンプレートにコンテンツ情報を入力</li>
-                  <li>入力済みのExcelファイルをアップロード</li>
-                  <li>編集画面で画像の追加や最終調整を実施</li>
-                </ol>
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* Left column - Template Download */}
+              <div className="space-y-4">
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                  <h4 className="text-lg font-semibold text-green-800 mb-3">📥 1. テンプレートのダウンロード</h4>
+                  <p className="text-sm text-green-700 mb-4">
+                    まず、コンテンツ作成用のExcelテンプレートをダウンロードしてください。
+                  </p>
+                  <button
+                    onClick={handleDownloadTemplate}
+                    className="w-full bg-green-600 text-white px-4 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold"
+                  >
+                    📊 テンプレートダウンロード
+                  </button>
+                </div>
+
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <h4 className="text-lg font-semibold text-blue-800 mb-3">📝 2. テンプレートの入力</h4>
+                  <ul className="text-sm text-blue-700 space-y-1">
+                    <li>• 「コンテンツ」シートに基本情報を入力</li>
+                    <li>• 「問題」シートに理解度確認問題を入力</li>
+                    <li>• 項目列に対応する入力内容列に記入</li>
+                    <li>• 詳細は「使用方法」シートを確認</li>
+                  </ul>
+                </div>
               </div>
 
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-                <input
-                  type="file"
-                  accept=".xlsx,.xls"
-                  onChange={(e) => {
-                    if (e.target.files[0]) {
-                      handleExcelUpload(e.target.files[0]);
-                    }
-                  }}
-                  className="hidden"
-                  id="excel-upload"
-                  disabled={excelUploadLoading}
-                />
-                <label
-                  htmlFor="excel-upload"
-                  className={`inline-flex flex-col items-center cursor-pointer ${
-                    excelUploadLoading ? 'opacity-50 cursor-not-allowed' : ''
-                  }`}
-                >
-                  <div className="text-6xl mb-4">📊</div>
-                  <div className="text-lg font-semibold text-gray-700 mb-2">
-                    {excelUploadLoading ? 'アップロード中...' : 'Excelファイルを選択'}
+              {/* Right column - Upload */}
+              <div className="space-y-4">
+                <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                  <h4 className="text-lg font-semibold text-purple-800 mb-3">📤 3. ファイルのアップロード</h4>
+                  <p className="text-sm text-purple-700 mb-4">
+                    入力済みのExcelファイルをアップロードしてください。
+                  </p>
+                  
+                  <div className="border-2 border-dashed border-purple-300 rounded-lg p-6 text-center">
+                    <input
+                      type="file"
+                      accept=".xlsx,.xls"
+                      onChange={(e) => {
+                        if (e.target.files[0]) {
+                          handleExcelUpload(e.target.files[0]);
+                        }
+                      }}
+                      className="hidden"
+                      id="excel-upload"
+                      disabled={excelUploadLoading}
+                    />
+                    <label
+                      htmlFor="excel-upload"
+                      className={`inline-flex flex-col items-center cursor-pointer ${
+                        excelUploadLoading ? 'opacity-50 cursor-not-allowed' : ''
+                      }`}
+                    >
+                      <div className="text-4xl mb-3">📊</div>
+                      <div className="text-sm font-semibold text-purple-700 mb-2">
+                        {excelUploadLoading ? 'アップロード中...' : 'Excelファイルを選択'}
+                      </div>
+                      <div className="text-xs text-purple-500 mb-3">
+                        または、ここにファイルをドラッグ＆ドロップ
+                      </div>
+                      <div className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors text-sm">
+                        ファイルを選択
+                      </div>
+                    </label>
                   </div>
-                  <div className="text-sm text-gray-500">
-                    または、ここにファイルをドラッグ＆ドロップ
-                  </div>
-                  <div className="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                    ファイルを選択
-                  </div>
-                </label>
-              </div>
+                </div>
 
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                <h4 className="text-sm font-semibold text-yellow-800 mb-2">⚠️ 注意事項</h4>
-                <ul className="text-xs text-yellow-700 space-y-1">
-                  <li>• 対応形式: .xlsx, .xls</li>
-                  <li>• テンプレート形式に従って入力してください</li>
-                  <li>• 画像はアップロード後に編集画面で追加します</li>
-                  <li>• ルビ記法は本文中に直接記入してください</li>
-                </ul>
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                  <h4 className="text-sm font-semibold text-yellow-800 mb-2">⚠️ 注意事項</h4>
+                  <ul className="text-xs text-yellow-700 space-y-1">
+                    <li>• 対応形式: .xlsx, .xls</li>
+                    <li>• テンプレート形式に従って入力してください</li>
+                    <li>• 画像はアップロード後に編集画面で追加します</li>
+                    <li>• ルビ記法: ｜漢字《かんじ》または漢字《かんじ》</li>
+                  </ul>
+                </div>
               </div>
+            </div>
+
+            <div className="mt-6 text-center">
+              <button
+                onClick={() => setShowExcelUpload(false)}
+                className="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+              >
+                閉じる
+              </button>
             </div>
           </div>
         </div>

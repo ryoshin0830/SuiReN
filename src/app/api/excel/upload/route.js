@@ -31,17 +31,21 @@ export async function POST(request) {
     const contentSheet = workbook.Sheets['コンテンツ'];
     const contentData = XLSX.utils.sheet_to_json(contentSheet, { header: 1 });
 
-    // Extract basic information
+    // Extract basic information using new table format
     let title = '';
     let level = '初級修了レベル';
     let text = '';
     let explanation = '';
 
-    // Find and extract data
+    // Find and extract data from table format
     for (let i = 0; i < contentData.length; i++) {
       const row = contentData[i];
       if (!row || row.length === 0) continue;
 
+      // Skip header row
+      if (row[0] === '項目') continue;
+
+      // Extract data based on first column (項目)
       if (row[0] === 'タイトル' && row[1]) {
         title = row[1].toString().trim();
       } else if (row[0] === 'レベル' && row[1]) {
@@ -49,57 +53,69 @@ export async function POST(request) {
         if (['初級修了レベル', '中級レベル', '上級レベル'].includes(levelValue)) {
           level = levelValue;
         }
-      } else if (row[0] === '本文') {
-        // Collect all text from subsequent rows until we hit another section
-        let textRows = [];
-        let foundActualText = false;
-        for (let j = i + 1; j < contentData.length; j++) {
-          const currentRow = contentData[j];
-          if (!currentRow) continue;
-          
-          // Stop if we hit the next section
-          if (currentRow[0] === '文章の解説（任意）') break;
-          
-          // Skip ruby notation examples and instructions
-          const rowText = currentRow.join(' ').toString();
-          // Check if this row contains ruby notation instructions
-          if (rowText.includes('※ルビの記法') ||
-              rowText.includes('ルビを振る場合') || 
-              rowText.includes('基本記法') || 
-              rowText.includes('省略記法') || 
-              rowText.includes('括弧記法') ||
-              rowText.includes('｜漢字《') || // Check for actual ruby notation examples
-              rowText.includes('漢字(かんじ)') || // Check for parenthesis notation example
-              (currentRow[0] && currentRow[0].toString().startsWith('・'))) {
-            continue;
-          }
-          
-          // Skip empty rows between instructions and actual text
-          const rowContent = currentRow.join('').trim();
-          if (!rowContent) {
-            if (foundActualText) {
-              // Include empty lines within the actual text
-              textRows.push('');
+      } else if (row[0] === '本文' && row[1]) {
+        // Get the text content directly from row[1]
+        const textContent = row[1].toString().trim();
+        
+        // Filter out instruction/example text from the content
+        const filteredLines = textContent.split('\n').filter(line => {
+          const trimmedLine = line.trim();
+          // Skip ruby notation instructions and examples
+          return !trimmedLine.includes('ルビの記法：') &&
+                 !trimmedLine.includes('ここに本文を入力してください') &&
+                 !trimmedLine.includes('※') &&
+                 !trimmedLine.includes('例：') &&
+                 !trimmedLine.startsWith('・');
+        });
+        
+        text = filteredLines.join('\n').trim();
+        
+        // Handle multiline text - check if there are continuation rows
+        let j = i + 1;
+        while (j < contentData.length && contentData[j] && !contentData[j][0]) {
+          if (contentData[j][1]) {
+            const continuationText = contentData[j][1].toString().trim();
+            // Apply same filtering to continuation lines
+            if (!continuationText.includes('ルビの記法：') &&
+                !continuationText.includes('ここに本文を入力してください') &&
+                !continuationText.includes('※') &&
+                !continuationText.includes('例：') &&
+                !continuationText.startsWith('・')) {
+              text += '\n' + continuationText;
             }
-            continue;
           }
-          
-          // This is actual text content
-          foundActualText = true;
-          if (currentRow[0] || currentRow[1]) {
-            textRows.push(currentRow.join(' ').trim());
-          }
+          j++;
         }
-        text = textRows.join('\n').trim();
-      } else if (row[0] === '文章の解説（任意）') {
-        // Collect explanation text
-        let explanationRows = [];
-        for (let j = i + 1; j < contentData.length; j++) {
-          if (contentData[j][0] || contentData[j][1]) {
-            explanationRows.push(contentData[j].join(' ').trim());
+      } else if (row[0] === '文章の解説' && row[1]) {
+        // Get the explanation content directly from row[1]
+        const explanationContent = row[1].toString().trim();
+        
+        // Filter out instruction text from the explanation
+        const filteredExplanation = explanationContent.split('\n').filter(line => {
+          const trimmedLine = line.trim();
+          return !trimmedLine.includes('ここに文章の解説を入力してください') &&
+                 !trimmedLine.includes('※') &&
+                 !trimmedLine.includes('例：') &&
+                 !trimmedLine.startsWith('・');
+        });
+        
+        explanation = filteredExplanation.join('\n').trim();
+        
+        // Handle multiline explanation - check if there are continuation rows
+        let j = i + 1;
+        while (j < contentData.length && contentData[j] && !contentData[j][0]) {
+          if (contentData[j][1]) {
+            const continuationExplanation = contentData[j][1].toString().trim();
+            // Apply same filtering to continuation lines
+            if (!continuationExplanation.includes('ここに文章の解説を入力してください') &&
+                !continuationExplanation.includes('※') &&
+                !continuationExplanation.includes('例：') &&
+                !continuationExplanation.startsWith('・')) {
+              explanation += '\n' + continuationExplanation;
+            }
           }
+          j++;
         }
-        explanation = explanationRows.join('\n').trim();
       }
     }
 
@@ -144,8 +160,8 @@ export async function POST(request) {
             if (headerStr === '問題番号') columnMap.questionNumber = index;
             else if (headerStr === '問題文') columnMap.questionText = index;
             else if (headerStr.startsWith('選択肢')) columnMap[headerStr] = index;
-            else if (headerStr.includes('正解番号')) columnMap.correctAnswer = index;
-            else if (headerStr.includes('解説')) columnMap.explanation = index;
+            else if (headerStr === '正解番号') columnMap.correctAnswer = index;
+            else if (headerStr === '解説') columnMap.explanation = index;
           }
         });
 
