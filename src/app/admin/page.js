@@ -14,6 +14,9 @@ export default function Admin() {
   const [selectedContent, setSelectedContent] = useState(null);
   const [showEditor, setShowEditor] = useState(false);
   const [editorMode, setEditorMode] = useState('create'); // 'create' or 'edit'
+  const [showExcelUpload, setShowExcelUpload] = useState(false);
+  const [excelUploadLoading, setExcelUploadLoading] = useState(false);
+  const [excelData, setExcelData] = useState(null);
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -82,7 +85,68 @@ export default function Admin() {
   const handleCloseEditor = () => {
     setShowEditor(false);
     setSelectedContent(null);
+    setExcelData(null);
     fetchContents(); // 一覧を再取得
+  };
+
+  // Excelテンプレートをダウンロード
+  const handleDownloadTemplate = async () => {
+    try {
+      const response = await fetch('/api/excel/template');
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'speed_reading_template.xlsx';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+      } else {
+        setError('テンプレートのダウンロードに失敗しました');
+      }
+    } catch (error) {
+      console.error('Error downloading template:', error);
+      setError('テンプレートのダウンロードに失敗しました');
+    }
+  };
+
+  // Excelファイルをアップロード
+  const handleExcelUpload = async (file) => {
+    setExcelUploadLoading(true);
+    setError('');
+    
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      const response = await fetch('/api/excel/upload', {
+        method: 'POST',
+        body: formData,
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success) {
+          // Excelからインポートしたデータをセット
+          setExcelData(result.data);
+          setEditorMode('create');
+          setShowExcelUpload(false);
+          setShowEditor(true);
+        } else {
+          setError(result.error || 'アップロードに失敗しました');
+        }
+      } else {
+        const errorData = await response.json();
+        setError(errorData.error || 'アップロードに失敗しました');
+      }
+    } catch (error) {
+      console.error('Error uploading Excel:', error);
+      setError('ファイルのアップロード中にエラーが発生しました');
+    } finally {
+      setExcelUploadLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -136,6 +200,7 @@ export default function Admin() {
       <ContentEditor
         mode={editorMode}
         content={selectedContent}
+        excelData={excelData}
         onClose={handleCloseEditor}
       />
     );
@@ -147,12 +212,24 @@ export default function Admin() {
         <h1 className="text-3xl font-bold text-gray-900">
           コンテンツ管理画面
         </h1>
-        <div className="flex space-x-4">
+        <div className="flex flex-wrap gap-4">
           <button
             onClick={handleCreate}
             className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors font-semibold"
           >
             新規作成
+          </button>
+          <button
+            onClick={() => setShowExcelUpload(true)}
+            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors font-semibold"
+          >
+            Excelから作成
+          </button>
+          <button
+            onClick={handleDownloadTemplate}
+            className="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors font-semibold"
+          >
+            テンプレートダウンロード
           </button>
           <button
             onClick={() => setIsAuthenticated(false)}
@@ -325,6 +402,77 @@ export default function Admin() {
           </div>
         </div>
       </div>
+
+      {/* Excel Upload Modal */}
+      {showExcelUpload && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-bold text-gray-900">Excelファイルからコンテンツ作成</h3>
+              <button
+                onClick={() => setShowExcelUpload(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="space-y-6">
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h4 className="text-lg font-semibold text-blue-800 mb-2">📝 使用方法</h4>
+                <ol className="list-decimal list-inside space-y-2 text-sm text-blue-700">
+                  <li>「テンプレートダウンロード」ボタンからExcelテンプレートをダウンロード</li>
+                  <li>テンプレートにコンテンツ情報を入力</li>
+                  <li>入力済みのExcelファイルをアップロード</li>
+                  <li>編集画面で画像の追加や最終調整を実施</li>
+                </ol>
+              </div>
+
+              <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+                <input
+                  type="file"
+                  accept=".xlsx,.xls"
+                  onChange={(e) => {
+                    if (e.target.files[0]) {
+                      handleExcelUpload(e.target.files[0]);
+                    }
+                  }}
+                  className="hidden"
+                  id="excel-upload"
+                  disabled={excelUploadLoading}
+                />
+                <label
+                  htmlFor="excel-upload"
+                  className={`inline-flex flex-col items-center cursor-pointer ${
+                    excelUploadLoading ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
+                >
+                  <div className="text-6xl mb-4">📊</div>
+                  <div className="text-lg font-semibold text-gray-700 mb-2">
+                    {excelUploadLoading ? 'アップロード中...' : 'Excelファイルを選択'}
+                  </div>
+                  <div className="text-sm text-gray-500">
+                    または、ここにファイルをドラッグ＆ドロップ
+                  </div>
+                  <div className="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                    ファイルを選択
+                  </div>
+                </label>
+              </div>
+
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                <h4 className="text-sm font-semibold text-yellow-800 mb-2">⚠️ 注意事項</h4>
+                <ul className="text-xs text-yellow-700 space-y-1">
+                  <li>• 対応形式: .xlsx, .xls</li>
+                  <li>• テンプレート形式に従って入力してください</li>
+                  <li>• 画像はアップロード後に編集画面で追加します</li>
+                  <li>• ルビ記法は本文中に直接記入してください</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

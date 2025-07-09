@@ -11,7 +11,7 @@ import {
 import { TextWithImagesPreview, TextStatistics } from './TextWithImages';
 import { formatRubyText, getRubyExamples, validateRuby } from '../lib/ruby-utils';
 
-export default function ContentEditor({ mode, content, onClose }) {
+export default function ContentEditor({ mode, content, excelData, onClose }) {
   const [formData, setFormData] = useState({
     title: '',
     level: '初級修了レベル',
@@ -65,8 +65,27 @@ export default function ContentEditor({ mode, content, onClose }) {
         }))
       });
       setImageManagerVersion(prev => prev + 1); // 再レンダリングを強制
+    } else if (mode === 'create' && excelData) {
+      // Excelからインポートしたデータで初期化
+      setFormData({
+        title: excelData.title || '',
+        level: excelData.level || '初級修了レベル',
+        levelCode: excelData.levelCode || 'beginner',
+        text: excelData.text || '',
+        explanation: excelData.explanation || '',
+        images: excelData.images || [],
+        thumbnail: excelData.thumbnail || null,
+        questions: excelData.questions || [
+          {
+            question: '',
+            options: ['', '', '', ''],
+            correctAnswer: 0,
+            explanation: ''
+          }
+        ]
+      });
     }
-  }, [mode, content, imageManager]);
+  }, [mode, content, excelData, imageManager]);
 
   // レベル変更時にlevelCodeも更新
   const handleLevelChange = (level) => {
@@ -439,6 +458,7 @@ export default function ContentEditor({ mode, content, onClose }) {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8 space-y-3 sm:space-y-0">
           <h1 className="text-xl sm:text-3xl font-bold text-gray-900">
             {mode === 'create' ? '新規コンテンツ作成' : 'コンテンツ編集'}
+            {excelData && ' (Excelからインポート)'}
           </h1>
           <button
             onClick={onClose}
@@ -451,6 +471,16 @@ export default function ContentEditor({ mode, content, onClose }) {
         {error && (
           <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
             <div className="text-red-600">{error}</div>
+          </div>
+        )}
+
+        {excelData && (
+          <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
+            <h3 className="text-green-800 font-semibold mb-2">✅ Excelからデータをインポートしました</h3>
+            <p className="text-green-700 text-sm">
+              基本情報と本文、問題がインポートされました。<br/>
+              このまま画像やサムネイルの追加、内容の最終調整を行ってください。
+            </p>
           </div>
         )}
 
