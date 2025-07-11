@@ -1,12 +1,12 @@
 /**
- * Layout.js - 速読ゴリラアプリケーションのメインレイアウトコンポーネント
+ * Layout.js - SuiReN (睡蓮) Japanese Speed Reading アプリケーションのメインレイアウトコンポーネント
  * 
  * 機能:
  * - 全ページ共通のナビゲーションバーを提供
  * - レスポンシブデザインとモダンUI/UX
  * - ガラスモーフィズムエフェクトとアニメーション
  * - アクティブページの視覚的表示
- * - ゴリラロゴとブランディング要素
+ * - SuiReN ロゴとブランディング要素
  */
 
 'use client';
@@ -38,11 +38,11 @@ export default function Layout({ children }) {
             <div className="flex items-center">
               <Link href="/" className="group flex items-center space-x-2 sm:space-x-3 transition-all duration-300 hover:scale-105">
                 
-                {/* ゴリラロゴ - ホバーエフェクト付き */}
+                {/* SuiReN ロゴ - ホバーエフェクト付き */}
                 <div className="relative">
                   <img 
                     src="/logos/gorilla-only-friendly.svg" 
-                    alt="速読ゴリラ" 
+                    alt="SuiReN (睡蓮)" 
                     className="h-8 sm:h-12 w-auto transition-all duration-300 group-hover:drop-shadow-lg"
                   />
                   {/* ホバー時のグロー効果 */}
@@ -51,7 +51,7 @@ export default function Layout({ children }) {
                 
                 {/* サイト名 - グラデーションテキスト */}
                 <span className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
-                  速読ゴリラ
+                  SuiReN (睡蓮)
                 </span>
               </Link>
             </div>
