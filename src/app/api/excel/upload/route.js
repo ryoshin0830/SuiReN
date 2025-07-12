@@ -5,25 +5,51 @@ export const runtime = 'nodejs'; // Ensure Node.js runtime for file processing
 
 export async function POST(request) {
   console.log('Excel upload API called');
+  console.log('Request headers:', request.headers);
   
   try {
-    let formData;
-    try {
-      formData = await request.formData();
-    } catch (formError) {
-      console.error('Failed to parse form data:', formError);
+    // Check content-type
+    const contentType = request.headers.get('content-type');
+    console.log('Content-Type:', contentType);
+    
+    if (!contentType || !contentType.includes('multipart/form-data')) {
       return NextResponse.json(
-        { error: 'リクエストの解析に失敗しました' },
+        { error: 'Invalid content type. Expected multipart/form-data' },
         { status: 400 }
       );
     }
     
+    let formData;
+    try {
+      formData = await request.formData();
+      console.log('FormData parsed successfully');
+    } catch (formError) {
+      console.error('Failed to parse form data:', formError);
+      return NextResponse.json(
+        { error: `リクエストの解析に失敗しました: ${formError.message}` },
+        { status: 400 }
+      );
+    }
+    
+    // List all form data keys
+    const keys = Array.from(formData.keys());
+    console.log('FormData keys:', keys);
+    
     const file = formData.get('file');
 
     if (!file) {
-      console.error('No file in form data');
+      console.error('No file in form data. Available keys:', keys);
       return NextResponse.json(
-        { error: 'ファイルが選択されていません' },
+        { error: 'ファイルが選択されていません。FormDataに"file"キーが見つかりません。' },
+        { status: 400 }
+      );
+    }
+    
+    // Check if it's actually a File object
+    if (!(file instanceof File)) {
+      console.error('Form data "file" is not a File object:', typeof file);
+      return NextResponse.json(
+        { error: 'アップロードされたデータがファイルではありません' },
         { status: 400 }
       );
     }

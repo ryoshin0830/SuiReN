@@ -467,6 +467,11 @@ export default function Admin() {
                       accept=".xlsx,.xls"
                       onChange={(e) => {
                         if (e.target.files[0]) {
+                          console.log('File selected:', {
+                            name: e.target.files[0].name,
+                            size: e.target.files[0].size,
+                            type: e.target.files[0].type
+                          });
                           handleExcelUpload(e.target.files[0]);
                         }
                       }}
