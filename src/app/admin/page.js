@@ -267,6 +267,7 @@ export default function Admin() {
                   <th className="px-4 py-2 text-left text-gray-800 font-semibold">タイトル</th>
                   <th className="px-4 py-2 text-left text-gray-800 font-semibold">レベル</th>
                   <th className="px-4 py-2 text-left text-gray-800 font-semibold">問題数</th>
+                  <th className="px-4 py-2 text-left text-gray-800 font-semibold">語数</th>
                   <th className="px-4 py-2 text-left text-gray-800 font-semibold">文字数</th>
                   <th className="px-4 py-2 text-left text-gray-800 font-semibold">操作</th>
                 </tr>
@@ -301,7 +302,10 @@ export default function Admin() {
                       {content.questions.length}問
                     </td>
                     <td className="px-4 py-2 text-gray-800">
-                      {content.text.length}文字
+                      {content.wordCount ? `${content.wordCount}語` : '-'}
+                    </td>
+                    <td className="px-4 py-2 text-gray-800">
+                      {content.characterCount ? `${content.characterCount}文字` : `${content.text.length}文字`}
                     </td>
                     <td className="px-4 py-2">
                       <div className="flex space-x-2">

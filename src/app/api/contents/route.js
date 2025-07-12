@@ -60,7 +60,7 @@ export async function POST(request) {
       totalSize: JSON.stringify(body).length
     });
     
-    const { title, level, levelCode, text, explanation, questions, images, thumbnail } = body;
+    const { title, level, levelCode, text, wordCount, characterCount, explanation, questions, images, thumbnail } = body;
 
     const content = await prisma.content.create({
       data: {
@@ -68,6 +68,8 @@ export async function POST(request) {
         level,
         levelCode,
         text,
+        wordCount: wordCount ? parseInt(wordCount) : null,      // 語数
+        characterCount: characterCount ? parseInt(characterCount) : null, // 文字数
         explanation: explanation || null, // 文章の解説
         images: images || [],
         thumbnail: thumbnail || null,

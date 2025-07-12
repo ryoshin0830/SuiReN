@@ -17,6 +17,8 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
     level: '初級修了レベル',
     levelCode: 'beginner',
     text: '',
+    wordCount: '',    // 語数（手動入力）
+    characterCount: '', // 文字数（手動入力）
     explanation: '', // 文章の解説
     images: [],
     thumbnail: null, // サムネイル画像
@@ -54,6 +56,8 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
         level: content.level,
         levelCode: content.levelCode,
         text: content.text,
+        wordCount: content.wordCount || '',    // 語数
+        characterCount: content.characterCount || '', // 文字数
         explanation: content.explanation || '', // 文章の解説も初期化
         images: images,
         thumbnail: content.thumbnail || null, // サムネイルも初期化
@@ -72,6 +76,8 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
         level: excelData.level || '初級修了レベル',
         levelCode: excelData.levelCode || 'beginner',
         text: excelData.text || '',
+        wordCount: excelData.wordCount || '',    // 語数
+        characterCount: excelData.characterCount || '', // 文字数
         explanation: excelData.explanation || '',
         images: excelData.images || [],
         thumbnail: excelData.thumbnail || null,
@@ -518,6 +524,47 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
                   <option value="中級レベル">中級レベル</option>
                   <option value="上級レベル">上級レベル</option>
                 </select>
+              </div>
+            </div>
+            
+            {/* 語数・文字数入力 */}
+            <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mt-6">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  語数 *
+                  <span className="ml-2 text-xs font-normal text-gray-500">（標準語数を入力）</span>
+                </label>
+                <input
+                  type="number"
+                  value={formData.wordCount}
+                  onChange={(e) => setFormData(prev => ({ ...prev, wordCount: e.target.value }))}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
+                  placeholder="例：250"
+                  min="1"
+                  required
+                />
+                <p className="mt-1 text-xs text-gray-500">
+                  標準語数：漢字・カタカナ・英数字=1.0、ひらがな=0.5として計算
+                </p>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  文字数 *
+                  <span className="ml-2 text-xs font-normal text-gray-500">（実際の文字数を入力）</span>
+                </label>
+                <input
+                  type="number"
+                  value={formData.characterCount}
+                  onChange={(e) => setFormData(prev => ({ ...prev, characterCount: e.target.value }))}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
+                  placeholder="例：450"
+                  min="1"
+                  required
+                />
+                <p className="mt-1 text-xs text-gray-500">
+                  スペースや改行を除いた実際の文字数
+                </p>
               </div>
             </div>
           </div>

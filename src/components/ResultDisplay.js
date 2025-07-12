@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { generateQRCode, createResultData } from '../lib/qr-generator';
 import { downloadScoreSheet } from '../lib/pdf-generator';
-import { calculateReadingStatistics, getStandardWordCountExplanation } from '../lib/speed-calculator';
+import { calculateReadingSpeed } from '../lib/speed-calculator';
 
 export default function ResultDisplay({ content, answers, readingData, onBack, onRetry }) {
   const [qrCode, setQrCode] = useState(null);
@@ -278,13 +278,19 @@ export default function ResultDisplay({ content, answers, readingData, onBack, o
       const analysis = analyzeParagraphViewTime(readingData.scrollData);
       setSpeedAnalysis(analysis);
       
-      // 読書速度統計を計算
-      const statistics = calculateReadingStatistics(
-        content.text,
-        readingData.readingTime,
-        content.level
-      );
-      setReadingStatistics(statistics);
+      // 読書速度を計算（手動入力された語数・文字数を使用）
+      if (content.wordCount && content.characterCount) {
+        const speedWPM = Math.round((content.wordCount / readingData.readingTime) * 60);
+        const speedCPM = Math.round((content.characterCount / readingData.readingTime) * 60);
+        
+        setReadingStatistics({
+          wordCount: content.wordCount,
+          characterCount: content.characterCount,
+          readingSpeedWPM: speedWPM,
+          readingSpeedCPM: speedCPM,
+          readingTime: readingData.readingTime
+        });
+      }
       
       // QRコードは最小限データで生成
       const qrString = await generateQRCode(result.qrData);
@@ -396,19 +402,12 @@ export default function ResultDisplay({ content, answers, readingData, onBack, o
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">読書速度:</span>
-                    <span className="font-bold text-2xl" style={{ color: readingStatistics.speedEvaluationWPM.color }}>
+                    <span className="font-bold text-2xl text-blue-600">
                       {readingStatistics.readingSpeedWPM}語/分
                     </span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600">評価:</span>
-                    <span className="px-3 py-1 rounded-lg font-semibold text-sm" 
-                          style={{ 
-                            backgroundColor: readingStatistics.speedEvaluationWPM.color + '20',
-                            color: readingStatistics.speedEvaluationWPM.color 
-                          }}>
-                      {readingStatistics.speedEvaluationWPM.message}
-                    </span>
+                  <div className="text-sm text-gray-500 mt-2">
+                    読了時間: {readingStatistics.readingTime}秒
                   </div>
                 </div>
               </div>
@@ -421,62 +420,30 @@ export default function ResultDisplay({ content, answers, readingData, onBack, o
                 </h3>
                 <div className="space-y-2">
                   <div className="flex justify-between">
-                    <span className="text-gray-600">標準文字数:</span>
+                    <span className="text-gray-600">文字数:</span>
                     <span className="font-bold text-gray-800">{readingStatistics.characterCount}文字</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">読書速度:</span>
-                    <span className="font-bold text-2xl" style={{ color: readingStatistics.speedEvaluationCPM.color }}>
+                    <span className="font-bold text-2xl text-green-600">
                       {readingStatistics.readingSpeedCPM}文字/分
                     </span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600">評価:</span>
-                    <span className="px-3 py-1 rounded-lg font-semibold text-sm" 
-                          style={{ 
-                            backgroundColor: readingStatistics.speedEvaluationCPM.color + '20',
-                            color: readingStatistics.speedEvaluationCPM.color 
-                          }}>
-                      {readingStatistics.speedEvaluationCPM.message}
-                    </span>
+                  <div className="text-sm text-gray-500 mt-2">
+                    読了時間: {readingStatistics.readingTime}秒
                   </div>
                 </div>
               </div>
             </div>
             
             {/* 標準語数の説明 */}
-            <details className="mt-6 bg-blue-50 rounded-xl p-4 border border-blue-200">
-              <summary className="cursor-pointer font-semibold text-blue-800 flex items-center">
-                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                標準語数とは？
-              </summary>
-              <div className="mt-4 text-sm text-gray-700 space-y-3">
-                <p>{getStandardWordCountExplanation().description}</p>
-                <ul className="list-disc list-inside space-y-1 pl-4">
-                  {getStandardWordCountExplanation().details.map((detail, index) => (
-                    <li key={index}>{detail}</li>
-                  ))}
-                </ul>
-                <div className="mt-4 p-3 bg-white rounded-lg">
-                  <p className="font-semibold text-gray-800 mb-2">例：{getStandardWordCountExplanation().example.text}</p>
-                  <div className="space-y-1 text-xs">
-                    {getStandardWordCountExplanation().example.breakdown.map((item, index) => (
-                      <div key={index} className="flex justify-between">
-                        <span className="font-mono">{item.word}</span>
-                        <span className="text-gray-600">{item.type} (×{item.weight})</span>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="mt-2 pt-2 border-t border-gray-200 text-right">
-                    <span className="text-gray-600">総語数: {getStandardWordCountExplanation().example.totalWords}語</span>
-                    <span className="mx-2">→</span>
-                    <span className="font-bold text-blue-700">標準語数: {getStandardWordCountExplanation().example.standardWordCount}語</span>
-                  </div>
-                </div>
-              </div>
-            </details>
+            <div className="mt-6 bg-blue-50 rounded-xl p-4 border border-blue-200">
+              <p className="text-sm text-gray-700">
+                <strong>標準語数とは：</strong>
+                日本語テキストの実質的な情報量を測るための指標です。
+                漢字・カタカナ・英数字の語を1.0、ひらがなのみの語を0.5として計算した値です。
+              </p>
+            </div>
           </div>
         )}
 

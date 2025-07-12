@@ -62,7 +62,7 @@ export async function PUT(request, { params }) {
   try {
     const { id } = await params;
     const body = await request.json();
-    const { title, level, levelCode, text, explanation, questions, images, thumbnail } = body;
+    const { title, level, levelCode, text, wordCount, characterCount, explanation, questions, images, thumbnail } = body;
 
     // トランザクション内で更新処理（タイムアウトを延長）
     const updatedContent = await prisma.$transaction(async (tx) => {
@@ -86,6 +86,8 @@ export async function PUT(request, { params }) {
           level,
           levelCode,
           text,
+          wordCount: wordCount ? parseInt(wordCount) : null,      // 語数
+          characterCount: characterCount ? parseInt(characterCount) : null, // 文字数
           explanation: explanation || null, // 文章の解説
           images: images || [],
           thumbnail: thumbnail || null,
