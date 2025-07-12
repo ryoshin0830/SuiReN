@@ -35,6 +35,8 @@ export async function POST(request) {
     let title = '';
     let level = '初級修了レベル';
     let text = '';
+    let wordCount = null;
+    let characterCount = null;
     let explanation = '';
 
     // Find and extract data from table format
@@ -85,6 +87,16 @@ export async function POST(request) {
             }
           }
           j++;
+        }
+      } else if (row[0] === '語数' && row[1]) {
+        const count = parseInt(row[1].toString().trim());
+        if (!isNaN(count) && count > 0) {
+          wordCount = count;
+        }
+      } else if (row[0] === '文字数' && row[1]) {
+        const count = parseInt(row[1].toString().trim());
+        if (!isNaN(count) && count > 0) {
+          characterCount = count;
         }
       } else if (row[0] === '文章の解説' && row[1]) {
         // Get the explanation content directly from row[1]
@@ -248,6 +260,8 @@ export async function POST(request) {
       level,
       levelCode,
       text,
+      wordCount,
+      characterCount,
       explanation: explanation || '',
       questions: questions, // Empty array is OK - ContentEditor will handle it
       images: [],
