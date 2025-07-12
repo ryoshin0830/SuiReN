@@ -10,12 +10,18 @@ import {
 } from '../lib/image-utils';
 import { TextWithImagesPreview, TextStatistics } from './TextWithImages';
 import { formatRubyText, getRubyExamples, validateRuby } from '../lib/ruby-utils';
+import { 
+  LEVEL_CODES,
+  LEVEL_DISPLAY_NAMES,
+  DISPLAY_NAME_TO_LEVEL_CODE,
+  getLevelCode
+} from '../lib/level-constants';
 
 export default function ContentEditor({ mode, content, excelData, onClose }) {
   const [formData, setFormData] = useState({
     title: '',
-    level: '中級前半',
-    levelCode: 'beginner',
+    level: LEVEL_DISPLAY_NAMES.BEGINNER,
+    levelCode: LEVEL_CODES.BEGINNER,
     text: '',
     explanation: '', // 文章の解説
     images: [],
@@ -69,8 +75,8 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
       // Excelからインポートしたデータで初期化
       setFormData({
         title: excelData.title || '',
-        level: excelData.level || '中級前半',
-        levelCode: excelData.levelCode || 'beginner',
+        level: excelData.level || LEVEL_DISPLAY_NAMES.BEGINNER,
+        levelCode: excelData.levelCode || LEVEL_CODES.BEGINNER,
         text: excelData.text || '',
         explanation: excelData.explanation || '',
         images: excelData.images || [],
@@ -89,20 +95,7 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
 
   // レベル変更時にlevelCodeも更新
   const handleLevelChange = (level) => {
-    let levelCode;
-    switch (level) {
-      case '中級前半':
-        levelCode = 'beginner';
-        break;
-      case '中級レベル':
-        levelCode = 'intermediate';
-        break;
-      case '上級レベル':
-        levelCode = 'advanced';
-        break;
-      default:
-        levelCode = 'beginner';
-    }
+    const levelCode = getLevelCode(level);
     setFormData(prev => ({ ...prev, level, levelCode }));
   };
 
@@ -514,9 +507,9 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
                   required
                 >
-                  <option value="中級前半">中級前半</option>
-                  <option value="中級レベル">中級レベル</option>
-                  <option value="上級レベル">上級レベル</option>
+                  <option value={LEVEL_DISPLAY_NAMES.BEGINNER}>{LEVEL_DISPLAY_NAMES.BEGINNER}</option>
+                  <option value={LEVEL_DISPLAY_NAMES.INTERMEDIATE}>{LEVEL_DISPLAY_NAMES.INTERMEDIATE}</option>
+                  <option value={LEVEL_DISPLAY_NAMES.ADVANCED}>{LEVEL_DISPLAY_NAMES.ADVANCED}</option>
                 </select>
               </div>
             </div>

@@ -96,6 +96,16 @@ Content {
 
 ### Important Implementation Details
 
+#### Level System Mapping
+- **IMPORTANT**: Level codes and display names use different values for historical reasons
+- Level mapping is centralized in `src/lib/level-constants.js`
+- Database uses these level codes:
+  - `beginner` → Displayed as "中級前半" (formerly "初級修了レベル")
+  - `intermediate` → Displayed as "中級レベル"
+  - `advanced` → Displayed as "上級レベル"
+- Always use the level constants instead of hardcoding values
+- This mapping ensures backward compatibility with existing data
+
 #### Next.js 15 Compatibility
 - All API routes use `await params` for dynamic segments
 - Proper async handling in route handlers

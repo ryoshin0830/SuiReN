@@ -14,6 +14,14 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { 
+  LEVEL_CODES, 
+  LEVEL_CODE_TO_DISPLAY, 
+  LEVEL_ORDER,
+  LEVEL_STYLES,
+  getLevelDisplayName,
+  getLevelStyle 
+} from '../../lib/level-constants';
 
 /**
  * 読解練習ライブラリページコンポーネント
@@ -63,9 +71,9 @@ export default function Reading() {
    */
   const stats = useMemo(() => {
     const total = readingContents.length;
-    const beginner = readingContents.filter(c => c.levelCode === 'beginner').length;
-    const intermediate = readingContents.filter(c => c.levelCode === 'intermediate').length;
-    const advanced = readingContents.filter(c => c.levelCode === 'advanced').length;
+    const beginner = readingContents.filter(c => c.levelCode === LEVEL_CODES.BEGINNER).length;
+    const intermediate = readingContents.filter(c => c.levelCode === LEVEL_CODES.INTERMEDIATE).length;
+    const advanced = readingContents.filter(c => c.levelCode === LEVEL_CODES.ADVANCED).length;
     
     // 平均文字数を計算
     const totalCharacters = readingContents.reduce((sum, content) => sum + (content.characterCount || 0), 0);
@@ -101,7 +109,7 @@ export default function Reading() {
         case 'title':
           return a.title.localeCompare(b.title); // タイトル順（あいうえお順）
         case 'level':
-          const levelOrder = { beginner: 1, intermediate: 2, advanced: 3 };
+          const levelOrder = LEVEL_ORDER;
           return levelOrder[a.levelCode] - levelOrder[b.levelCode]; // レベル順
         case 'questions':
           return b.questions.length - a.questions.length; // 問題数順（多い順）
@@ -226,9 +234,9 @@ export default function Reading() {
               className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-gray-800 bg-white font-medium"
             >
               <option value="all">全レベル</option>
-              <option value="beginner">中級前半</option>
-              <option value="intermediate">中級</option>
-              <option value="advanced">上級</option>
+              <option value={LEVEL_CODES.BEGINNER}>{LEVEL_CODE_TO_DISPLAY[LEVEL_CODES.BEGINNER]}</option>
+              <option value={LEVEL_CODES.INTERMEDIATE}>{LEVEL_CODE_TO_DISPLAY[LEVEL_CODES.INTERMEDIATE]}</option>
+              <option value={LEVEL_CODES.ADVANCED}>{LEVEL_CODE_TO_DISPLAY[LEVEL_CODES.ADVANCED]}</option>
             </select>
             {/* ソート */}
             <select
@@ -249,9 +257,9 @@ export default function Reading() {
             {/* 簡易統計 */}
             <div className="flex items-center space-x-4 text-sm">
               <span className="font-bold text-gray-800">総数: {stats.total}</span>
-              <span className="font-medium text-blue-700">中級前半: {stats.beginner}</span>
-              <span className="font-medium text-emerald-700">中級: {stats.intermediate}</span>
-              <span className="font-medium text-purple-700">上級: {stats.advanced}</span>
+              <span className={`font-medium ${LEVEL_STYLES[LEVEL_CODES.BEGINNER].textBold}`}>{getLevelDisplayName(LEVEL_CODES.BEGINNER)}: {stats.beginner}</span>
+              <span className={`font-medium ${LEVEL_STYLES[LEVEL_CODES.INTERMEDIATE].textBold}`}>{getLevelDisplayName(LEVEL_CODES.INTERMEDIATE)}: {stats.intermediate}</span>
+              <span className={`font-medium ${LEVEL_STYLES[LEVEL_CODES.ADVANCED].textBold}`}>{getLevelDisplayName(LEVEL_CODES.ADVANCED)}: {stats.advanced}</span>
             </div>
             
             {/* 表示モード切り替え */}
@@ -321,16 +329,16 @@ export default function Reading() {
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600">中級前半</span>
-                    <span className="font-bold text-blue-600">{stats.beginner}</span>
+                    <span className="text-gray-600">{getLevelDisplayName(LEVEL_CODES.BEGINNER)}</span>
+                    <span className={`font-bold ${LEVEL_STYLES[LEVEL_CODES.BEGINNER].text}`}>{stats.beginner}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600">中級レベル</span>
-                    <span className="font-bold text-emerald-600">{stats.intermediate}</span>
+                    <span className="text-gray-600">{getLevelDisplayName(LEVEL_CODES.INTERMEDIATE)}</span>
+                    <span className={`font-bold ${LEVEL_STYLES[LEVEL_CODES.INTERMEDIATE].text}`}>{stats.intermediate}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600">上級レベル</span>
-                    <span className="font-bold text-purple-600">{stats.advanced}</span>
+                    <span className="text-gray-600">{getLevelDisplayName(LEVEL_CODES.ADVANCED)}</span>
+                    <span className={`font-bold ${LEVEL_STYLES[LEVEL_CODES.ADVANCED].text}`}>{stats.advanced}</span>
                   </div>
                   <hr className="border-gray-200" />
                   <div className="flex justify-between items-center">
@@ -383,9 +391,9 @@ export default function Reading() {
                     <div className="space-y-2">
                       {[
                         { value: 'all', label: 'すべて', count: stats.total },
-                        { value: 'beginner', label: '中級前半', count: stats.beginner, color: 'blue' },
-                        { value: 'intermediate', label: '中級レベル', count: stats.intermediate, color: 'emerald' },
-                        { value: 'advanced', label: '上級レベル', count: stats.advanced, color: 'purple' }
+                        { value: LEVEL_CODES.BEGINNER, label: getLevelDisplayName(LEVEL_CODES.BEGINNER), count: stats.beginner, color: 'blue' },
+                        { value: LEVEL_CODES.INTERMEDIATE, label: getLevelDisplayName(LEVEL_CODES.INTERMEDIATE), count: stats.intermediate, color: 'emerald' },
+                        { value: LEVEL_CODES.ADVANCED, label: getLevelDisplayName(LEVEL_CODES.ADVANCED), count: stats.advanced, color: 'purple' }
                                              ].map((option) => (
                          <label key={option.value} className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors duration-200">
                            <div className="flex items-center min-w-0">
@@ -526,13 +534,7 @@ export default function Reading() {
                           
                           {/* レベルバッジ */}
                           <div className="absolute top-2 sm:top-4 left-2 sm:left-4">
-                            <span className={`inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-xs font-bold backdrop-blur-sm ${
-                              content.levelCode === 'beginner' 
-                                ? 'bg-blue-500/80 text-white'
-                                : content.levelCode === 'intermediate'
-                                ? 'bg-emerald-500/80 text-white'
-                                : 'bg-purple-500/80 text-white'
-                            }`}>
+                            <span className={`inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-xs font-bold backdrop-blur-sm ${getLevelStyle(content.levelCode, 'badgeHover')}`}>
                               {content.level}
                             </span>
                           </div>
@@ -616,13 +618,7 @@ export default function Reading() {
                             <div className="flex-1 min-w-0 mr-2 sm:mr-3">
                               <h3 className="text-xs sm:text-sm font-bold text-gray-800 mb-0.5 line-clamp-1">{content.title}</h3>
                               <div className="flex items-center space-x-1 sm:space-x-2 flex-wrap">
-                                <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-xs font-bold ${
-                                  content.levelCode === 'beginner' 
-                                    ? 'bg-blue-100 text-blue-700'
-                                    : content.levelCode === 'intermediate'
-                                    ? 'bg-emerald-100 text-emerald-700'
-                                    : 'bg-purple-100 text-purple-700'
-                                }`}>
+                                <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-xs font-bold ${getLevelStyle(content.levelCode, 'badge')}`}>
                                   {content.level}
                                 </span>
                                 <span className="text-xs text-orange-600 font-medium">{(content.characterCount || 0).toLocaleString()}字</span>

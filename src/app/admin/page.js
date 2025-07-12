@@ -2,6 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import ContentEditor from '../../components/ContentEditor';
+import { 
+  LEVEL_CODES, 
+  getLevelDisplayName,
+  getLevelStyle 
+} from '../../lib/level-constants';
 
 const ADMIN_PASSWORD = 'gorira';
 
@@ -287,13 +292,7 @@ export default function Admin() {
                       </button>
                     </td>
                     <td className="px-4 py-2">
-                      <span className={`inline-block px-2 py-1 rounded text-xs ${
-                        content.levelCode === 'beginner' 
-                          ? 'bg-blue-100 text-blue-800'
-                          : content.levelCode === 'intermediate'
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-purple-100 text-purple-800'
-                      }`}>
+                      <span className={`inline-block px-2 py-1 rounded text-xs ${getLevelStyle(content.levelCode)}`}>
                         {content.level}
                       </span>
                     </td>
@@ -356,16 +355,16 @@ export default function Admin() {
               <div className="text-sm text-gray-600">レベル別内訳</div>
               <div className="space-y-1">
                 <div className="flex justify-between text-gray-800">
-                  <span>中級前半</span>
-                  <span>{contents.filter(c => c.levelCode === 'beginner').length}</span>
+                  <span>{getLevelDisplayName(LEVEL_CODES.BEGINNER)}</span>
+                  <span>{contents.filter(c => c.levelCode === LEVEL_CODES.BEGINNER).length}</span>
                 </div>
                 <div className="flex justify-between text-gray-800">
-                  <span>中級レベル</span>
-                  <span>{contents.filter(c => c.levelCode === 'intermediate').length}</span>
+                  <span>{getLevelDisplayName(LEVEL_CODES.INTERMEDIATE)}</span>
+                  <span>{contents.filter(c => c.levelCode === LEVEL_CODES.INTERMEDIATE).length}</span>
                 </div>
                 <div className="flex justify-between text-gray-800">
-                  <span>上級レベル</span>
-                  <span>{contents.filter(c => c.levelCode === 'advanced').length}</span>
+                  <span>{getLevelDisplayName(LEVEL_CODES.ADVANCED)}</span>
+                  <span>{contents.filter(c => c.levelCode === LEVEL_CODES.ADVANCED).length}</span>
                 </div>
               </div>
             </div>
