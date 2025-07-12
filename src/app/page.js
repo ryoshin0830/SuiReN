@@ -116,11 +116,11 @@ export default function Home() {
               </p>
               
               <p className="text-lg">
-                私たちは、睡蓮（SuiReN）のように静かで美しい水面を漂うように、みなさんに日本語の文章を、楽しく速く読んでほしいと思います。
+                私たちは、みなさんに日本語の文章を、楽しくスラスラと読んでほしいと思います。
               </p>
               
               <p className="text-lg">
-                「<span className="font-bold text-blue-600">SuiReN (睡蓮)</span>」の練習では、とても簡単な文章を、なるべく速く読みます。でも、速すぎてはだめです。だいたいの意味がわかるように、そして、速く読んでください。何回もこの練習をしていると、楽しく速く読めるようになりますよ。
+                「<span className="font-bold text-blue-600">スイスイリーダー</span>」の練習では、簡単な文章を、なるべく速く読みます。でも、速すぎてはだめです。だいたいの意味がわかるように、そして、速く読んでください。何回もこの練習をしていると、楽しくスラスラ読めるようになりますよ。
               </p>
               
               <div className="text-center mt-8">
@@ -298,7 +298,7 @@ export default function Home() {
             準備はできましたか？
           </h2>
           <p className="text-xl lg:text-2xl text-white/90 mb-12 leading-relaxed">
-            今日からSuiReN (睡蓮)になって、<br />
+            今日から<br />
             日本語の文章をスイスイ読めるようになりましょう！
           </p>
           
