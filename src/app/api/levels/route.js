@@ -15,18 +15,24 @@ export async function GET() {
 
     return NextResponse.json(levels);
   } catch (error) {
-    // エラーログを簡潔に
-    console.log('Database error, returning default levels:', error.code || error.message);
+    console.log('Level table error:', error.code);
     
-    // デフォルトレベルを返す（エラーの種類に関わらず）
-    // 本番環境ではLevelテーブルが存在するまで、常にデフォルト値を返す
-    const defaultLevels = [
-      { id: 'beginner', displayName: '中級前半', orderIndex: 1, isDefault: true, _count: { contents: 0 } },
-      { id: 'intermediate', displayName: '中級レベル', orderIndex: 2, isDefault: false, _count: { contents: 0 } },
-      { id: 'advanced', displayName: '上級レベル', orderIndex: 3, isDefault: false, _count: { contents: 0 } }
-    ];
-    // 200 status を明示的に返す
-    return NextResponse.json(defaultLevels, { status: 200 });
+    // Prismaエラーコード P2021: テーブルが存在しない
+    if (error.code === 'P2021' || error.code === 'P2022') {
+      // デフォルトレベルを返す
+      const defaultLevels = [
+        { id: 'beginner', displayName: '中級前半', orderIndex: 1, isDefault: true, _count: { contents: 0 } },
+        { id: 'intermediate', displayName: '中級レベル', orderIndex: 2, isDefault: false, _count: { contents: 0 } },
+        { id: 'advanced', displayName: '上級レベル', orderIndex: 3, isDefault: false, _count: { contents: 0 } }
+      ];
+      return NextResponse.json(defaultLevels, { status: 200 });
+    }
+    
+    // その他のエラーの場合
+    return NextResponse.json(
+      { error: 'レベルの取得に失敗しました' },
+      { status: 500 }
+    );
   }
 }
 

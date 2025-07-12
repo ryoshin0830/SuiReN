@@ -27,12 +27,14 @@ export default function LevelManager() {
   }, [levels]);
 
   // データベースの可用性をチェック
-  // 注: Levelテーブルが存在しない場合、現在は常にtrueとして扱う
   useEffect(() => {
-    // 現在のバージョンでは、データベースエラーがあってもデフォルトレベルで動作するため
-    // 常に利用可能として扱う
-    setIsDatabaseAvailable(false); // レベル管理機能は無効化
-  }, []);
+    // レベルデータが正常に取得できているかチェック
+    if (levels && levels.length > 0 && !error) {
+      setIsDatabaseAvailable(true);
+    } else {
+      setIsDatabaseAvailable(false);
+    }
+  }, [levels, error]);
 
   // レベルの表示名を編集
   const handleEditDisplayName = async (levelId, newDisplayName) => {
