@@ -16,9 +16,17 @@ export async function GET() {
     return NextResponse.json(levels);
   } catch (error) {
     console.error('Error fetching levels:', error);
+    console.error('Error code:', error.code);
+    console.error('Error message:', error.message);
     
     // Levelテーブルが存在しない場合のフォールバック
-    if (error.code === 'P2021' || error.message?.includes('table') || error.message?.includes('relation')) {
+    // Prismaのエラーコードをチェック
+    if (error.code === 'P2021' || 
+        error.code === 'P2022' || 
+        error.message?.includes('table') || 
+        error.message?.includes('relation') ||
+        error.message?.includes('does not exist') ||
+        error.message?.includes('Level')) {
       console.log('Level table not found, returning default levels');
       const defaultLevels = [
         { id: 'beginner', displayName: '中級前半', orderIndex: 1, isDefault: true, _count: { contents: 0 } },
