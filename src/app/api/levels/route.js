@@ -16,6 +16,18 @@ export async function GET() {
     return NextResponse.json(levels);
   } catch (error) {
     console.error('Error fetching levels:', error);
+    
+    // Levelテーブルが存在しない場合のフォールバック
+    if (error.code === 'P2021' || error.message?.includes('table') || error.message?.includes('relation')) {
+      console.log('Level table not found, returning default levels');
+      const defaultLevels = [
+        { id: 'beginner', displayName: '中級前半', orderIndex: 1, isDefault: true, _count: { contents: 0 } },
+        { id: 'intermediate', displayName: '中級レベル', orderIndex: 2, isDefault: false, _count: { contents: 0 } },
+        { id: 'advanced', displayName: '上級レベル', orderIndex: 3, isDefault: false, _count: { contents: 0 } }
+      ];
+      return NextResponse.json(defaultLevels);
+    }
+    
     return NextResponse.json(
       { error: 'レベルの取得に失敗しました' },
       { status: 500 }
@@ -83,6 +95,15 @@ export async function POST(request) {
     return NextResponse.json(newLevel, { status: 201 });
   } catch (error) {
     console.error('Error creating level:', error);
+    
+    // Levelテーブルが存在しない場合
+    if (error.code === 'P2021' || error.message?.includes('table') || error.message?.includes('relation')) {
+      return NextResponse.json(
+        { error: 'レベル管理機能は現在利用できません。データベースの設定が必要です。' },
+        { status: 503 }
+      );
+    }
+    
     return NextResponse.json(
       { error: 'レベルの作成に失敗しました' },
       { status: 500 }

@@ -26,6 +26,25 @@ export async function GET(request, props) {
     return NextResponse.json(level);
   } catch (error) {
     console.error('Error fetching level:', error);
+    
+    // Levelテーブルが存在しない場合のフォールバック
+    if (error.code === 'P2021' || error.message?.includes('table') || error.message?.includes('relation')) {
+      const defaultLevels = {
+        'beginner': { id: 'beginner', displayName: '中級前半', orderIndex: 1, isDefault: true, _count: { contents: 0 } },
+        'intermediate': { id: 'intermediate', displayName: '中級レベル', orderIndex: 2, isDefault: false, _count: { contents: 0 } },
+        'advanced': { id: 'advanced', displayName: '上級レベル', orderIndex: 3, isDefault: false, _count: { contents: 0 } }
+      };
+      
+      if (defaultLevels[id]) {
+        return NextResponse.json(defaultLevels[id]);
+      }
+      
+      return NextResponse.json(
+        { error: 'レベルが見つかりません' },
+        { status: 404 }
+      );
+    }
+    
     return NextResponse.json(
       { error: 'レベルの取得に失敗しました' },
       { status: 500 }
@@ -77,6 +96,15 @@ export async function PUT(request, props) {
     return NextResponse.json(updatedLevel);
   } catch (error) {
     console.error('Error updating level:', error);
+    
+    // Levelテーブルが存在しない場合
+    if (error.code === 'P2021' || error.message?.includes('table') || error.message?.includes('relation')) {
+      return NextResponse.json(
+        { error: 'レベル管理機能は現在利用できません。データベースの設定が必要です。' },
+        { status: 503 }
+      );
+    }
+    
     if (error.code === 'P2025') {
       return NextResponse.json(
         { error: 'レベルが見つかりません' },
@@ -161,6 +189,15 @@ export async function DELETE(request, props) {
     });
   } catch (error) {
     console.error('Error deleting level:', error);
+    
+    // Levelテーブルが存在しない場合
+    if (error.code === 'P2021' || error.message?.includes('table') || error.message?.includes('relation')) {
+      return NextResponse.json(
+        { error: 'レベル管理機能は現在利用できません。データベースの設定が必要です。' },
+        { status: 503 }
+      );
+    }
+    
     return NextResponse.json(
       { error: 'レベルの削除に失敗しました' },
       { status: 500 }
