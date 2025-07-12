@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import * as XLSX from 'xlsx';
-import { LEVEL_DISPLAY_NAMES } from '../../../lib/level-constants';
+import { LEVEL_DISPLAY_NAMES } from '../../../../lib/level-constants';
 
 export async function GET() {
   try {

@@ -5,7 +5,7 @@ import {
   LEVEL_DISPLAY_NAMES,
   DISPLAY_NAME_TO_LEVEL_CODE,
   getLevelCode
-} from '../../../lib/level-constants';
+} from '../../../../lib/level-constants';
 
 export async function POST(request) {
   try {
