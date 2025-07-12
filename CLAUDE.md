@@ -53,7 +53,7 @@ curl -X POST http://localhost:3000/api/excel/upload -F "file=@content.xlsx"
 ## Architecture
 
 ### Overview
-SuiReN (睡蓮) is a Next.js 15 web application for Japanese language learners to practice speed reading. It tracks reading time, measures comprehension through quizzes, and generates color-coded QR codes based on performance.
+SuiReN is a Next.js 15 web application for Japanese language learners to practice speed reading. It tracks reading time, measures comprehension through quizzes, and generates color-coded QR codes based on performance.
 
 ### Key Components
 

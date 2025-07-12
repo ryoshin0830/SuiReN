@@ -1,10 +1,10 @@
-# SuiReN（睡蓮）― Japanese Speed Reading
+# SuiReN ― Japanese Speed Reading
 
 日本語学習者のための速読練習ウェブサイト
 
 ## プロジェクト概要
 
-SuiReN（睡蓮）は、日本語学習者の読解流暢さ（Fluency）向上を目的とした速読練習ウェブサイトです。
+SuiReNは、日本語学習者の読解流暢さ（Fluency）向上を目的とした速読練習ウェブサイトです。
 
 ### 主な機能
 
