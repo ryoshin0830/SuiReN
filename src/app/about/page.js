@@ -16,7 +16,8 @@ export default function About() {
           </p>
           <p>
             読解におけるfluencyは、<strong>正確性</strong>、<strong>自動性</strong>、<strong>速度</strong>の
-            3つの要素から構成されます。
+            3つの要素から構成されます。速度は「語数/分（WPM: Words Per Minute）」で測定され、
+            日本語の場合は「標準語数」という概念を導入して計算しています。
           </p>
         </div>
       </div>
@@ -97,6 +98,50 @@ export default function About() {
             継続的な練習により、日本語を読む際の自動性が向上し、
             より自然で流暢な読解能力の獲得が期待できます。
           </p>
+        </div>
+      </div>
+      <div className="bg-white rounded-lg shadow-md p-8">
+        <h2 className="text-2xl font-semibold text-gray-900 mb-6">
+          読書速度の測定方法
+        </h2>
+        <div className="text-gray-700 space-y-4">
+          <h3 className="text-lg font-semibold text-gray-900">標準語数とは？</h3>
+          <p>
+            日本語テキストの実質的な情報量を測るための指標です。
+            SuiReNでは、形態素解析に基づいた語彙単位でカウントし、
+            以下の重み付けを行っています：
+          </p>
+          <ul className="list-disc list-inside space-y-2 ml-4">
+            <li>漢字・カタカナ・英数字の語：1.0として計算</li>
+            <li>ひらがなのみの語（助詞など）：0.5として計算</li>
+          </ul>
+          
+          <h3 className="text-lg font-semibold text-gray-900 mt-6">速度の計算方法</h3>
+          <p>
+            読書速度 = 標準語数 ÷ 読書時間（分）
+          </p>
+          <p className="mt-2">
+            この計算方法により、日本語の特殊性を考慮した
+            公平な速度測定が可能になります。
+          </p>
+          
+          <h3 className="text-lg font-semibold text-gray-900 mt-6">目標速度の目安</h3>
+          <div className="mt-2">
+            <p className="font-semibold">日本語学習者：</p>
+            <ul className="list-disc list-inside space-y-1 ml-4">
+              <li>初級：50-100語/分</li>
+              <li>中級：100-200語/分</li>
+              <li>上級：200-300語/分</li>
+            </ul>
+            
+            <p className="font-semibold mt-4">日本語ネイティブスピーカー：</p>
+            <ul className="list-disc list-inside space-y-1 ml-4">
+              <li>小学生：100-200語/分</li>
+              <li>中学生：200-300語/分</li>
+              <li>高校生：300-400語/分</li>
+              <li>大学生・成人：400-600語/分</li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
