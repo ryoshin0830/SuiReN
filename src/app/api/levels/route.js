@@ -15,20 +15,18 @@ export async function GET() {
 
     return NextResponse.json(levels);
   } catch (error) {
-    console.error('Error fetching levels:', error);
-    console.error('Error code:', error.code);
-    console.error('Error message:', error.message);
-    console.error('Error name:', error.name);
+    // エラーログを簡潔に
+    console.log('Database error, returning default levels:', error.code || error.message);
     
     // デフォルトレベルを返す（エラーの種類に関わらず）
     // 本番環境ではLevelテーブルが存在するまで、常にデフォルト値を返す
-    console.log('Returning default levels due to database error');
     const defaultLevels = [
       { id: 'beginner', displayName: '中級前半', orderIndex: 1, isDefault: true, _count: { contents: 0 } },
       { id: 'intermediate', displayName: '中級レベル', orderIndex: 2, isDefault: false, _count: { contents: 0 } },
       { id: 'advanced', displayName: '上級レベル', orderIndex: 3, isDefault: false, _count: { contents: 0 } }
     ];
-    return NextResponse.json(defaultLevels);
+    // 200 status を明示的に返す
+    return NextResponse.json(defaultLevels, { status: 200 });
   }
 }
 

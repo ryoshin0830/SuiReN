@@ -25,7 +25,8 @@ export async function GET(request, props) {
 
     return NextResponse.json(level);
   } catch (error) {
-    console.error('Error fetching level:', error);
+    // エラーログを簡潔に
+    console.log('Database error, returning default level:', error.code || error.message);
     
     // データベースエラーの場合は常にデフォルト値を返す
     const defaultLevels = {
@@ -35,7 +36,7 @@ export async function GET(request, props) {
     };
     
     if (defaultLevels[id]) {
-      return NextResponse.json(defaultLevels[id]);
+      return NextResponse.json(defaultLevels[id], { status: 200 });
     }
     
     return NextResponse.json(
