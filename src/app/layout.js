@@ -8,7 +8,7 @@ const notoSansJP = Noto_Sans_JP({
 });
 
 export const metadata = {
-  title: "SuiReN (睡蓮) - Japanese Speed Reading",
+  title: "SuiReN - Japanese Speed Reading",
   description: "日本語学習者のための速読ウェブサイト",
 };
 

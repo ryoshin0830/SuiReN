@@ -189,7 +189,7 @@ export default function Reading() {
             <div className="flex items-center space-x-4">
               <img 
                 src="/logos/gorilla-only-animated.svg" 
-                alt="SuiReN (睡蓮)" 
+                alt="SuiReN" 
                 className="h-12 w-auto drop-shadow-lg"
               />
               <div>

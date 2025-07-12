@@ -1,5 +1,5 @@
 /**
- * Layout.js - SuiReN (睡蓮) Japanese Speed Reading アプリケーションのメインレイアウトコンポーネント
+ * Layout.js - SuiReN Japanese Speed Reading アプリケーションのメインレイアウトコンポーネント
  * 
  * 機能:
  * - 全ページ共通のナビゲーションバーを提供
@@ -42,7 +42,7 @@ export default function Layout({ children }) {
                 <div className="relative">
                   <img 
                     src="/logos/gorilla-only-friendly.svg" 
-                    alt="SuiReN (睡蓮)" 
+                    alt="SuiReN" 
                     className="h-8 sm:h-12 w-auto transition-all duration-300 group-hover:drop-shadow-lg"
                   />
                   {/* ホバー時のグロー効果 */}
@@ -51,7 +51,7 @@ export default function Layout({ children }) {
                 
                 {/* サイト名 - グラデーションテキスト */}
                 <span className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
-                  SuiReN (睡蓮)
+                  SuiReN
                 </span>
               </Link>
             </div>
