@@ -14,14 +14,7 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { 
-  LEVEL_CODES, 
-  LEVEL_CODE_TO_DISPLAY, 
-  LEVEL_ORDER,
-  LEVEL_STYLES,
-  getLevelDisplayName,
-  getLevelStyle 
-} from '../../lib/level-constants';
+import { useLevels } from '../../hooks/useLevels';
 
 /**
  * 読解練習ライブラリページコンポーネント
@@ -31,6 +24,7 @@ import {
 export default function Reading() {
   // ===== 状態管理 =====
   const router = useRouter();
+  const { levels, loading: levelsLoading, getLevelDisplayName, getLevelStyle } = useLevels();
   const [searchTerm, setSearchTerm] = useState(''); // 検索キーワード
   const [levelFilter, setLevelFilter] = useState('all'); // レベルフィルタ（all, beginner, intermediate, advanced）
   const [sortBy, setSortBy] = useState('id'); // 並び替え基準（id, title, level, questions）
@@ -71,16 +65,19 @@ export default function Reading() {
    */
   const stats = useMemo(() => {
     const total = readingContents.length;
-    const beginner = readingContents.filter(c => c.levelCode === LEVEL_CODES.BEGINNER).length;
-    const intermediate = readingContents.filter(c => c.levelCode === LEVEL_CODES.INTERMEDIATE).length;
-    const advanced = readingContents.filter(c => c.levelCode === LEVEL_CODES.ADVANCED).length;
+    
+    // 各レベルのコンテンツ数を計算
+    const levelCounts = {};
+    levels.forEach(level => {
+      levelCounts[level.id] = readingContents.filter(c => c.levelCode === level.id).length;
+    });
     
     // 平均文字数を計算
     const totalCharacters = readingContents.reduce((sum, content) => sum + (content.characterCount || 0), 0);
     const averageCharacters = total > 0 ? Math.round(totalCharacters / total) : 0;
     
-    return { total, beginner, intermediate, advanced, averageCharacters };
-  }, [readingContents]);
+    return { total, levelCounts, averageCharacters };
+  }, [readingContents, levels]);
 
   // ===== フィルタリング・ソート処理 =====
   /**
@@ -232,11 +229,14 @@ export default function Reading() {
               value={levelFilter}
               onChange={(e) => setLevelFilter(e.target.value)}
               className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-gray-800 bg-white font-medium"
+              disabled={levelsLoading}
             >
               <option value="all">全レベル</option>
-              <option value={LEVEL_CODES.BEGINNER}>{LEVEL_CODE_TO_DISPLAY[LEVEL_CODES.BEGINNER]}</option>
-              <option value={LEVEL_CODES.INTERMEDIATE}>{LEVEL_CODE_TO_DISPLAY[LEVEL_CODES.INTERMEDIATE]}</option>
-              <option value={LEVEL_CODES.ADVANCED}>{LEVEL_CODE_TO_DISPLAY[LEVEL_CODES.ADVANCED]}</option>
+              {levels.map(level => (
+                <option key={level.id} value={level.id}>
+                  {level.displayName}
+                </option>
+              ))}
             </select>
             {/* ソート */}
             <select
@@ -257,9 +257,11 @@ export default function Reading() {
             {/* 簡易統計 */}
             <div className="flex items-center space-x-4 text-sm">
               <span className="font-bold text-gray-800">総数: {stats.total}</span>
-              <span className={`font-medium ${LEVEL_STYLES[LEVEL_CODES.BEGINNER].textBold}`}>{getLevelDisplayName(LEVEL_CODES.BEGINNER)}: {stats.beginner}</span>
-              <span className={`font-medium ${LEVEL_STYLES[LEVEL_CODES.INTERMEDIATE].textBold}`}>{getLevelDisplayName(LEVEL_CODES.INTERMEDIATE)}: {stats.intermediate}</span>
-              <span className={`font-medium ${LEVEL_STYLES[LEVEL_CODES.ADVANCED].textBold}`}>{getLevelDisplayName(LEVEL_CODES.ADVANCED)}: {stats.advanced}</span>
+              {levels.map(level => (
+                <span key={level.id} className={`font-medium ${getLevelStyle(level.id, 'textBold')}`}>
+                  {level.displayName}: {stats.levelCounts[level.id] || 0}
+                </span>
+              ))}
             </div>
             
             {/* 表示モード切り替え */}
@@ -328,18 +330,14 @@ export default function Reading() {
                       {stats.total}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600">{getLevelDisplayName(LEVEL_CODES.BEGINNER)}</span>
-                    <span className={`font-bold ${LEVEL_STYLES[LEVEL_CODES.BEGINNER].text}`}>{stats.beginner}</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600">{getLevelDisplayName(LEVEL_CODES.INTERMEDIATE)}</span>
-                    <span className={`font-bold ${LEVEL_STYLES[LEVEL_CODES.INTERMEDIATE].text}`}>{stats.intermediate}</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600">{getLevelDisplayName(LEVEL_CODES.ADVANCED)}</span>
-                    <span className={`font-bold ${LEVEL_STYLES[LEVEL_CODES.ADVANCED].text}`}>{stats.advanced}</span>
-                  </div>
+                  {levels.map(level => (
+                    <div key={level.id} className="flex justify-between items-center">
+                      <span className="text-gray-600">{level.displayName}</span>
+                      <span className={`font-bold ${getLevelStyle(level.id, 'text')}`}>
+                        {stats.levelCounts[level.id] || 0}
+                      </span>
+                    </div>
+                  ))}
                   <hr className="border-gray-200" />
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">平均文字数</span>
@@ -391,10 +389,13 @@ export default function Reading() {
                     <div className="space-y-2">
                       {[
                         { value: 'all', label: 'すべて', count: stats.total },
-                        { value: LEVEL_CODES.BEGINNER, label: getLevelDisplayName(LEVEL_CODES.BEGINNER), count: stats.beginner, color: 'blue' },
-                        { value: LEVEL_CODES.INTERMEDIATE, label: getLevelDisplayName(LEVEL_CODES.INTERMEDIATE), count: stats.intermediate, color: 'emerald' },
-                        { value: LEVEL_CODES.ADVANCED, label: getLevelDisplayName(LEVEL_CODES.ADVANCED), count: stats.advanced, color: 'purple' }
-                                             ].map((option) => (
+                        ...levels.map(level => ({
+                          value: level.id,
+                          label: level.displayName,
+                          count: stats.levelCounts[level.id] || 0,
+                          color: level.id === 'beginner' ? 'blue' : level.id === 'intermediate' ? 'emerald' : level.id === 'advanced' ? 'purple' : 'gray'
+                        }))
+                      ].map((option) => (
                          <label key={option.value} className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors duration-200">
                            <div className="flex items-center min-w-0">
                              <input

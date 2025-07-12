@@ -72,6 +72,9 @@ npx prisma db push
 # 初期データの投入（オプション）
 node scripts/seed.js
 
+# レベルマスタの初期化
+node scripts/migrate-levels.js
+
 # 開発サーバーの起動
 npm run dev
 ```

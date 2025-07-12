@@ -10,18 +10,16 @@ import {
 } from '../lib/image-utils';
 import { TextWithImagesPreview, TextStatistics } from './TextWithImages';
 import { formatRubyText, getRubyExamples, validateRuby } from '../lib/ruby-utils';
-import { 
-  LEVEL_CODES,
-  LEVEL_DISPLAY_NAMES,
-  DISPLAY_NAME_TO_LEVEL_CODE,
-  getLevelCode
-} from '../lib/level-constants';
+import { useLevels } from '../hooks/useLevels';
 
 export default function ContentEditor({ mode, content, excelData, onClose }) {
+  const { levels, loading: levelsLoading, getDefaultLevel } = useLevels();
+  const defaultLevel = getDefaultLevel();
+  
   const [formData, setFormData] = useState({
     title: '',
-    level: LEVEL_DISPLAY_NAMES.BEGINNER,
-    levelCode: LEVEL_CODES.BEGINNER,
+    level: '',
+    levelCode: '',
     text: '',
     explanation: '', // 文章の解説
     images: [],
@@ -49,6 +47,17 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
     format: 'basic'
   });
 
+  // デフォルトレベルの設定
+  useEffect(() => {
+    if (defaultLevel && !formData.level && !formData.levelCode) {
+      setFormData(prev => ({
+        ...prev,
+        level: defaultLevel.displayName,
+        levelCode: defaultLevel.id
+      }));
+    }
+  }, [defaultLevel, formData.level, formData.levelCode]);
+
   // 編集モードの場合、既存データで初期化
   useEffect(() => {
     if (mode === 'edit' && content) {
@@ -73,10 +82,11 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
       setImageManagerVersion(prev => prev + 1); // 再レンダリングを強制
     } else if (mode === 'create' && excelData) {
       // Excelからインポートしたデータで初期化
+      const defaultLvl = defaultLevel || { displayName: '', id: '' };
       setFormData({
         title: excelData.title || '',
-        level: excelData.level || LEVEL_DISPLAY_NAMES.BEGINNER,
-        levelCode: excelData.levelCode || LEVEL_CODES.BEGINNER,
+        level: excelData.level || defaultLvl.displayName,
+        levelCode: excelData.levelCode || defaultLvl.id,
         text: excelData.text || '',
         explanation: excelData.explanation || '',
         images: excelData.images || [],
@@ -91,12 +101,18 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
         ]
       });
     }
-  }, [mode, content, excelData, imageManager]);
+  }, [mode, content, excelData, imageManager, defaultLevel]);
 
   // レベル変更時にlevelCodeも更新
-  const handleLevelChange = (level) => {
-    const levelCode = getLevelCode(level);
-    setFormData(prev => ({ ...prev, level, levelCode }));
+  const handleLevelChange = (levelId) => {
+    const selectedLevel = levels.find(l => l.id === levelId);
+    if (selectedLevel) {
+      setFormData(prev => ({ 
+        ...prev, 
+        level: selectedLevel.displayName, 
+        levelCode: selectedLevel.id 
+      }));
+    }
   };
 
   // 画像アップロード処理
@@ -502,14 +518,21 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
                   レベル *
                 </label>
                 <select
-                  value={formData.level}
+                  value={formData.levelCode}
                   onChange={(e) => handleLevelChange(e.target.value)}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
                   required
+                  disabled={levelsLoading}
                 >
-                  <option value={LEVEL_DISPLAY_NAMES.BEGINNER}>{LEVEL_DISPLAY_NAMES.BEGINNER}</option>
-                  <option value={LEVEL_DISPLAY_NAMES.INTERMEDIATE}>{LEVEL_DISPLAY_NAMES.INTERMEDIATE}</option>
-                  <option value={LEVEL_DISPLAY_NAMES.ADVANCED}>{LEVEL_DISPLAY_NAMES.ADVANCED}</option>
+                  {levelsLoading ? (
+                    <option>読み込み中...</option>
+                  ) : (
+                    levels.map(level => (
+                      <option key={level.id} value={level.id}>
+                        {level.displayName}
+                      </option>
+                    ))
+                  )}
                 </select>
               </div>
             </div>
