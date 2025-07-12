@@ -14,7 +14,7 @@ import { formatRubyText, getRubyExamples, validateRuby } from '../lib/ruby-utils
 export default function ContentEditor({ mode, content, excelData, onClose }) {
   const [formData, setFormData] = useState({
     title: '',
-    level: '初級修了レベル',
+    level: '中級前半',
     levelCode: 'beginner',
     text: '',
     explanation: '', // 文章の解説
@@ -69,7 +69,7 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
       // Excelからインポートしたデータで初期化
       setFormData({
         title: excelData.title || '',
-        level: excelData.level || '初級修了レベル',
+        level: excelData.level || '中級前半',
         levelCode: excelData.levelCode || 'beginner',
         text: excelData.text || '',
         explanation: excelData.explanation || '',
@@ -91,7 +91,7 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
   const handleLevelChange = (level) => {
     let levelCode;
     switch (level) {
-      case '初級修了レベル':
+      case '中級前半':
         levelCode = 'beginner';
         break;
       case '中級レベル':
@@ -514,7 +514,7 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
                   required
                 >
-                  <option value="初級修了レベル">初級修了レベル</option>
+                  <option value="中級前半">中級前半</option>
                   <option value="中級レベル">中級レベル</option>
                   <option value="上級レベル">上級レベル</option>
                 </select>

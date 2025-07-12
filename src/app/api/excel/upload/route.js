@@ -33,7 +33,7 @@ export async function POST(request) {
 
     // Extract basic information using new table format
     let title = '';
-    let level = '初級修了レベル';
+    let level = '中級前半';
     let text = '';
     let explanation = '';
 
@@ -50,7 +50,7 @@ export async function POST(request) {
         title = row[1].toString().trim();
       } else if (row[0] === 'レベル' && row[1]) {
         const levelValue = row[1].toString().trim();
-        if (['初級修了レベル', '中級レベル', '上級レベル'].includes(levelValue)) {
+        if (['中級前半', '中級レベル', '上級レベル'].includes(levelValue)) {
           level = levelValue;
         }
       } else if (row[0] === '本文' && row[1]) {
@@ -231,7 +231,7 @@ export async function POST(request) {
     // Determine level code
     let levelCode = 'beginner';
     switch (level) {
-      case '初級修了レベル':
+      case '中級前半':
         levelCode = 'beginner';
         break;
       case '中級レベル':

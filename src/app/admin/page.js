@@ -356,7 +356,7 @@ export default function Admin() {
               <div className="text-sm text-gray-600">レベル別内訳</div>
               <div className="space-y-1">
                 <div className="flex justify-between text-gray-800">
-                  <span>初級レベル</span>
+                  <span>中級前半</span>
                   <span>{contents.filter(c => c.levelCode === 'beginner').length}</span>
                 </div>
                 <div className="flex justify-between text-gray-800">
