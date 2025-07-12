@@ -25,8 +25,9 @@ export async function GET() {
       level: content.level,
       levelCode: content.levelCode,
       text: content.text,
+      wordCount: content.wordCount,    // 語数
+      characterCount: content.characterCount || content.text.length, // 文字数
       explanation: content.explanation || '', // 文章の解説
-      characterCount: content.text.length, // 文字数を追加
       images: content.images || [],
       thumbnail: content.thumbnail || null,
       questions: content.questions.map(question => ({
@@ -61,6 +62,15 @@ export async function POST(request) {
     });
     
     const { title, level, levelCode, text, wordCount, characterCount, explanation, questions, images, thumbnail } = body;
+    
+    console.log('POST /api/contents received wordCount/characterCount:', {
+      wordCount: { value: wordCount, type: typeof wordCount },
+      characterCount: { value: characterCount, type: typeof characterCount },
+      willBeSaved: {
+        wordCount: wordCount ? parseInt(wordCount) : null,
+        characterCount: characterCount ? parseInt(characterCount) : null
+      }
+    });
 
     const content = await prisma.content.create({
       data: {

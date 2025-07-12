@@ -34,8 +34,9 @@ export async function GET(request, { params }) {
       level: content.level,
       levelCode: content.levelCode,
       text: content.text,
+      wordCount: content.wordCount,    // 語数
+      characterCount: content.characterCount || content.text.length, // 文字数（保存された値または自動計算）
       explanation: content.explanation || '', // 文章の解説
-      characterCount: content.text.length, // 文字数を追加
       images: content.images || [],
       thumbnail: content.thumbnail || null,
       questions: content.questions.map(question => ({
@@ -63,6 +64,12 @@ export async function PUT(request, { params }) {
     const { id } = await params;
     const body = await request.json();
     const { title, level, levelCode, text, wordCount, characterCount, explanation, questions, images, thumbnail } = body;
+    
+    console.log('PUT /api/contents/[id] received:', {
+      id,
+      wordCount: { value: wordCount, type: typeof wordCount },
+      characterCount: { value: characterCount, type: typeof characterCount }
+    });
 
     // トランザクション内で更新処理（タイムアウトを延長）
     const updatedContent = await prisma.$transaction(async (tx) => {
