@@ -354,10 +354,15 @@ export default function LevelManager() {
                 <input
                   type="text"
                   value={newLevel.id}
-                  onChange={(e) => setNewLevel(prev => ({ ...prev, id: e.target.value.toLowerCase() }))}
+                  onChange={(e) => {
+                    const value = e.target.value.toLowerCase();
+                    // 英数字とハイフンのみを許可
+                    if (/^[a-z0-9-]*$/.test(value)) {
+                      setNewLevel(prev => ({ ...prev, id: value }));
+                    }
+                  }}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900"
                   placeholder="例: upper-intermediate"
-                  pattern="[a-z0-9\\-]+"
                 />
               </div>
               
