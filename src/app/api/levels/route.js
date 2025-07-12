@@ -18,28 +18,17 @@ export async function GET() {
     console.error('Error fetching levels:', error);
     console.error('Error code:', error.code);
     console.error('Error message:', error.message);
+    console.error('Error name:', error.name);
     
-    // Levelテーブルが存在しない場合のフォールバック
-    // Prismaのエラーコードをチェック
-    if (error.code === 'P2021' || 
-        error.code === 'P2022' || 
-        error.message?.includes('table') || 
-        error.message?.includes('relation') ||
-        error.message?.includes('does not exist') ||
-        error.message?.includes('Level')) {
-      console.log('Level table not found, returning default levels');
-      const defaultLevels = [
-        { id: 'beginner', displayName: '中級前半', orderIndex: 1, isDefault: true, _count: { contents: 0 } },
-        { id: 'intermediate', displayName: '中級レベル', orderIndex: 2, isDefault: false, _count: { contents: 0 } },
-        { id: 'advanced', displayName: '上級レベル', orderIndex: 3, isDefault: false, _count: { contents: 0 } }
-      ];
-      return NextResponse.json(defaultLevels);
-    }
-    
-    return NextResponse.json(
-      { error: 'レベルの取得に失敗しました' },
-      { status: 500 }
-    );
+    // デフォルトレベルを返す（エラーの種類に関わらず）
+    // 本番環境ではLevelテーブルが存在するまで、常にデフォルト値を返す
+    console.log('Returning default levels due to database error');
+    const defaultLevels = [
+      { id: 'beginner', displayName: '中級前半', orderIndex: 1, isDefault: true, _count: { contents: 0 } },
+      { id: 'intermediate', displayName: '中級レベル', orderIndex: 2, isDefault: false, _count: { contents: 0 } },
+      { id: 'advanced', displayName: '上級レベル', orderIndex: 3, isDefault: false, _count: { contents: 0 } }
+    ];
+    return NextResponse.json(defaultLevels);
   }
 }
 
