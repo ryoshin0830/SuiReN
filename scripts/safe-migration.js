@@ -29,8 +29,8 @@ async function safeMigration() {
           "displayName" VARCHAR(255) NOT NULL,
           "orderIndex" INTEGER NOT NULL,
           "isDefault" BOOLEAN DEFAULT false,
-          "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-          "updatedAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+          "createdAt" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
+          "updatedAt" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP
         )
       `;
     }
@@ -44,38 +44,62 @@ async function safeMigration() {
 
     for (const level of levels) {
       try {
+        const now = new Date();
         await prisma.$executeRaw`
-          INSERT INTO levels (id, "displayName", "orderIndex", "isDefault")
-          VALUES (${level.id}, ${level.displayName}, ${level.orderIndex}, ${level.isDefault})
+          INSERT INTO levels (id, "displayName", "orderIndex", "isDefault", "createdAt", "updatedAt")
+          VALUES (${level.id}, ${level.displayName}, ${level.orderIndex}, ${level.isDefault}, ${now}, ${now})
           ON CONFLICT (id) DO UPDATE SET
             "displayName" = ${level.displayName},
-            "orderIndex" = ${level.orderIndex}
+            "orderIndex" = ${level.orderIndex},
+            "updatedAt" = ${now}
         `;
         console.log(`✓ Level ${level.id} created/updated`);
       } catch (error) {
         console.log(`Level ${level.id} error:`, error.message);
+        console.log('Full error:', error);
       }
     }
 
-    // 4. 無効なlevelCodeを修正
+    // 4. 既存の外部キー制約を削除（存在する場合）
+    console.log('Removing existing foreign key constraint if exists...');
+    try {
+      await prisma.$executeRaw`
+        ALTER TABLE contents DROP CONSTRAINT IF EXISTS "contents_levelCode_fkey"
+      `;
+      console.log('✓ Existing foreign key constraint removed');
+    } catch (error) {
+      console.log('No existing foreign key constraint to remove');
+    }
+
+    // 5. 無効なlevelCodeを修正
     console.log('Fixing invalid level codes...');
     
     // NULLまたは空のlevelCodeを修正
-    await prisma.$executeRaw`
+    const nullFixed = await prisma.$executeRaw`
       UPDATE contents 
       SET "levelCode" = 'beginner'
       WHERE "levelCode" IS NULL OR "levelCode" = ''
     `;
+    console.log(`✓ Fixed ${nullFixed} NULL or empty levelCodes`);
 
     // 存在しないレベルコードを修正
-    await prisma.$executeRaw`
+    const invalidFixed = await prisma.$executeRaw`
       UPDATE contents 
       SET "levelCode" = 'beginner'
       WHERE "levelCode" NOT IN ('beginner', 'intermediate', 'advanced')
     `;
+    console.log(`✓ Fixed ${invalidFixed} invalid levelCodes`);
 
-    console.log('Migration completed successfully!');
-    console.log('You can now run "prisma db push" safely.');
+    // 6. レベルコードの統計を表示
+    const stats = await prisma.$queryRaw`
+      SELECT "levelCode", COUNT(*) as count 
+      FROM contents 
+      GROUP BY "levelCode"
+    `;
+    console.log('Content level distribution:', stats);
+
+    console.log('\nMigration completed successfully!');
+    console.log('Database is now ready for prisma db push.');
 
   } catch (error) {
     console.error('Migration error:', error);
