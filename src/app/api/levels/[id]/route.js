@@ -91,23 +91,10 @@ export async function PUT(request, props) {
   } catch (error) {
     console.error('Error updating level:', error);
     
-    // Levelテーブルが存在しない場合
-    if (error.code === 'P2021' || error.message?.includes('table') || error.message?.includes('relation')) {
-      return NextResponse.json(
-        { error: 'レベル管理機能は現在利用できません。データベースの設定が必要です。' },
-        { status: 503 }
-      );
-    }
-    
-    if (error.code === 'P2025') {
-      return NextResponse.json(
-        { error: 'レベルが見つかりません' },
-        { status: 404 }
-      );
-    }
+    // すべてのエラーに対して503を返す
     return NextResponse.json(
-      { error: 'レベルの更新に失敗しました' },
-      { status: 500 }
+      { error: 'レベル管理機能は現在利用できません。データベースの設定が必要です。' },
+      { status: 503 }
     );
   }
 }
@@ -184,17 +171,10 @@ export async function DELETE(request, props) {
   } catch (error) {
     console.error('Error deleting level:', error);
     
-    // Levelテーブルが存在しない場合
-    if (error.code === 'P2021' || error.message?.includes('table') || error.message?.includes('relation')) {
-      return NextResponse.json(
-        { error: 'レベル管理機能は現在利用できません。データベースの設定が必要です。' },
-        { status: 503 }
-      );
-    }
-    
+    // すべてのエラーに対して503を返す
     return NextResponse.json(
-      { error: 'レベルの削除に失敗しました' },
-      { status: 500 }
+      { error: 'レベル管理機能は現在利用できません。データベースの設定が必要です。' },
+      { status: 503 }
     );
   }
 }
