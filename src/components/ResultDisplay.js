@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { generateQRCode, createResultData } from '../lib/qr-generator';
 import { downloadScoreSheet } from '../lib/pdf-generator';
-import { calculateReadingStatistics } from '../lib/speed-calculator';
+import { calculateReadingStatistics, getStandardWordCountExplanation } from '../lib/speed-calculator';
 
 export default function ResultDisplay({ content, answers, readingData, onBack, onRetry }) {
   const [qrCode, setQrCode] = useState(null);
