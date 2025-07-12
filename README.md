@@ -1,10 +1,10 @@
-# 速読ゴリラ (Speed Reading Gorilla)
+# SuiReN（睡蓮）― Japanese Speed Reading
 
 日本語学習者のための速読練習ウェブサイト
 
 ## プロジェクト概要
 
-速読ゴリラは、日本語学習者の読解流暢さ（Fluency）向上を目的とした速読練習ウェブサイトです。
+SuiReN（睡蓮）は、日本語学習者の読解流暢さ（Fluency）向上を目的とした速読練習ウェブサイトです。
 
 ### 主な機能
 
@@ -47,8 +47,8 @@
 
 ## リポジトリ情報
 
-- **GitHub**: https://github.com/ryoshin0830/speed-reading-gorilla
-- **Vercelプロジェクト**: speed-reading-gorilla
+- **GitHub**: https://github.com/ryoshin0830/SuiReN
+- **Vercelプロジェクト**: SuiReN
 
 ## セットアップ
 
@@ -56,8 +56,8 @@
 
 ```bash
 # リポジトリのクローン
-git clone https://github.com/ryoshin0830/speed-reading-gorilla.git
-cd speed-reading-gorilla
+git clone https://github.com/ryoshin0830/SuiReN.git
+cd SuiReN
 
 # 依存関係のインストール
 npm install
@@ -505,14 +505,14 @@ model Content {
 ### 🌐 本番環境
 **プロジェクトは既にVercelにデプロイ済みです！**
 
-- **プロジェクト名**: speed-reading-gorilla
+- **プロジェクト名**: SuiReN
 - **デプロイ方法**: GitHubリポジトリから手動デプロイ
-- **URL**: https://speed-reading-gorilla.vercel.app （予想URL - 実際のURLを確認してください）
+- **URL**: https://suiren.vercel.app （予想URL - 実際のURLを確認してください）
 
 ### 新規デプロイ
 他の環境にデプロイする場合は、以下のボタンを使用してください：
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/ryoshin0830/speed-reading-gorilla)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/ryoshin0830/SuiReN)
 
 ## デザイン特徴
 
@@ -522,10 +522,10 @@ model Content {
 - **マイクロインタラクション**: ホバーエフェクトとアニメーション
 - **レスポンシブ**: モバイル・タブレット・デスクトップ対応
 
-### 速読ゴリラキャラクター
-- アニメーション付きSVGロゴ
-- 親しみやすいゴリラキャラクター
-- 読書をテーマにしたデザイン
+### SuiReNロゴ
+- 睡蓮（すいれん）をモチーフにしたロゴ
+- 日本的な美しさと静かさを表現
+- 読書と学習をイメージしたデザイン
 
 ## 大規模コンテンツ対応
 

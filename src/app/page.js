@@ -1,5 +1,5 @@
 /**
- * Homepage - 速読ゴリラアプリケーションのトップページ
+ * Homepage - SuiReN (睡蓮)アプリケーションのトップページ
  * 
  * 機能:
  * - ヒーローセクションでサイトの紹介（インパクトのあるデザイン）
@@ -34,7 +34,7 @@ export default function Home() {
           <div className="mb-8 transform hover:scale-110 transition-transform duration-500">
             <img 
               src="/logos/gorilla-only-animated.svg" 
-              alt="速読ゴリラ" 
+              alt="SuiReN (睡蓮)" 
               className="h-32 sm:h-40 lg:h-48 w-auto mx-auto filter drop-shadow-2xl"
             />
           </div>
@@ -42,7 +42,7 @@ export default function Home() {
           {/* タイトル */}
           <h1 className="text-6xl sm:text-7xl lg:text-8xl font-black mb-6">
             <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent animate-gradient">
-              速読ゴリラ
+              SuiReN (睡蓮)
             </span>
           </h1>
 
@@ -116,11 +116,11 @@ export default function Home() {
               </p>
               
               <p className="text-lg">
-                私たちは、海や川で、すいすいと楽しく泳いでいるように、みなさんに日本語の文章を、楽しく速く読んでほしいと思います。
+                私たちは、睡蓮（SuiReN）のように静かで美しい水面を漂うように、みなさんに日本語の文章を、楽しく速く読んでほしいと思います。
               </p>
               
               <p className="text-lg">
-                「<span className="font-bold text-blue-600">速読ゴリラ</span>」の練習では、とても簡単な文章を、なるべく速く読みます。でも、速すぎてはだめです。だいたいの意味がわかるように、そして、速く読んでください。何回もこの練習をしていると、楽しく速く読めるようになりますよ。
+                「<span className="font-bold text-blue-600">SuiReN (睡蓮)</span>」の練習では、とても簡単な文章を、なるべく速く読みます。でも、速すぎてはだめです。だいたいの意味がわかるように、そして、速く読んでください。何回もこの練習をしていると、楽しく速く読めるようになりますよ。
               </p>
               
               <div className="text-center mt-8">
@@ -128,7 +128,7 @@ export default function Home() {
                   みなさん、がんばって！
                 </p>
                 <p className="text-lg text-gray-600">
-                  速読ゴリラ・チーム
+                  SuiReN (睡蓮)・チーム
                 </p>
               </div>
             </div>
@@ -146,7 +146,7 @@ export default function Home() {
                 3ステップで簡単
               </span>
             </h2>
-            <p className="text-2xl text-gray-600">速読ゴリラの練習方法</p>
+            <p className="text-2xl text-gray-600">SuiReN (睡蓮)の練習方法</p>
           </div>
 
           {/* 3ステップカード */}
@@ -212,7 +212,7 @@ export default function Home() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl lg:text-5xl font-bold text-gray-800 mb-6">
-              なぜ速読ゴリラ？
+              なぜSuiReN (睡蓮)？
             </h2>
             <p className="text-xl text-gray-600">科学的に設計された速読練習システム</p>
           </div>
@@ -298,7 +298,7 @@ export default function Home() {
             準備はできましたか？
           </h2>
           <p className="text-xl lg:text-2xl text-white/90 mb-12 leading-relaxed">
-            今日から速読ゴリラになって、<br />
+            今日からSuiReN (睡蓮)になって、<br />
             日本語の文章をスイスイ読めるようになりましょう！
           </p>
           
@@ -314,7 +314,7 @@ export default function Home() {
 
           <div className="mt-8">
             <p className="text-white/70 text-lg">
-              速読ゴリラ・チーム
+              SuiReN (睡蓮)・チーム
             </p>
           </div>
         </div>

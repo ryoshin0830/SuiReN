@@ -8,7 +8,7 @@ export async function GET() {
 
     // Create the main content sheet with table format
     const mainSheetData = [
-      ['速読ゴリラ コンテンツテンプレート', '', '', '', ''],
+      ['SuiReN (睡蓮) コンテンツテンプレート', '', '', '', ''],
       ['', '', '', '', ''],
       ['項目', '入力内容', '説明・注意事項', '', ''],
       ['タイトル', '例：ももたろう', '必須：コンテンツのタイトル', '', ''],
