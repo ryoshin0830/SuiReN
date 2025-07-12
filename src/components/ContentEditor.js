@@ -425,8 +425,11 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
         url,
         method,
         dataSize: JSON.stringify(formData).length,
-        imageCount: formData.images.length
+        imageCount: formData.images.length,
+        wordCount: formData.wordCount,
+        characterCount: formData.characterCount
       });
+      console.log('Full formData:', formData);
       
       const response = await fetch(url, {
         method,
@@ -531,8 +534,8 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
             <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mt-6">
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  語数 *
-                  <span className="ml-2 text-xs font-normal text-gray-500">（標準語数を入力）</span>
+                  語数
+                  <span className="ml-2 text-xs font-normal text-gray-500">（標準語数を入力・任意）</span>
                 </label>
                 <input
                   type="number"
@@ -550,8 +553,8 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
               
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  文字数 *
-                  <span className="ml-2 text-xs font-normal text-gray-500">（実際の文字数を入力）</span>
+                  文字数
+                  <span className="ml-2 text-xs font-normal text-gray-500">（実際の文字数を入力・任意）</span>
                 </label>
                 <input
                   type="number"
