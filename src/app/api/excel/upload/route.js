@@ -1,23 +1,102 @@
 import { NextResponse } from 'next/server';
 import * as XLSX from 'xlsx';
 
+export const runtime = 'nodejs'; // Ensure Node.js runtime for file processing
+
 export async function POST(request) {
+  console.log('Excel upload API called');
+  console.log('Request headers:', request.headers);
+  
   try {
-    const formData = await request.formData();
+    // Check content-type
+    const contentType = request.headers.get('content-type');
+    console.log('Content-Type:', contentType);
+    
+    if (!contentType || !contentType.includes('multipart/form-data')) {
+      return NextResponse.json(
+        { error: 'Invalid content type. Expected multipart/form-data' },
+        { status: 400 }
+      );
+    }
+    
+    let formData;
+    try {
+      formData = await request.formData();
+      console.log('FormData parsed successfully');
+    } catch (formError) {
+      console.error('Failed to parse form data:', formError);
+      return NextResponse.json(
+        { error: `リクエストの解析に失敗しました: ${formError.message}` },
+        { status: 400 }
+      );
+    }
+    
+    // List all form data keys
+    const keys = Array.from(formData.keys());
+    console.log('FormData keys:', keys);
+    
     const file = formData.get('file');
 
     if (!file) {
+      console.error('No file in form data. Available keys:', keys);
       return NextResponse.json(
-        { error: 'ファイルが選択されていません' },
+        { error: 'ファイルが選択されていません。FormDataに"file"キーが見つかりません。' },
+        { status: 400 }
+      );
+    }
+    
+    // Check if it's actually a File object
+    if (!(file instanceof File)) {
+      console.error('Form data "file" is not a File object:', typeof file);
+      return NextResponse.json(
+        { error: 'アップロードされたデータがファイルではありません' },
+        { status: 400 }
+      );
+    }
+    
+    console.log('File received:', {
+      name: file.name,
+      size: file.size,
+      type: file.type
+    });
+
+    // Validate file type
+    const validTypes = [
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'application/vnd.ms-excel',
+      'application/octet-stream' // Sometimes Excel files are detected as this
+    ];
+    
+    if (!validTypes.includes(file.type) && !file.name.match(/\.(xlsx|xls)$/i)) {
+      return NextResponse.json(
+        { error: 'Excelファイル（.xlsx または .xls）を選択してください' },
         { status: 400 }
       );
     }
 
     // Convert file to buffer
-    const buffer = await file.arrayBuffer();
+    let buffer;
+    try {
+      buffer = await file.arrayBuffer();
+    } catch (bufferError) {
+      console.error('Failed to convert file to buffer:', bufferError);
+      return NextResponse.json(
+        { error: 'ファイルの読み込みに失敗しました' },
+        { status: 400 }
+      );
+    }
     
     // Read the Excel file
-    const workbook = XLSX.read(buffer, { type: 'buffer' });
+    let workbook;
+    try {
+      workbook = XLSX.read(buffer, { type: 'buffer' });
+    } catch (xlsxError) {
+      console.error('Failed to parse Excel file:', xlsxError);
+      return NextResponse.json(
+        { error: 'Excelファイルの解析に失敗しました。正しいExcelファイルを選択してください。' },
+        { status: 400 }
+      );
+    }
 
     // Check if required sheets exist
     if (!workbook.SheetNames.includes('コンテンツ')) {
@@ -35,6 +114,8 @@ export async function POST(request) {
     let title = '';
     let level = '初級修了レベル';
     let text = '';
+    let wordCount = null;
+    let characterCount = null;
     let explanation = '';
 
     // Find and extract data from table format
@@ -85,6 +166,16 @@ export async function POST(request) {
             }
           }
           j++;
+        }
+      } else if (row[0] === '語数' && row[1]) {
+        const count = parseInt(row[1].toString().trim());
+        if (!isNaN(count) && count > 0) {
+          wordCount = count;
+        }
+      } else if (row[0] === '文字数' && row[1]) {
+        const count = parseInt(row[1].toString().trim());
+        if (!isNaN(count) && count > 0) {
+          characterCount = count;
         }
       } else if (row[0] === '文章の解説' && row[1]) {
         // Get the explanation content directly from row[1]
@@ -248,6 +339,8 @@ export async function POST(request) {
       level,
       levelCode,
       text,
+      wordCount,
+      characterCount,
       explanation: explanation || '',
       questions: questions, // Empty array is OK - ContentEditor will handle it
       images: [],
@@ -262,8 +355,13 @@ export async function POST(request) {
 
   } catch (error) {
     console.error('Error processing Excel file:', error);
+    console.error('Error stack:', error.stack);
     return NextResponse.json(
-      { error: 'ファイルの処理中にエラーが発生しました: ' + error.message },
+      { 
+        error: 'ファイルの処理中にエラーが発生しました', 
+        details: error.message,
+        type: error.name 
+      },
       { status: 500 }
     );
   }

@@ -16,6 +16,8 @@ model Content {
   level       String    // 表示用レベル名（例：初級修了レベル）
   levelCode   String    // システム内部レベルコード（beginner, intermediate, advanced）
   text        String    @db.Text
+  wordCount   Int?      // 語数（手動入力）
+  characterCount Int?   // 文字数（手動入力）
   explanation String?   @db.Text // 文章の解説（オプション）
   images      Json?     // 複数画像データ（Base64形式）
   thumbnail   Json?     // サムネイル画像データ（Base64形式）

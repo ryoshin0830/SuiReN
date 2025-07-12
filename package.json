@@ -4,17 +4,19 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && prisma db push --skip-generate && next build",
     "start": "next start",
     "lint": "next lint",
     "postinstall": "prisma generate"
   },
   "dependencies": {
     "@prisma/client": "^6.9.0",
+    "dotenv": "^17.2.0",
     "html2canvas": "^1.4.1",
     "js-cookie": "^3.0.5",
     "next": "15.3.3",
     "pdfmake": "^0.2.20",
+    "pg": "^8.16.3",
     "prisma": "^6.9.0",
     "qrcode": "^1.5.4",
     "react": "^19.0.0",
