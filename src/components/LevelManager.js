@@ -10,6 +10,7 @@ export default function LevelManager() {
   const [showDeleteModal, setShowDeleteModal] = useState(null);
   const [targetLevelId, setTargetLevelId] = useState('');
   const [saving, setSaving] = useState(false);
+  const [isDatabaseAvailable, setIsDatabaseAvailable] = useState(true);
 
   // 新規レベル用のフォームデータ
   const [newLevel, setNewLevel] = useState({
@@ -25,8 +26,29 @@ export default function LevelManager() {
     }
   }, [levels]);
 
+  // データベースの可用性をチェック
+  useEffect(() => {
+    const checkDatabaseAvailability = async () => {
+      try {
+        const response = await fetch('/api/levels');
+        const data = await response.json();
+        if (response.status === 503 || (data.error && data.error.includes('データベースの設定が必要'))) {
+          setIsDatabaseAvailable(false);
+        }
+      } catch (error) {
+        console.error('Database check error:', error);
+      }
+    };
+    checkDatabaseAvailability();
+  }, []);
+
   // レベルの表示名を編集
   const handleEditDisplayName = async (levelId, newDisplayName) => {
+    if (!isDatabaseAvailable) {
+      alert('レベル管理機能は現在利用できません。データベースの設定が必要です。');
+      return;
+    }
+    
     setSaving(true);
     try {
       const response = await fetch(`/api/levels/${levelId}`, {
@@ -37,6 +59,9 @@ export default function LevelManager() {
 
       if (!response.ok) {
         const error = await response.json();
+        if (response.status === 503) {
+          setIsDatabaseAvailable(false);
+        }
         throw new Error(error.error || '更新に失敗しました');
       }
 
@@ -51,6 +76,10 @@ export default function LevelManager() {
 
   // レベルの順序を変更
   const handleOrderChange = async (levelId, direction) => {
+    if (!isDatabaseAvailable) {
+      alert('レベル管理機能は現在利用できません。データベースの設定が必要です。');
+      return;
+    }
     const currentIndex = levels.findIndex(l => l.id === levelId);
     const targetIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
 
@@ -85,6 +114,10 @@ export default function LevelManager() {
 
   // 新規レベルの追加
   const handleAddLevel = async () => {
+    if (!isDatabaseAvailable) {
+      alert('レベル管理機能は現在利用できません。データベースの設定が必要です。');
+      return;
+    }
     if (!newLevel.id || !newLevel.displayName) {
       alert('レベルIDと表示名を入力してください');
       return;
@@ -119,6 +152,10 @@ export default function LevelManager() {
 
   // レベルの削除
   const handleDeleteLevel = async () => {
+    if (!isDatabaseAvailable) {
+      alert('レベル管理機能は現在利用できません。データベースの設定が必要です。');
+      return;
+    }
     if (!targetLevelId) {
       alert('移行先レベルを選択してください');
       return;
@@ -147,6 +184,10 @@ export default function LevelManager() {
 
   // デフォルトレベルの設定
   const handleSetDefault = async (levelId) => {
+    if (!isDatabaseAvailable) {
+      alert('レベル管理機能は現在利用できません。データベースの設定が必要です。');
+      return;
+    }
     setSaving(true);
     try {
       const response = await fetch(`/api/levels/${levelId}/set-default`, {
@@ -179,12 +220,29 @@ export default function LevelManager() {
         <h2 className="text-xl font-semibold text-gray-900">レベル管理</h2>
         <button
           onClick={() => setShowAddModal(true)}
-          className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
-          disabled={saving}
+          className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={saving || !isDatabaseAvailable}
         >
           新規レベル追加
         </button>
       </div>
+
+      {/* データベース未設定の警告 */}
+      {!isDatabaseAvailable && (
+        <div className="mb-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+          <div className="flex">
+            <svg className="w-5 h-5 text-yellow-600 mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+            </svg>
+            <div>
+              <h3 className="text-sm font-semibold text-yellow-800">データベース設定が必要です</h3>
+              <p className="text-sm text-yellow-700 mt-1">
+                レベル管理機能を使用するにはデータベースの設定が必要です。現在は表示のみ可能です。
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* レベル一覧 */}
       <div className="overflow-x-auto">
@@ -206,15 +264,17 @@ export default function LevelManager() {
                   <div className="flex items-center space-x-1">
                     <button
                       onClick={() => handleOrderChange(level.id, 'up')}
-                      disabled={index === 0 || saving}
+                      disabled={index === 0 || saving || !isDatabaseAvailable}
                       className="p-1 text-gray-600 hover:text-gray-800 disabled:opacity-30"
+                      title={!isDatabaseAvailable ? 'データベース設定が必要です' : ''}
                     >
                       ↑
                     </button>
                     <button
                       onClick={() => handleOrderChange(level.id, 'down')}
-                      disabled={index === levels.length - 1 || saving}
+                      disabled={index === levels.length - 1 || saving || !isDatabaseAvailable}
                       className="p-1 text-gray-600 hover:text-gray-800 disabled:opacity-30"
+                      title={!isDatabaseAvailable ? 'データベース設定が必要です' : ''}
                     >
                       ↓
                     </button>
@@ -239,8 +299,11 @@ export default function LevelManager() {
                     />
                   ) : (
                     <span
-                      onClick={() => !saving && setEditingLevel(level.id)}
-                      className="cursor-pointer hover:bg-gray-100 px-2 py-1 rounded text-gray-800"
+                      onClick={() => !saving && isDatabaseAvailable && setEditingLevel(level.id)}
+                      className={`px-2 py-1 rounded text-gray-800 ${
+                        isDatabaseAvailable ? 'cursor-pointer hover:bg-gray-100' : 'cursor-not-allowed'
+                      }`}
+                      title={!isDatabaseAvailable ? 'データベース設定が必要です' : ''}
                     >
                       {level.displayName}
                     </span>
@@ -253,8 +316,9 @@ export default function LevelManager() {
                   ) : (
                     <button
                       onClick={() => handleSetDefault(level.id)}
-                      className="text-gray-400 hover:text-green-600"
-                      disabled={saving}
+                      className="text-gray-400 hover:text-green-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                      disabled={saving || !isDatabaseAvailable}
+                      title={!isDatabaseAvailable ? 'データベース設定が必要です' : ''}
                     >
                       設定
                     </button>
@@ -263,8 +327,9 @@ export default function LevelManager() {
                 <td className="px-4 py-2">
                   <button
                     onClick={() => setShowDeleteModal(level)}
-                    disabled={level.isDefault || saving}
+                    disabled={level.isDefault || saving || !isDatabaseAvailable}
                     className="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    title={!isDatabaseAvailable ? 'データベース設定が必要です' : (level.isDefault ? 'デフォルトレベルは削除できません' : '')}
                   >
                     削除
                   </button>
