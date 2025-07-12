@@ -226,7 +226,7 @@ export default function Reading() {
               className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-gray-800 bg-white font-medium"
             >
               <option value="all">全レベル</option>
-              <option value="beginner">初級</option>
+              <option value="beginner">中級前半</option>
               <option value="intermediate">中級</option>
               <option value="advanced">上級</option>
             </select>
@@ -249,7 +249,7 @@ export default function Reading() {
             {/* 簡易統計 */}
             <div className="flex items-center space-x-4 text-sm">
               <span className="font-bold text-gray-800">総数: {stats.total}</span>
-              <span className="font-medium text-blue-700">初級: {stats.beginner}</span>
+              <span className="font-medium text-blue-700">中級前半: {stats.beginner}</span>
               <span className="font-medium text-emerald-700">中級: {stats.intermediate}</span>
               <span className="font-medium text-purple-700">上級: {stats.advanced}</span>
             </div>
@@ -321,7 +321,7 @@ export default function Reading() {
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600">初級レベル</span>
+                    <span className="text-gray-600">中級前半</span>
                     <span className="font-bold text-blue-600">{stats.beginner}</span>
                   </div>
                   <div className="flex justify-between items-center">
@@ -383,7 +383,7 @@ export default function Reading() {
                     <div className="space-y-2">
                       {[
                         { value: 'all', label: 'すべて', count: stats.total },
-                        { value: 'beginner', label: '初級レベル', count: stats.beginner, color: 'blue' },
+                        { value: 'beginner', label: '中級前半', count: stats.beginner, color: 'blue' },
                         { value: 'intermediate', label: '中級レベル', count: stats.intermediate, color: 'emerald' },
                         { value: 'advanced', label: '上級レベル', count: stats.advanced, color: 'purple' }
                                              ].map((option) => (
