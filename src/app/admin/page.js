@@ -138,12 +138,23 @@ export default function Admin() {
           setError(result.error || 'アップロードに失敗しました');
         }
       } else {
-        const errorData = await response.json();
-        setError(errorData.error || 'アップロードに失敗しました');
+        let errorMessage = 'アップロードに失敗しました';
+        try {
+          const errorData = await response.json();
+          console.error('Excel upload error:', errorData);
+          errorMessage = errorData.error || errorMessage;
+          if (errorData.details) {
+            errorMessage += ': ' + errorData.details;
+          }
+        } catch (e) {
+          console.error('Failed to parse error response:', e);
+          errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+        }
+        setError(errorMessage);
       }
     } catch (error) {
       console.error('Error uploading Excel:', error);
-      setError('ファイルのアップロード中にエラーが発生しました');
+      setError('ファイルのアップロード中にエラーが発生しました: ' + error.message);
     } finally {
       setExcelUploadLoading(false);
     }

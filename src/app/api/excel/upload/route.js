@@ -1,23 +1,76 @@
 import { NextResponse } from 'next/server';
 import * as XLSX from 'xlsx';
 
+export const runtime = 'nodejs'; // Ensure Node.js runtime for file processing
+
 export async function POST(request) {
+  console.log('Excel upload API called');
+  
   try {
-    const formData = await request.formData();
+    let formData;
+    try {
+      formData = await request.formData();
+    } catch (formError) {
+      console.error('Failed to parse form data:', formError);
+      return NextResponse.json(
+        { error: 'リクエストの解析に失敗しました' },
+        { status: 400 }
+      );
+    }
+    
     const file = formData.get('file');
 
     if (!file) {
+      console.error('No file in form data');
       return NextResponse.json(
         { error: 'ファイルが選択されていません' },
         { status: 400 }
       );
     }
+    
+    console.log('File received:', {
+      name: file.name,
+      size: file.size,
+      type: file.type
+    });
+
+    // Validate file type
+    const validTypes = [
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'application/vnd.ms-excel',
+      'application/octet-stream' // Sometimes Excel files are detected as this
+    ];
+    
+    if (!validTypes.includes(file.type) && !file.name.match(/\.(xlsx|xls)$/i)) {
+      return NextResponse.json(
+        { error: 'Excelファイル（.xlsx または .xls）を選択してください' },
+        { status: 400 }
+      );
+    }
 
     // Convert file to buffer
-    const buffer = await file.arrayBuffer();
+    let buffer;
+    try {
+      buffer = await file.arrayBuffer();
+    } catch (bufferError) {
+      console.error('Failed to convert file to buffer:', bufferError);
+      return NextResponse.json(
+        { error: 'ファイルの読み込みに失敗しました' },
+        { status: 400 }
+      );
+    }
     
     // Read the Excel file
-    const workbook = XLSX.read(buffer, { type: 'buffer' });
+    let workbook;
+    try {
+      workbook = XLSX.read(buffer, { type: 'buffer' });
+    } catch (xlsxError) {
+      console.error('Failed to parse Excel file:', xlsxError);
+      return NextResponse.json(
+        { error: 'Excelファイルの解析に失敗しました。正しいExcelファイルを選択してください。' },
+        { status: 400 }
+      );
+    }
 
     // Check if required sheets exist
     if (!workbook.SheetNames.includes('コンテンツ')) {
@@ -276,8 +329,13 @@ export async function POST(request) {
 
   } catch (error) {
     console.error('Error processing Excel file:', error);
+    console.error('Error stack:', error.stack);
     return NextResponse.json(
-      { error: 'ファイルの処理中にエラーが発生しました: ' + error.message },
+      { 
+        error: 'ファイルの処理中にエラーが発生しました', 
+        details: error.message,
+        type: error.name 
+      },
       { status: 500 }
     );
   }
