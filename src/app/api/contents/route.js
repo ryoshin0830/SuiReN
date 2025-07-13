@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '../../../lib/prisma';
+import prisma from '../../../lib/prisma';
 
 // GET /api/contents - 全コンテンツを取得
 export async function GET() {
