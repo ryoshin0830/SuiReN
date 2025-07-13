@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,38 +7,47 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Level {
+  id          String   @id
+  displayName String
+  orderIndex  Int
+  isDefault   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("levels")
+}
+
 model Content {
-  id          String    @id @default(cuid())
-  title       String
-  level       String    // 表示用レベル名（例：初級修了レベル）
-  levelCode   String    // システム内部レベルコード（beginner, intermediate, advanced）
-  text        String    @db.Text
-  wordCount   Int?      // 語数（手動入力）
-  characterCount Int?   // 文字数（手動入力）
-  explanation String?   @db.Text // 文章の解説（オプション）
-  images      Json?     // 複数画像データ（Base64形式）
-  thumbnail   Json?     // サムネイル画像データ（Base64形式）
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  
-  questions Question[]
-  
+  id             String     @id @default(cuid())
+  title          String
+  level          String
+  levelCode      String
+  text           String
+  wordCount      Int?
+  characterCount Int?
+  explanation    String?
+  images         Json?
+  thumbnail      Json?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  questions      Question[]
+
   @@map("contents")
 }
 
 model Question {
-  id            String   @id @default(cuid())
+  id            String           @id @default(cuid())
   contentId     String
   question      String
-  correctAnswer Int      // 正解の選択肢インデックス（0から始まる）
-  explanation   String?  @db.Text // 問題の解説（オプション）
-  orderIndex    Int      // 問題の表示順序
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  
-  content Content @relation(fields: [contentId], references: [id], onDelete: Cascade)
-  options QuestionOption[]
-  
+  correctAnswer Int
+  explanation   String?
+  orderIndex    Int
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  options       QuestionOption[]
+  content       Content          @relation(fields: [contentId], references: [id], onDelete: Cascade)
+
   @@map("questions")
 }
 
@@ -49,11 +55,10 @@ model QuestionOption {
   id         String   @id @default(cuid())
   questionId String
   optionText String
-  orderIndex Int      // 選択肢の表示順序
+  orderIndex Int
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-  
-  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
   @@map("question_options")
 }

@@ -1,8 +1,28 @@
 import { NextResponse } from 'next/server';
 import * as XLSX from 'xlsx';
+import prisma from '../../../../lib/prisma';
 
 export async function GET() {
   try {
+    // データベースからレベル情報を取得
+    let levels;
+    try {
+      levels = await prisma.level.findMany({
+        orderBy: { orderIndex: 'asc' }
+      });
+    } catch (error) {
+      console.error('Failed to fetch levels:', error);
+      // フォールバック: デフォルトレベルを使用
+      levels = [
+        { id: 'beginner', displayName: '中級前半' },
+        { id: 'intermediate', displayName: '中級レベル' },
+        { id: 'advanced', displayName: '上級レベル' }
+      ];
+    }
+
+    // レベル選択肢の文字列を生成
+    const levelOptions = levels.map(l => l.displayName).join(' / ');
+    const defaultLevel = levels.find(l => l.isDefault) || levels[0];
     // Create a new workbook
     const workbook = XLSX.utils.book_new();
 
@@ -12,7 +32,7 @@ export async function GET() {
       ['', '', '', '', ''],
       ['項目', '入力内容', '説明・注意事項', '', ''],
       ['タイトル', '例：ももたろう', '必須：コンテンツのタイトル', '', ''],
-      ['レベル', '初級修了レベル', '初級修了レベル / 中級レベル / 上級レベル から選択', '', ''],
+      ['レベル', defaultLevel.displayName, `${levelOptions} から選択`, '', ''],
       ['本文', 'ここに本文を入力してください。', '必須：速読練習用の本文。改行はそのまま反映されます。ルビの記法：｜漢字《かんじ》または漢字《かんじ》', '', ''],
       ['語数', '250', '任意：標準語数を手動で入力。漢字・カタカナ語は1、ひらがなのみの語は0.5で計算', '', ''],
       ['文字数', '450', '任意：本文の文字数を手動で入力。自動計算も可能', '', ''],
@@ -100,7 +120,7 @@ export async function GET() {
       ['1. 基本情報の入力', ''],
       ['・「コンテンツ」シートの「項目」列に対して「入力内容」列に記入してください', ''],
       ['・タイトルは必須です', ''],
-      ['・レベルは「初級修了レベル」「中級レベル」「上級レベル」から選択してください', ''],
+      [`・レベルは「${levelOptions}」から選択してください`, ''],
       ['・語数と文字数は任意です（管理画面で後から編集可能）', ''],
       ['・語数は標準語数計算方法に基づいて入力してください', ''],
       ['', ''],
