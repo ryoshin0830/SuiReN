@@ -1,6 +1,12 @@
 const { PrismaClient } = require('@prisma/client');
 
 async function simpleCreateLevels() {
+  // Vercel environment or local development
+  if (!process.env.DATABASE_URL) {
+    console.error('DATABASE_URL is not set');
+    process.exit(1);
+  }
+  
   const prisma = new PrismaClient();
 
   try {
