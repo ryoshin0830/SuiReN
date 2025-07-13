@@ -35,12 +35,17 @@ export default function About() {
       const match = part.match(/\{\{IMAGE:(\d+)\}\}/);
       if (match && aboutData?.images) {
         const imageIndex = parseInt(match[1], 10);
-        const image = aboutData.images[imageIndex];
-        if (image) {
+        const imageData = aboutData.images[imageIndex];
+        if (imageData) {
+          // imageDataがオブジェクトの場合はbase64プロパティを、文字列の場合はそのまま使用
+          const imageSrc = typeof imageData === 'object' && imageData.base64 
+            ? imageData.base64 
+            : imageData;
+            
           return (
             <img
               key={index}
-              src={image}
+              src={imageSrc}
               alt={`画像 ${imageIndex + 1}`}
               className="max-w-full h-auto my-4 rounded-lg shadow-lg"
             />

@@ -23,7 +23,18 @@ export default function AboutPageEditor() {
       
       const data = await response.json();
       setContent(data.content || '');
-      setImages(data.images || []);
+      // 画像データが文字列の配列の場合、オブジェクトの配列に変換
+      if (data.images && Array.isArray(data.images)) {
+        const processedImages = data.images.map(img => {
+          if (typeof img === 'string') {
+            return { base64: img };
+          }
+          return img;
+        });
+        setImages(processedImages);
+      } else {
+        setImages([]);
+      }
     } catch (err) {
       setError(err.message);
     } finally {
@@ -68,7 +79,7 @@ export default function AboutPageEditor() {
     for (const file of files) {
       try {
         const result = await compressImageToBase64(file);
-        newImages.push(result.base64);
+        newImages.push(result);
       } catch (error) {
         console.error('Image compression error:', error);
         setError(`画像の処理に失敗しました: ${file.name}`);
@@ -160,7 +171,7 @@ export default function AboutPageEditor() {
             {images.map((image, index) => (
               <div key={index} className="relative group">
                 <img
-                  src={image}
+                  src={typeof image === 'object' && image.base64 ? image.base64 : image}
                   alt={`画像 ${index + 1}`}
                   className="w-full h-32 object-cover rounded-lg"
                 />
