@@ -145,12 +145,23 @@ export default function Admin() {
           setError(result.error || 'アップロードに失敗しました');
         }
       } else {
-        const errorData = await response.json();
-        setError(errorData.error || 'アップロードに失敗しました');
+        let errorMessage = 'アップロードに失敗しました';
+        try {
+          const errorData = await response.json();
+          console.error('Excel upload error:', errorData);
+          errorMessage = errorData.error || errorMessage;
+          if (errorData.details) {
+            errorMessage += ': ' + errorData.details;
+          }
+        } catch (e) {
+          console.error('Failed to parse error response:', e);
+          errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+        }
+        setError(errorMessage);
       }
     } catch (error) {
       console.error('Error uploading Excel:', error);
-      setError('ファイルのアップロード中にエラーが発生しました');
+      setError('ファイルのアップロード中にエラーが発生しました: ' + error.message);
     } finally {
       setExcelUploadLoading(false);
     }
@@ -307,6 +318,7 @@ export default function Admin() {
                   <th className="px-4 py-2 text-left text-gray-800 font-semibold">タイトル</th>
                   <th className="px-4 py-2 text-left text-gray-800 font-semibold">レベル</th>
                   <th className="px-4 py-2 text-left text-gray-800 font-semibold">問題数</th>
+                  <th className="px-4 py-2 text-left text-gray-800 font-semibold">語数</th>
                   <th className="px-4 py-2 text-left text-gray-800 font-semibold">文字数</th>
                   <th className="px-4 py-2 text-left text-gray-800 font-semibold">操作</th>
                 </tr>
@@ -335,7 +347,10 @@ export default function Admin() {
                       {content.questions.length}問
                     </td>
                     <td className="px-4 py-2 text-gray-800">
-                      {content.text.length}文字
+                      {content.wordCount ? `${content.wordCount}語` : '-'}
+                    </td>
+                    <td className="px-4 py-2 text-gray-800">
+                      {content.characterCount ? `${content.characterCount}文字` : `${content.text.length}文字`}
                     </td>
                     <td className="px-4 py-2">
                       <div className="flex space-x-2">
@@ -493,6 +508,11 @@ export default function Admin() {
                       accept=".xlsx,.xls"
                       onChange={(e) => {
                         if (e.target.files[0]) {
+                          console.log('File selected:', {
+                            name: e.target.files[0].name,
+                            size: e.target.files[0].size,
+                            type: e.target.files[0].type
+                          });
                           handleExcelUpload(e.target.files[0]);
                         }
                       }}

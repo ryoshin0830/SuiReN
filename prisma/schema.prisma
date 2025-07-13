@@ -29,6 +29,8 @@ model Content {
   level       String    // 表示用レベル名（例：中級前半）- 互換性のため保持
   levelCode   String    // レベルテーブルへの外部キー
   text        String    @db.Text
+  wordCount   Int?      // 語数（手動入力）
+  characterCount Int?   // 文字数（手動入力）
   explanation String?   @db.Text // 文章の解説（オプション）
   images      Json?     // 複数画像データ（Base64形式）
   thumbnail   Json?     // サムネイル画像データ（Base64形式）

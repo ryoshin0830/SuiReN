@@ -291,6 +291,131 @@ export default function Home() {
         </div>
       </div>
 
+      {/* ===== FAQセクション ===== */}
+      <div className="relative py-20 px-6 bg-gray-50">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl lg:text-5xl font-bold text-gray-800 mb-4">
+              よくある質問
+            </h2>
+            <p className="text-xl text-gray-600">SuiReNについての疑問にお答えします</p>
+          </div>
+          
+          <div className="space-y-6">
+            {/* FAQ 1 */}
+            <details className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-300">
+              <summary className="cursor-pointer font-semibold text-lg text-gray-800 flex items-center justify-between">
+                <span className="flex items-center">
+                  <span className="text-2xl mr-3">🤔</span>
+                  「標準語数」とは何ですか？
+                </span>
+                <svg className="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </summary>
+              <div className="mt-4 text-gray-700 space-y-3">
+                <p>
+                  標準語数は、日本語テキストの実質的な情報量を測るための指標です。
+                  日本語は漢字、ひらがな、カタカナが混在するため、
+                  単純な文字数ではなく、意味を持つ語彙単位でカウントします。
+                </p>
+                <ul className="list-disc list-inside space-y-1 ml-4">
+                  <li>漢字・カタカナ・英数字の語：1.0として計算</li>
+                  <li>ひらがなのみの語（助詞など）：0.5として計算</li>
+                </ul>
+                <p className="mt-3">
+                  この方法により、日本語の特殊性を考慮した公平な速度測定が可能になります。
+                </p>
+              </div>
+            </details>
+            
+            {/* FAQ 2 */}
+            <details className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-300">
+              <summary className="cursor-pointer font-semibold text-lg text-gray-800 flex items-center justify-between">
+                <span className="flex items-center">
+                  <span className="text-2xl mr-3">🎯</span>
+                  目標とする読書速度はどのくらいですか？
+                </span>
+                <svg className="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </summary>
+              <div className="mt-4 text-gray-700">
+                <p className="font-semibold mb-2">日本語学習者の目標速度：</p>
+                <ul className="list-disc list-inside space-y-1 ml-4 mb-4">
+                  <li>初級：50-100語/分</li>
+                  <li>中級：100-200語/分</li>
+                  <li>上級：200-300語/分</li>
+                </ul>
+                <p className="font-semibold mb-2">参考：日本語ネイティブスピーカー：</p>
+                <ul className="list-disc list-inside space-y-1 ml-4">
+                  <li>小学生：100-200語/分</li>
+                  <li>中学生：200-300語/分</li>
+                  <li>高校生：300-400語/分</li>
+                  <li>大学生・成人：400-600語/分</li>
+                </ul>
+              </div>
+            </details>
+            
+            {/* FAQ 3 */}
+            <details className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-300">
+              <summary className="cursor-pointer font-semibold text-lg text-gray-800 flex items-center justify-between">
+                <span className="flex items-center">
+                  <span className="text-2xl mr-3">📈</span>
+                  速読練習で本当に効果がありますか？
+                </span>
+                <svg className="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </summary>
+              <div className="mt-4 text-gray-700 space-y-3">
+                <p>
+                  はい、研究により速読練習の効果が確認されています。
+                  特に、多読プログラムの中で速読を併用することで、
+                  読解の流暇さ（fluency）を高める相乗効果が期待できます。
+                </p>
+                <p>
+                  継続的な練習により、以下の効果が期待できます：
+                </p>
+                <ul className="list-disc list-inside space-y-1 ml-4">
+                  <li>読解の自動性の向上</li>
+                  <li>語彙認識の高速化</li>
+                  <li>文法処理の自動化</li>
+                  <li>全体的な読解力の向上</li>
+                </ul>
+              </div>
+            </details>
+            
+            {/* FAQ 4 */}
+            <details className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-300">
+              <summary className="cursor-pointer font-semibold text-lg text-gray-800 flex items-center justify-between">
+                <span className="flex items-center">
+                  <span className="text-2xl mr-3">❓</span>
+                  速読と精読の違いは何ですか？
+                </span>
+                <svg className="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </summary>
+              <div className="mt-4 text-gray-700 space-y-3">
+                <p>
+                  <strong>速読</strong>は、全体的な意味を素早くつかむことを目的とし、
+                  細部にこだわらずに読み進めます。
+                </p>
+                <p>
+                  <strong>精読</strong>は、一字一句まで正確に理解することを目的とし、
+                  時間をかけて丁寧に読みます。
+                </p>
+                <p>
+                  SuiReNでは速読スキルの向上に焦点を当てていますが、
+                  両方のスキルがバランス良く身に付くことが理想的です。
+                </p>
+              </div>
+            </details>
+          </div>
+        </div>
+      </div>
+
       {/* ===== 最終CTA ===== */}
       <div className="relative py-20 px-6 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600">
         <div className="max-w-4xl mx-auto text-center">

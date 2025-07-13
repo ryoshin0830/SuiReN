@@ -3,11 +3,13 @@
 import { useState, useEffect } from 'react';
 import { generateQRCode, createResultData } from '../lib/qr-generator';
 import { downloadScoreSheet } from '../lib/pdf-generator';
+import { calculateReadingSpeed } from '../lib/speed-calculator';
 
 export default function ResultDisplay({ content, answers, readingData, onBack, onRetry }) {
   const [qrCode, setQrCode] = useState(null);
   const [resultData, setResultData] = useState(null);
   const [speedAnalysis, setSpeedAnalysis] = useState(null);
+  const [readingStatistics, setReadingStatistics] = useState(null);
 
   // 画像に関する行を判定する関数
   const isImageLine = (line) => {
@@ -276,6 +278,20 @@ export default function ResultDisplay({ content, answers, readingData, onBack, o
       const analysis = analyzeParagraphViewTime(readingData.scrollData);
       setSpeedAnalysis(analysis);
       
+      // 読書速度を計算（手動入力された語数・文字数を使用）
+      if (content.wordCount && content.characterCount) {
+        const speedWPM = Math.round((content.wordCount / readingData.readingTime) * 60);
+        const speedCPM = Math.round((content.characterCount / readingData.readingTime) * 60);
+        
+        setReadingStatistics({
+          wordCount: content.wordCount,
+          characterCount: content.characterCount,
+          readingSpeedWPM: speedWPM,
+          readingSpeedCPM: speedCPM,
+          readingTime: readingData.readingTime
+        });
+      }
+      
       // QRコードは最小限データで生成
       const qrString = await generateQRCode(result.qrData);
       setQrCode(qrString);
@@ -359,6 +375,77 @@ export default function ResultDisplay({ content, answers, readingData, onBack, o
             <div className="text-xl sm:text-2xl font-bold text-gray-800">{content.level}</div>
           </div>
         </div>
+
+        {/* 読書速度統計 */}
+        {readingStatistics && (
+          <div className="backdrop-blur-xl bg-white/70 rounded-2xl p-6 sm:p-8 shadow-xl border border-white/20 mb-8 sm:mb-12 animate-slide-up">
+            <div className="flex items-center mb-4 sm:mb-6">
+              <div className="w-8 h-8 bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-lg flex items-center justify-center mr-3">
+                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                </svg>
+              </div>
+              <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-indigo-800 to-indigo-900 bg-clip-text text-transparent">読書速度分析</h2>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* 語数ベースの速度 */}
+              <div className="bg-white/50 rounded-xl p-4 sm:p-6 border border-gray-200">
+                <h3 className="font-semibold text-gray-700 mb-3 flex items-center">
+                  <span className="text-lg">📚</span>
+                  <span className="ml-2">語数ベース</span>
+                </h3>
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">標準語数:</span>
+                    <span className="font-bold text-gray-800">{readingStatistics.wordCount}語</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">読書速度:</span>
+                    <span className="font-bold text-2xl text-blue-600">
+                      {readingStatistics.readingSpeedWPM}語/分
+                    </span>
+                  </div>
+                  <div className="text-sm text-gray-500 mt-2">
+                    読了時間: {readingStatistics.readingTime}秒
+                  </div>
+                </div>
+              </div>
+              
+              {/* 文字数ベースの速度 */}
+              <div className="bg-white/50 rounded-xl p-4 sm:p-6 border border-gray-200">
+                <h3 className="font-semibold text-gray-700 mb-3 flex items-center">
+                  <span className="text-lg">✍️</span>
+                  <span className="ml-2">文字数ベース</span>
+                </h3>
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">文字数:</span>
+                    <span className="font-bold text-gray-800">{readingStatistics.characterCount}文字</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">読書速度:</span>
+                    <span className="font-bold text-2xl text-green-600">
+                      {readingStatistics.readingSpeedCPM}文字/分
+                    </span>
+                  </div>
+                  <div className="text-sm text-gray-500 mt-2">
+                    読了時間: {readingStatistics.readingTime}秒
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* 標準語数の説明 */}
+            <div className="mt-6 bg-blue-50 rounded-xl p-4 border border-blue-200">
+              <p className="text-sm text-gray-700">
+                <strong>標準語数とは：</strong>
+                日本語テキストの実質的な情報量を測るための指標です。
+                漢字・カタカナ・英数字の語を1.0、ひらがなのみの語を0.5として計算した値です。
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* 文章解説 */}
         {content.explanation && content.explanation.trim() && (
