@@ -6,21 +6,48 @@ export async function GET() {
   console.log('Contents API called');
   console.log('DATABASE_URL exists:', !!process.env.DATABASE_URL);
   console.log('NODE_ENV:', process.env.NODE_ENV);
+  console.log('Prisma client:', !!prisma);
+  console.log('Prisma models:', prisma ? Object.keys(prisma).filter(k => !k.startsWith('_') && !k.startsWith('$')) : 'No prisma');
   
   try {
-    const contents = await prisma.content.findMany({
-      include: {
-        questions: {
-          include: {
-            options: {
-              orderBy: { orderIndex: 'asc' }
-            }
-          },
-          orderBy: { orderIndex: 'asc' }
-        }
-      },
-      orderBy: { id: 'asc' }
+    // Prismaクライアントが利用可能か確認
+    if (!prisma) {
+      console.error('Prisma client not initialized');
+      throw new Error('Database connection not available');
+    }
+
+    console.log('Attempting to fetch contents from database...');
+    
+    // First, test the connection with a simple query
+    try {
+      const testConnection = await prisma.$queryRaw`SELECT 1`;
+      console.log('Database connection test successful');
+    } catch (connError) {
+      console.error('Database connection test failed:', connError);
+      throw new Error('Cannot connect to database');
+    }
+    
+    // Use transaction with timeout for better connection handling on Vercel
+    const contents = await prisma.$transaction(async (tx) => {
+      return await tx.content.findMany({
+        include: {
+          questions: {
+            include: {
+              options: {
+                orderBy: { orderIndex: 'asc' }
+              }
+            },
+            orderBy: { orderIndex: 'asc' }
+          }
+        },
+        orderBy: { id: 'asc' }
+      });
+    }, {
+      maxWait: 10000, // 10 seconds max wait
+      timeout: 30000  // 30 seconds timeout
     });
+
+    console.log('Contents fetched successfully:', contents.length);
 
     // データ形式を既存の構造に変換
     const formattedContents = contents.map(content => ({
@@ -45,14 +72,35 @@ export async function GET() {
 
     return NextResponse.json(formattedContents);
   } catch (error) {
-    console.error('Error fetching contents:', error);
-    console.error('Error details:', {
+    console.error('Contents GET error details:', {
       name: error.name,
       message: error.message,
       code: error.code,
       meta: error.meta,
-      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      stack: error.stack
     });
+    
+    // Prismaの特定のエラーコードをチェック
+    if (error.code === 'P2021' || error.code === 'P2022' || error.message?.includes('contents')) {
+      console.log('Table does not exist error detected - returning empty array');
+      return NextResponse.json([]);
+    }
+    
+    // Connection timeout errors
+    if (error.code === 'P1001' || error.code === 'P1002') {
+      console.log('Database connection error detected');
+      return NextResponse.json(
+        { 
+          error: 'Database connection failed',
+          details: {
+            message: error.message,
+            code: error.code,
+            suggestion: 'Check database connection on Vercel'
+          }
+        },
+        { status: 500 }
+      );
+    }
     
     // Return more detailed error in production for debugging
     return NextResponse.json(
