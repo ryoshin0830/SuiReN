@@ -62,3 +62,13 @@ model QuestionOption {
 
   @@map("question_options")
 }
+
+model AboutPage {
+  id        String   @id @default(cuid())
+  content   String
+  images    Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("about_page")
+}
