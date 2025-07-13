@@ -8,13 +8,16 @@ export async function GET(request, props) {
 
   try {
     const level = await prisma.level.findUnique({
-      where: { id },
-      include: {
-        _count: {
-          select: { contents: true }
-        }
-      }
+      where: { id }
     });
+
+    if (level) {
+      // _countを手動で追加
+      const count = await prisma.content.count({
+        where: { levelCode: id }
+      });
+      level._count = { contents: count };
+    }
 
     if (!level) {
       return NextResponse.json(
@@ -58,13 +61,14 @@ export async function PUT(request, props) {
     // レベルの更新
     const updatedLevel = await prisma.level.update({
       where: { id },
-      data: updateData,
-      include: {
-        _count: {
-          select: { contents: true }
-        }
-      }
+      data: updateData
     });
+
+    // _countを手動で追加
+    const count = await prisma.content.count({
+      where: { levelCode: id }
+    });
+    updatedLevel._count = { contents: count };
 
     // 関連するコンテンツのlevelフィールドも更新
     if (displayName) {

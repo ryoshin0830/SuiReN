@@ -108,15 +108,16 @@ export async function POST(request) {
         displayName,
         orderIndex,
         isDefault: false
-      },
-      include: {
-        _count: {
-          select: { contents: true }
-        }
       }
     });
 
-    return NextResponse.json(newLevel, { status: 201 });
+    // _countを手動で追加
+    const levelWithCount = {
+      ...newLevel,
+      _count: { contents: 0 }
+    };
+
+    return NextResponse.json(levelWithCount, { status: 201 });
   } catch (error) {
     console.error('Error creating level:', error);
     if (error.code === 'P2002') {
