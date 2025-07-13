@@ -1,11 +1,6 @@
 import { NextResponse } from 'next/server';
 import * as XLSX from 'xlsx';
-import { 
-  LEVEL_CODES,
-  LEVEL_DISPLAY_NAMES,
-  DISPLAY_NAME_TO_LEVEL_CODE,
-  getLevelCode
-} from '../../../../lib/level-constants';
+import prisma from '../../../../lib/prisma';
 
 export const runtime = 'nodejs'; // Ensure Node.js runtime for file processing
 
@@ -14,6 +9,27 @@ export async function POST(request) {
   console.log('Request headers:', request.headers);
   
   try {
+    // データベースからレベル情報を取得
+    let levels;
+    try {
+      levels = await prisma.level.findMany({
+        orderBy: { orderIndex: 'asc' }
+      });
+    } catch (error) {
+      console.error('Failed to fetch levels:', error);
+      // フォールバック: デフォルトレベルを使用
+      levels = [
+        { id: 'beginner', displayName: '中級前半' },
+        { id: 'intermediate', displayName: '中級レベル' },
+        { id: 'advanced', displayName: '上級レベル' }
+      ];
+    }
+    
+    // 表示名からレベルコードへのマッピングを作成
+    const displayNameToLevelCode = {};
+    levels.forEach(level => {
+      displayNameToLevelCode[level.displayName] = level.id;
+    });
     // Check content-type
     const contentType = request.headers.get('content-type');
     console.log('Content-Type:', contentType);
@@ -118,7 +134,8 @@ export async function POST(request) {
 
     // Extract basic information using new table format
     let title = '';
-    let level = LEVEL_DISPLAY_NAMES.BEGINNER;
+    const defaultLevel = levels.find(l => l.isDefault) || levels[0];
+    let level = defaultLevel.displayName;
     let text = '';
     let wordCount = null;
     let characterCount = null;
@@ -137,7 +154,9 @@ export async function POST(request) {
         title = row[1].toString().trim();
       } else if (row[0] === 'レベル' && row[1]) {
         const levelValue = row[1].toString().trim();
-        if ([LEVEL_DISPLAY_NAMES.BEGINNER, LEVEL_DISPLAY_NAMES.INTERMEDIATE, LEVEL_DISPLAY_NAMES.ADVANCED].includes(levelValue)) {
+        // 動的レベルリストでチェック
+        const validLevel = levels.find(l => l.displayName === levelValue);
+        if (validLevel) {
           level = levelValue;
         }
       } else if (row[0] === '本文' && row[1]) {
@@ -325,8 +344,8 @@ export async function POST(request) {
       }
     }
 
-    // Determine level code
-    const levelCode = getLevelCode(level);
+    // Determine level code using dynamic mapping
+    const levelCode = displayNameToLevelCode[level] || defaultLevel.id;
 
     // Prepare the content data
     const contentData2 = {
