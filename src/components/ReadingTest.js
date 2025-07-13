@@ -501,7 +501,7 @@ export default function ReadingTest({ content, onBack }) {
           >
             
             <div className="max-w-4xl mx-auto relative">
-              {/* 段落分割されたテキスト表示 */}
+              {/* 段落分割された読み物表示 */}
               <div className="space-y-8">
                 {/* 段落1の前の大きな空白エリア（段落1を画面中央に持ってくるため） */}
                 <div className="h-screen flex items-center justify-center">

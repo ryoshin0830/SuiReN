@@ -107,7 +107,7 @@ export default function About() {
         <div className="text-gray-700 space-y-4">
           <h3 className="text-lg font-semibold text-gray-900">標準語数とは？</h3>
           <p>
-            日本語テキストの実質的な情報量を測るための指標です。
+            日本語読み物の実質的な情報量を測るための指標です。
             SuiReNでは、形態素解析に基づいた語彙単位でカウントし、
             以下の重み付けを行っています：
           </p>

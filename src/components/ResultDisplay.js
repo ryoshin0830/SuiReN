@@ -440,7 +440,7 @@ export default function ResultDisplay({ content, answers, readingData, onBack, o
             <div className="mt-6 bg-blue-50 rounded-xl p-4 border border-blue-200">
               <p className="text-sm text-gray-700">
                 <strong>標準語数とは：</strong>
-                日本語テキストの実質的な情報量を測るための指標です。
+                日本語読み物の実質的な情報量を測るための指標です。
                 漢字・カタカナ・英数字の語を1.0、ひらがなのみの語を0.5として計算した値です。
               </p>
             </div>

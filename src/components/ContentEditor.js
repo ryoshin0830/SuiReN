@@ -215,7 +215,7 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
     setImageManagerVersion(prev => prev + 1); // 再レンダリングを強制
   };
 
-  // テキストに画像プレースホルダーを挿入
+  // 読み物に画像プレースホルダーを挿入
   const insertImagePlaceholder = (imageId) => {
     const placeholder = `{{IMAGE:${imageId}}}`;
     const textarea = document.querySelector('textarea[name="text"]');
@@ -848,7 +848,7 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
               </div>
             </div>
 
-            {/* テキストプレビュー */}
+            {/* 読み物プレビュー */}
             {formData.text && (
               <div className="mt-6">
                 <TextWithImagesPreview 
