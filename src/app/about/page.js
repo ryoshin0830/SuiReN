@@ -23,32 +23,32 @@ export default function About() {
       </div>
 
       <div className="grid md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-blue-50 rounded-lg p-6">
-          <h3 className="text-xl font-semibold text-blue-900 mb-4">
+        <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
+          <h3 className="text-2xl font-bold text-blue-900 mb-6">
             正確性（Accuracy）
           </h3>
-          <p className="text-blue-700">
-            文字、語彙、文法を正しく理解する能力。
+          <p className="text-blue-800 text-lg leading-relaxed">
+            文字、語彙、文法を正しく理解する能力。<br />
             間違いなく読むことができるかどうかです。
           </p>
         </div>
 
-        <div className="bg-green-50 rounded-lg p-6">
-          <h3 className="text-xl font-semibold text-green-900 mb-4">
+        <div className="bg-green-50 border-2 border-green-200 rounded-lg p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
+          <h3 className="text-2xl font-bold text-green-900 mb-6">
             自動性（Automaticity）
           </h3>
-          <p className="text-green-700">
-            意識的な努力なしに読める能力。
+          <p className="text-green-800 text-lg leading-relaxed">
+            意識的な努力なしに読める能力。<br />
             考えなくても自然に読めることです。
           </p>
         </div>
 
-        <div className="bg-purple-50 rounded-lg p-6">
-          <h3 className="text-xl font-semibold text-purple-900 mb-4">
+        <div className="bg-purple-50 border-2 border-purple-200 rounded-lg p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
+          <h3 className="text-2xl font-bold text-purple-900 mb-6">
             速度（Rate）
           </h3>
-          <p className="text-purple-700">
-            適切なスピードで読める能力。
+          <p className="text-purple-800 text-lg leading-relaxed">
+            適切なスピードで読める能力。<br />
             速すぎず遅すぎない自然な速度です。
           </p>
         </div>

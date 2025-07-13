@@ -260,7 +260,7 @@ export default function LevelManager() {
                     <button
                       onClick={() => handleOrderChange(level.id, 'up')}
                       disabled={index === 0 || saving || !isDatabaseAvailable}
-                      className="p-1 text-gray-600 hover:text-gray-800 disabled:opacity-30"
+                      className="p-1 text-gray-600 hover:text-gray-800 disabled:opacity-60"
                       title={!isDatabaseAvailable ? 'データベース設定が必要です' : ''}
                     >
                       ↑
@@ -268,7 +268,7 @@ export default function LevelManager() {
                     <button
                       onClick={() => handleOrderChange(level.id, 'down')}
                       disabled={index === levels.length - 1 || saving || !isDatabaseAvailable}
-                      className="p-1 text-gray-600 hover:text-gray-800 disabled:opacity-30"
+                      className="p-1 text-gray-600 hover:text-gray-800 disabled:opacity-60"
                       title={!isDatabaseAvailable ? 'データベース設定が必要です' : ''}
                     >
                       ↓
@@ -311,7 +311,7 @@ export default function LevelManager() {
                   ) : (
                     <button
                       onClick={() => handleSetDefault(level.id)}
-                      className="text-gray-400 hover:text-green-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="text-gray-600 hover:text-green-600 disabled:opacity-50 disabled:cursor-not-allowed"
                       disabled={saving || !isDatabaseAvailable}
                       title={!isDatabaseAvailable ? 'データベース設定が必要です' : ''}
                     >
@@ -382,7 +382,7 @@ export default function LevelManager() {
                   setShowAddModal(false);
                   setNewLevel({ id: '', displayName: '', orderIndex: levels.length + 1 });
                 }}
-                className="px-4 py-2 text-gray-600 bg-gray-200 rounded-lg hover:bg-gray-300"
+                className="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300"
                 disabled={saving}
               >
                 キャンセル
@@ -440,7 +440,7 @@ export default function LevelManager() {
                   setShowDeleteModal(null);
                   setTargetLevelId('');
                 }}
-                className="px-4 py-2 text-gray-600 bg-gray-200 rounded-lg hover:bg-gray-300"
+                className="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300"
                 disabled={saving}
               >
                 キャンセル
