@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import ContentEditor from '../../components/ContentEditor';
 import LevelManager from '../../components/LevelManager';
+import AboutPageEditor from '../../components/AboutPageEditor';
 import { 
   LEVEL_CODES, 
   getLevelDisplayName,
@@ -23,7 +24,7 @@ export default function Admin() {
   const [showExcelUpload, setShowExcelUpload] = useState(false);
   const [excelUploadLoading, setExcelUploadLoading] = useState(false);
   const [excelData, setExcelData] = useState(null);
-  const [activeTab, setActiveTab] = useState('contents'); // 'contents' or 'levels'
+  const [activeTab, setActiveTab] = useState('contents'); // 'contents', 'levels', or 'about'
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -279,6 +280,16 @@ export default function Admin() {
           >
             レベル管理
           </button>
+          <button
+            onClick={() => setActiveTab('about')}
+            className={`py-2 px-1 border-b-2 font-medium text-sm ${
+              activeTab === 'about'
+                ? 'border-blue-500 text-blue-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            }`}
+          >
+            このサイトについて
+          </button>
         </nav>
       </div>
 
@@ -451,6 +462,11 @@ export default function Admin() {
       {/* レベル管理タブ */}
       {activeTab === 'levels' && (
         <LevelManager />
+      )}
+
+      {/* このサイトについてタブ */}
+      {activeTab === 'about' && (
+        <AboutPageEditor />
       )}
 
       {/* Excel Upload Modal */}

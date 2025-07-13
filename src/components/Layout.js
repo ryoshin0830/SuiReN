@@ -60,7 +60,7 @@ export default function Layout({ children }) {
             <div className="flex items-center space-x-1 sm:space-x-2">
               
               
-              {/* 速読説明ページリンク */}
+              {/* このサイトについてリンク */}
               <Link 
                 href="/about" 
                 className={`relative px-2 sm:px-4 py-1 sm:py-2 rounded-lg sm:rounded-xl font-medium transition-all duration-300 text-xs sm:text-sm ${
@@ -69,7 +69,7 @@ export default function Layout({ children }) {
                     : 'text-gray-700 hover:text-white hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-500 hover:shadow-lg hover:shadow-blue-500/25' // 非アクティブ状態
                 }`}
               >
-                <span className="relative z-10">「速読」について</span>
+                <span className="relative z-10">このサイトについて</span>
               </Link>
               
               {/* 読解練習ページリンク - メインCTA */}
