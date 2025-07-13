@@ -14,16 +14,24 @@ export async function GET() {
 
     console.log('Attempting to fetch levels from database...');
     const levels = await prisma.level.findMany({
-      orderBy: { orderIndex: 'asc' },
-      include: {
-        _count: {
-          select: { contents: true }
-        }
-      }
+      orderBy: { orderIndex: 'asc' }
     });
+    
+    // コンテンツ数を手動で追加
+    const levelsWithCount = await Promise.all(
+      levels.map(async (level) => {
+        const count = await prisma.content.count({
+          where: { levelCode: level.id }
+        });
+        return {
+          ...level,
+          _count: { contents: count }
+        };
+      })
+    );
 
-    console.log('Levels fetched successfully:', levels.length);
-    return NextResponse.json(levels);
+    console.log('Levels fetched successfully:', levelsWithCount.length);
+    return NextResponse.json(levelsWithCount);
   } catch (error) {
     console.error('Level GET error details:', {
       name: error.name,
