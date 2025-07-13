@@ -3,6 +3,10 @@ import prisma from '../../../lib/prisma';
 
 // GET /api/contents - 全コンテンツを取得
 export async function GET() {
+  console.log('Contents API called');
+  console.log('DATABASE_URL exists:', !!process.env.DATABASE_URL);
+  console.log('NODE_ENV:', process.env.NODE_ENV);
+  
   try {
     const contents = await prisma.content.findMany({
       include: {
@@ -42,8 +46,25 @@ export async function GET() {
     return NextResponse.json(formattedContents);
   } catch (error) {
     console.error('Error fetching contents:', error);
+    console.error('Error details:', {
+      name: error.name,
+      message: error.message,
+      code: error.code,
+      meta: error.meta,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
+    
+    // Return more detailed error in production for debugging
     return NextResponse.json(
-      { error: 'Failed to fetch contents' },
+      { 
+        error: 'Failed to fetch contents',
+        details: {
+          message: error.message,
+          code: error.code,
+          dbUrlExists: !!process.env.DATABASE_URL,
+          nodeEnv: process.env.NODE_ENV
+        }
+      },
       { status: 500 }
     );
   }

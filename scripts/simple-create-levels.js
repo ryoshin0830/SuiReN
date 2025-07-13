@@ -1,15 +1,26 @@
 const { PrismaClient } = require('@prisma/client');
 
 async function simpleCreateLevels() {
+  console.log('=== Simple Create Levels Script Started ===');
+  console.log('Environment:', process.env.VERCEL ? 'Vercel' : 'Local');
+  console.log('DATABASE_URL exists:', !!process.env.DATABASE_URL);
+  
   // Vercel environment or local development
   if (!process.env.DATABASE_URL) {
-    console.error('DATABASE_URL is not set');
+    console.error('ERROR: DATABASE_URL is not set');
+    console.error('Available env vars:', Object.keys(process.env).filter(k => k.includes('DATABASE') || k.includes('POSTGRES')));
     process.exit(1);
   }
   
   const prisma = new PrismaClient();
 
   try {
+    console.log('Connecting to database...');
+    
+    // Test connection first
+    await prisma.$queryRaw`SELECT 1`;
+    console.log('✓ Database connection successful');
+    
     console.log('Creating Level table without constraints...');
 
     // 1. Levelテーブルを作成（存在しない場合）
