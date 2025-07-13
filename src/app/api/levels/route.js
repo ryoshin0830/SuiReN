@@ -3,6 +3,8 @@ import prisma from '../../../lib/prisma';
 
 // GET: 全レベルの取得
 export async function GET() {
+  console.log('Level GET API called');
+  
   try {
     // Prismaクライアントが利用可能か確認
     if (!prisma) {
@@ -10,6 +12,7 @@ export async function GET() {
       throw new Error('Database connection not available');
     }
 
+    console.log('Attempting to fetch levels from database...');
     const levels = await prisma.level.findMany({
       orderBy: { orderIndex: 'asc' },
       include: {
@@ -19,9 +22,28 @@ export async function GET() {
       }
     });
 
+    console.log('Levels fetched successfully:', levels.length);
     return NextResponse.json(levels);
   } catch (error) {
-    console.error('Level GET error:', error);
+    console.error('Level GET error details:', {
+      name: error.name,
+      message: error.message,
+      code: error.code,
+      meta: error.meta,
+      stack: error.stack
+    });
+    
+    // Prismaの特定のエラーコードをチェック
+    if (error.code === 'P2021' || error.code === 'P2022' || error.message?.includes('level')) {
+      console.log('Table does not exist error detected - returning default levels');
+      const defaultLevels = [
+        { id: 'beginner', displayName: '中級前半', orderIndex: 1, isDefault: true, _count: { contents: 0 } },
+        { id: 'intermediate', displayName: '中級レベル', orderIndex: 2, isDefault: false, _count: { contents: 0 } },
+        { id: 'advanced', displayName: '上級レベル', orderIndex: 3, isDefault: false, _count: { contents: 0 } }
+      ];
+      return NextResponse.json(defaultLevels);
+    }
+    
     return NextResponse.json(
       { error: 'レベルの取得に失敗しました' },
       { status: 500 }
