@@ -834,7 +834,7 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
                 onChange={(e) => setFormData(prev => ({ ...prev, text: e.target.value }))}
                 rows={12}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-gray-900 placeholder-gray-500"
-                placeholder="読解練習用の文章を入力してください...&#10;&#10;ルビ記法:&#10;• 基本: ｜漢字《かんじ》&#10;• 省略: 漢字《かんじ》&#10;• 括弧: 漢字(かんじ)"
+                placeholder="読解練習用のテキストを入力してください...&#10;&#10;ルビ記法:&#10;• 基本: ｜漢字《かんじ》&#10;• 省略: 漢字《かんじ》&#10;• 括弧: 漢字(かんじ)"
                 required
               />
               
@@ -861,17 +861,17 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
             {/* 文章の解説 */}
             <div className="mt-6">
               <label className="block text-sm font-semibold text-gray-700 mb-2">
-                文章の解説（オプション）
+                テキストの解説（オプション）
               </label>
               <textarea
                 value={formData.explanation}
                 onChange={(e) => setFormData(prev => ({ ...prev, explanation: e.target.value }))}
                 rows={4}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
-                placeholder="文章の背景情報、重要なポイント、文化的な説明など...&#10;読解練習結果で表示される解説文です。"
+                placeholder="テキストの背景情報、重要なポイント、文化的な説明など...&#10;読解練習結果で表示される解説文です。"
               />
               <div className="mt-2 text-xs text-gray-500">
-                この解説は読解練習結果画面で表示されます。文章の理解を深めるための補足情報を記載してください。
+                この解説は読解練習結果画面で表示されます。テキストの理解を深めるための補足情報を記載してください。
               </div>
             </div>
           </div>

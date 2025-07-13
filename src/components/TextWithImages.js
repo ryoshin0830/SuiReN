@@ -66,7 +66,7 @@ export default function TextWithImages({ text, images = [], className = "" }) {
             <div key={index} className="my-6 text-center">
               <img
                 src={image.base64}
-                alt={image.alt || '文章内の画像'}
+                alt={image.alt || 'テキスト内の画像'}
                 className="max-w-full h-auto max-h-96 mx-auto rounded-lg bg-transparent"
                 style={{ 
                   backgroundColor: 'transparent',
@@ -141,7 +141,7 @@ export default function TextWithImages({ text, images = [], className = "" }) {
                   <div key={imgIndex} className="flex-shrink-0">
                     <img
                       src={image.base64}
-                      alt={image.alt || `文章内の画像${imgIndex + 1}`}
+                      alt={image.alt || `テキスト内の画像${imgIndex + 1}`}
                       className="max-w-xs h-auto max-h-64 rounded-lg bg-transparent"
                       style={{ 
                         backgroundColor: 'transparent',
