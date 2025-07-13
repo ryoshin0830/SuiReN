@@ -6,7 +6,7 @@ const testData = [
   ['これは実際の本文です。', '', '', '', ''],
   ['ルビを使った例：日本《にほん》', '', '', '', ''],
   ['', '', '', '', ''],
-  ['文章の解説（任意）', '', '', '', '']
+  ['読み物の解説（任意）', '', '', '', '']
 ];
 
 // Simulate the parsing logic
@@ -29,7 +29,7 @@ if (startIndex !== -1) {
     if (!currentRow) continue;
     
     // Stop if we hit the next section
-    if (currentRow[0] === '文章の解説（任意）') break;
+    if (currentRow[0] === '読み物の解説（任意）') break;
     
     // Skip ruby notation examples and instructions
     const rowText = currentRow.join(' ').toString();

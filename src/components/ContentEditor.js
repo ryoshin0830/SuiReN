@@ -23,7 +23,7 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
     text: '',
     wordCount: '',    // 語数（手動入力）
     characterCount: '', // 文字数（手動入力）
-    explanation: '', // 文章の解説
+    explanation: '', // 読み物の解説
     images: [],
     thumbnail: null, // サムネイル画像
     questions: [
@@ -73,7 +73,7 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
         text: content.text,
         wordCount: content.wordCount || '',    // 語数
         characterCount: content.characterCount || '', // 文字数
-        explanation: content.explanation || '', // 文章の解説も初期化
+        explanation: content.explanation || '', // 読み物の解説も初期化
         images: images,
         thumbnail: content.thumbnail || null, // サムネイルも初期化
         questions: content.questions.map(q => ({
@@ -215,7 +215,7 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
     setImageManagerVersion(prev => prev + 1); // 再レンダリングを強制
   };
 
-  // テキストに画像プレースホルダーを挿入
+  // 読み物に画像プレースホルダーを挿入
   const insertImagePlaceholder = (imageId) => {
     const placeholder = `{{IMAGE:${imageId}}}`;
     const textarea = document.querySelector('textarea[name="text"]');
@@ -662,8 +662,8 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
               <ul className="text-sm text-blue-700 space-y-1">
                 <li>• 推奨サイズ: 400×300ピクセル（4:3の比率）</li>
                 <li>• 自動的に圧縮・最適化されます</li>
-                <li>• 読解練習ライブラリの各文章カードの背景として表示されます</li>
-                <li>• 文章の内容に関連した画像を設定することをお勧めします</li>
+                <li>• 読解練習ライブラリの各読み物カードの背景として表示されます</li>
+                <li>• 読み物の内容に関連した画像を設定することをお勧めします</li>
               </ul>
             </div>
           </div>
@@ -801,7 +801,7 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
               <h3 className="text-sm font-semibold text-gray-700 mb-2">📝 画像の使用方法</h3>
               <ol className="text-sm text-gray-600 space-y-1">
                 <li>1. 「画像をアップロード」で画像を追加</li>
-                <li>2. 「テキストに挿入」で文章の任意の位置に挿入</li>
+                <li>2. 「読み物に挿入」で読み物の任意の位置に挿入</li>
                 <li>3. 単一画像: <code className="bg-gray-200 px-1 rounded">{`{{IMAGE:画像ID}}`}</code></li>
                 <li>4. 複数画像（横並び）: <code className="bg-gray-200 px-1 rounded">{`{{IMAGES:ID1,ID2,ID3}}`}</code></li>
                 <li>5. 画像は自動的に圧縮・最適化されます</li>
@@ -834,7 +834,7 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
                 onChange={(e) => setFormData(prev => ({ ...prev, text: e.target.value }))}
                 rows={12}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-gray-900 placeholder-gray-500"
-                placeholder="読解練習用の文章を入力してください...&#10;&#10;ルビ記法:&#10;• 基本: ｜漢字《かんじ》&#10;• 省略: 漢字《かんじ》&#10;• 括弧: 漢字(かんじ)"
+                placeholder="読解練習用の読み物を入力してください...&#10;&#10;ルビ記法:&#10;• 基本: ｜漢字《かんじ》&#10;• 省略: 漢字《かんじ》&#10;• 括弧: 漢字(かんじ)"
                 required
               />
               
@@ -848,7 +848,7 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
               </div>
             </div>
 
-            {/* テキストプレビュー */}
+            {/* 読み物プレビュー */}
             {formData.text && (
               <div className="mt-6">
                 <TextWithImagesPreview 
@@ -858,20 +858,20 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
               </div>
             )}
 
-            {/* 文章の解説 */}
+            {/* 読み物の解説 */}
             <div className="mt-6">
               <label className="block text-sm font-semibold text-gray-700 mb-2">
-                文章の解説（オプション）
+                読み物の解説（オプション）
               </label>
               <textarea
                 value={formData.explanation}
                 onChange={(e) => setFormData(prev => ({ ...prev, explanation: e.target.value }))}
                 rows={4}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
-                placeholder="文章の背景情報、重要なポイント、文化的な説明など...&#10;読解練習結果で表示される解説文です。"
+                placeholder="読み物の背景情報、重要なポイント、文化的な説明など...&#10;読解練習結果で表示される解説文です。"
               />
               <div className="mt-2 text-xs text-gray-500">
-                この解説は読解練習結果画面で表示されます。文章の理解を深めるための補足情報を記載してください。
+                この解説は読解練習結果画面で表示されます。読み物の理解を深めるための補足情報を記載してください。
               </div>
             </div>
           </div>

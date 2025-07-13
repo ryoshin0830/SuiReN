@@ -2,12 +2,12 @@
  * Reading Page - 読解練習ライブラリの選択画面
  * 
  * 機能:
- * - 文章の検索・フィルタリング・並び替え
+ * - 読み物の検索・フィルタリング・並び替え
  * - グリッド・リスト表示モードの切り替え
  * - ページネーション（9件ずつ表示）
  * - 統計ダッシュボード
  * - モダンUI/UXデザイン（2カラムレイアウト）
- * - 研究配慮（文章内容を事前に表示しない）
+ * - 研究配慮（読み物内容を事前に表示しない）
  */
 
 'use client';
@@ -60,7 +60,7 @@ export default function Reading() {
 
   // ===== 統計データの計算 =====
   /**
-   * 文章数の統計を計算（総数・レベル別）
+   * 読み物数の統計を計算（総数・レベル別）
    * useMemoを使用してパフォーマンス最適化
    */
   const stats = useMemo(() => {
@@ -197,7 +197,7 @@ export default function Reading() {
                 <h1 className="text-2xl font-black bg-gradient-to-r from-gray-800 via-blue-600 to-purple-600 bg-clip-text text-transparent">
                   読解練習ライブラリ
                 </h1>
-                <p className="text-sm text-gray-600">お好みの文章を選んでください</p>
+                <p className="text-sm text-gray-600">お好みの読み物を選んでください</p>
               </div>
             </div>
             
@@ -317,11 +317,11 @@ export default function Reading() {
                   <svg className="w-5 h-5 mr-2 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" />
                   </svg>
-                  文章統計
+                  読み物統計
                 </h3>
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600">総文章数</span>
+                    <span className="text-gray-600">総読み物数</span>
                     <span className="font-bold text-xl bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                       {stats.total}
                     </span>
@@ -441,7 +441,7 @@ export default function Reading() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
                   <span className="text-lg font-bold text-gray-800">
-                    {filteredContents.length}件の文章
+                    {filteredContents.length}件の読み物
                   </span>
                   {hasActiveFilters && (
                     <span className="text-sm text-blue-600 bg-blue-50 px-3 py-1 rounded-full font-medium">
@@ -488,7 +488,7 @@ export default function Reading() {
             {paginatedContents.length === 0 ? (
               <div className="bg-white rounded-2xl p-16 shadow-lg border border-gray-100 text-center">
                 <div className="text-6xl mb-4">🔍</div>
-                <h3 className="text-2xl font-bold text-gray-700 mb-2">該当する文章が見つかりません</h3>
+                <h3 className="text-2xl font-bold text-gray-700 mb-2">該当する読み物が見つかりません</h3>
                 <p className="text-gray-600 mb-4">検索条件を変更してもう一度お試しください</p>
                 {hasActiveFilters && (
                   <button

@@ -426,7 +426,7 @@ export default function ReadingTest({ content, onBack }) {
             </h2>
             {/* ステップバイステップの説明 */}
             <ol className="text-blue-700 space-y-1 sm:space-y-2 text-sm sm:text-base">
-              <li>1. 「読書開始」ボタンを押して文章を読んでください</li>
+              <li>1. 「読書開始」ボタンを押して読み物を読んでください</li>
               <li>2. 読み終わったら「読書完了」ボタンを押してください</li>
               <li>3. 理解度確認の質問に答えてください</li>
               <li>4. 結果が表示されます</li>
@@ -501,7 +501,7 @@ export default function ReadingTest({ content, onBack }) {
           >
             
             <div className="max-w-4xl mx-auto relative">
-              {/* 段落分割されたテキスト表示 */}
+              {/* 段落分割された読み物表示 */}
               <div className="space-y-8">
                 {/* 段落1の前の大きな空白エリア（段落1を画面中央に持ってくるため） */}
                 <div className="h-screen flex items-center justify-center">
@@ -597,10 +597,10 @@ export default function ReadingTest({ content, onBack }) {
                 </div>
               </div>
               
-              {/* 読書完了ボタン（文章の最後に配置） */}
+              {/* 読書完了ボタン（読み物の最後に配置） */}
               <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t-2 border-gray-300 bg-gray-50 rounded-lg p-4 sm:p-6">
                 <div className="text-center">
-                  <p className="text-gray-700 mb-3 sm:mb-4 text-base sm:text-lg">📖 文章を読み終わりましたか？</p>
+                  <p className="text-gray-700 mb-3 sm:mb-4 text-base sm:text-lg">📖 読み物を読み終わりましたか？</p>
                   <p className="text-gray-500 mb-4 sm:mb-6 text-xs sm:text-sm">下のボタンを押して問題に進んでください</p>
                   <button
                     onClick={finishReading}

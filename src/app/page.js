@@ -69,7 +69,7 @@ export default function Home() {
                 楽しく
               </span>
               <br />
-              日本語の文章を読む力を身につけよう
+              日本語の読み物を読む力を身につけよう
             </p>
           </div>
 
@@ -116,11 +116,11 @@ export default function Home() {
               </p>
               
               <p className="text-lg">
-                私たちは、みなさんに日本語の文章を、楽しくスラスラと読んでほしいと思います。
+                私たちは、みなさんに日本語の読み物を、楽しくスラスラと読んでほしいと思います。
               </p>
               
               <p className="text-lg">
-                「<span className="font-bold text-blue-600">SuiReN</span>」の練習では、簡単な文章を、なるべく速く読みます。でも、速すぎてはだめです。だいたいの意味がわかるように、そして、速く読んでください。何回もこの練習をしていると、楽しくスラスラ読めるようになりますよ。
+                「<span className="font-bold text-blue-600">SuiReN</span>」の練習では、簡単な読み物を、なるべく速く読みます。でも、速すぎてはだめです。だいたいの意味がわかるように、そして、速く読んでください。何回もこの練翕をしていると、楽しくスラスラ読めるようになりますよ。
               </p>
               
               <div className="text-center mt-8">
@@ -158,7 +158,7 @@ export default function Home() {
                 <div className="text-6xl font-black text-blue-500 mb-4">01</div>
                 <h3 className="text-2xl font-bold text-gray-800 mb-4">レベルを選ぶ</h3>
                 <p className="text-gray-600 leading-relaxed">
-                  自分のレベルに合った文章を選びます。簡単すぎず、難しすぎない、ちょうどいいレベルから始めましょう。
+                  自分のレベルに合った読み物を選びます。簡単すぎず、難しすぎない、ちょうどいいレベルから始めましょう。
                 </p>
               </div>
             </div>
@@ -266,7 +266,7 @@ export default function Home() {
               <h3 className="text-2xl font-bold text-gray-800 mb-6">速読で得られる効果</h3>
               <div className="space-y-4 text-gray-700">
                 <p className="leading-relaxed">
-                  文章を<span className="font-bold text-blue-600">速く読む</span>ことで、全体の意味を効率的に把握できるようになります。
+                  読み物を<span className="font-bold text-blue-600">速く読む</span>ことで、全体の意味を効率的に把握できるようになります。
                 </p>
                 <p className="leading-relaxed">
                   継続的な練習により、日本語の<span className="font-bold text-purple-600">読解の自動性</span>が向上し、母語話者に近い流暢な読みが可能になります。
@@ -315,7 +315,7 @@ export default function Home() {
               </summary>
               <div className="mt-4 text-gray-700 space-y-3">
                 <p>
-                  標準語数は、日本語テキストの実質的な情報量を測るための指標です。
+                  標準語数は、日本語読み物の実質的な情報量を測るための指標です。
                   日本語は漢字、ひらがな、カタカナが混在するため、
                   単純な文字数ではなく、意味を持つ語彙単位でカウントします。
                 </p>
@@ -424,7 +424,7 @@ export default function Home() {
           </h2>
           <p className="text-xl lg:text-2xl text-white/90 mb-12 leading-relaxed">
             今日から<br />
-            日本語の文章をスイスイ読めるようになりましょう！
+            日本語の読み物をスイスイ読めるようになりましょう！
           </p>
           
           <Link 
