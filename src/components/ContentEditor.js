@@ -510,7 +510,7 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
             <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  タイトル *
+                  タイトル（必須）
                 </label>
                 <input
                   type="text"
@@ -826,7 +826,7 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
             
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
-                本文 *
+                本文（必須）
               </label>
               <textarea
                 name="text"
