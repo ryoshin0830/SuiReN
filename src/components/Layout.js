@@ -59,6 +59,17 @@ export default function Layout({ children }) {
             {/* ナビゲーションメニュー */}
             <div className="flex items-center space-x-1 sm:space-x-2">
               
+              {/* 速読についてリンク */}
+              <Link 
+                href="/fluency" 
+                className={`relative px-2 sm:px-4 py-1 sm:py-2 rounded-lg sm:rounded-xl font-medium transition-all duration-300 text-xs sm:text-sm ${
+                  pathname === '/fluency' 
+                    ? 'text-white bg-gradient-to-r from-blue-600 to-purple-600 shadow-lg shadow-blue-500/25' // アクティブ状態
+                    : 'text-gray-700 hover:text-white hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-500 hover:shadow-lg hover:shadow-blue-500/25' // 非アクティブ状態
+                }`}
+              >
+                <span className="relative z-10">「速読」について</span>
+              </Link>
               
               {/* このサイトについてリンク */}
               <Link 
