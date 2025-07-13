@@ -189,7 +189,8 @@ export default function LevelManager() {
       });
 
       if (!response.ok) {
-        throw new Error('デフォルトレベルの設定に失敗しました');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'デフォルトレベルの設定に失敗しました');
       }
 
       await refetch();
