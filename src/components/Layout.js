@@ -30,7 +30,7 @@ export default function Layout({ children }) {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
       
       {/* ナビゲーションバー - スティッキー配置とガラスモーフィズム効果 */}
-      <nav className="sticky top-0 z-50 backdrop-blur-xl bg-white/70 border-b border-white/20 shadow-lg shadow-black/5">
+      <nav className="sticky top-0 z-50 backdrop-blur-xl bg-white/85 border-b border-gray-200/50 shadow-lg shadow-black/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16 sm:h-20">
             

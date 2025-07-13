@@ -952,7 +952,7 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
                         type="button"
                         onClick={() => addOption(questionIndex)}
                         disabled={question.options.length >= 6}
-                        className="bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
                       >
                         選択肢追加
                       </button>
@@ -1041,7 +1041,7 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
             <button
               type="submit"
               disabled={loading}
-              className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold disabled:opacity-70 disabled:cursor-not-allowed"
             >
               {loading 
                 ? (mode === 'create' ? '作成中...' : '更新中...')
@@ -1152,7 +1152,7 @@ function ImageEditModal({ image, onSave, onClose }) {
           </button>
           <button
             onClick={onClose}
-            className="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400"
+            className="flex-1 bg-gray-300 text-gray-800 py-2 rounded-lg hover:bg-gray-400"
           >
             キャンセル
           </button>
@@ -1245,13 +1245,13 @@ function RubyModal({ formData, onChange, onSave, onClose }) {
               <button
                 onClick={onSave}
                 disabled={!formData.baseText.trim() || !formData.ruby.trim()}
-                className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 挿入
               </button>
               <button
                 onClick={onClose}
-                className="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400"
+                className="flex-1 bg-gray-300 text-gray-800 py-2 rounded-lg hover:bg-gray-400"
               >
                 キャンセル
               </button>
@@ -1353,7 +1353,7 @@ function MultipleImageInserter({ images, onInsert }) {
             type="button"
             onClick={() => setSelectedImageIds([])}
             disabled={selectedImageIds.length === 0}
-            className="text-sm px-3 py-1 border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="text-sm px-3 py-1 border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-70 disabled:cursor-not-allowed"
           >
             クリア
           </button>
@@ -1361,7 +1361,7 @@ function MultipleImageInserter({ images, onInsert }) {
             type="button"
             onClick={handleInsert}
             disabled={selectedImageIds.length === 0}
-            className="text-sm bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="text-sm bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700 disabled:opacity-70 disabled:cursor-not-allowed"
           >
             横並びで挿入
           </button>
