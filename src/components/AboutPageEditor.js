@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { compressImage } from '../lib/image-compression';
+import { compressImageToBase64 } from '../lib/image-utils';
 
 export default function AboutPageEditor() {
   const [content, setContent] = useState('');
@@ -67,8 +67,8 @@ export default function AboutPageEditor() {
     
     for (const file of files) {
       try {
-        const compressedImage = await compressImage(file);
-        newImages.push(compressedImage);
+        const result = await compressImageToBase64(file);
+        newImages.push(result.base64);
       } catch (error) {
         console.error('Image compression error:', error);
         setError(`画像の処理に失敗しました: ${file.name}`);
