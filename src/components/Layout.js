@@ -72,6 +72,18 @@ export default function Layout({ children }) {
                 <span className="relative z-10">「速読」について</span>
               </Link>
               
+              {/* プロジェクト紹介ページリンク */}
+              <Link 
+                href="/project" 
+                className={`relative px-2 sm:px-4 py-1 sm:py-2 rounded-lg sm:rounded-xl font-medium transition-all duration-300 text-xs sm:text-sm ${
+                  pathname === '/project' 
+                    ? 'text-white bg-gradient-to-r from-purple-600 to-pink-600 shadow-lg shadow-purple-500/25' // アクティブ状態
+                    : 'text-gray-700 hover:text-white hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 hover:shadow-lg hover:shadow-purple-500/25' // 非アクティブ状態
+                }`}
+              >
+                <span className="relative z-10">このサイトについて</span>
+              </Link>
+              
               {/* 読解練習ページリンク - メインCTA */}
               <Link 
                 href="/reading" 

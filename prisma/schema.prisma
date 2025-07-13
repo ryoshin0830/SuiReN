@@ -62,3 +62,16 @@ model QuestionOption {
 
   @@map("question_options")
 }
+
+model SiteInfo {
+  id          String   @id @default("default")
+  title       String   @default("SuiReN")
+  description String?
+  developers  Json?    // Array of developer info { name, role, description }
+  features    Json?    // Array of feature descriptions
+  usage       Json?    // Array of usage steps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("site_info")
+}
