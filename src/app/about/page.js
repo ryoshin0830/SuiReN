@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Layout from '../../components/Layout';
 
 export default function About() {
   const [aboutData, setAboutData] = useState(null);
@@ -63,8 +62,7 @@ export default function About() {
   };
 
   return (
-    <Layout>
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
+    <div className="container mx-auto px-4 py-8 max-w-4xl">
         <h1 className="text-4xl font-bold text-center mb-8 text-gray-800">
           このサイトについて
         </h1>
@@ -95,7 +93,6 @@ export default function About() {
             )}
           </div>
         )}
-      </div>
-    </Layout>
+    </div>
   );
 }
