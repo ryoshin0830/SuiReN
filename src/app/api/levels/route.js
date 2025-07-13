@@ -4,6 +4,8 @@ import prisma from '../../../lib/prisma';
 // GET: 全レベルの取得
 export async function GET() {
   console.log('Level GET API called');
+  console.log('Prisma client:', !!prisma);
+  console.log('Prisma models:', prisma ? Object.keys(prisma).filter(k => !k.startsWith('_') && !k.startsWith('$')) : 'No prisma');
   
   try {
     // Prismaクライアントが利用可能か確認
