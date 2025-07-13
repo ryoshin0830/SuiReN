@@ -100,7 +100,7 @@ export const downloadScoreSheet = (resultData) => {
       </div>
       
       <div class="section">
-        <div class="section-title">テキスト情報</div>
+        <div class="section-title">読み物情報</div>
         <table class="result-table">
           <tr>
             <th>タイトル</th>

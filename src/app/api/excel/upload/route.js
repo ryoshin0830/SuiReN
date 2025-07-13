@@ -202,14 +202,15 @@ export async function POST(request) {
         if (!isNaN(count) && count > 0) {
           characterCount = count;
         }
-      } else if ((row[0] === 'テキストの解説' || row[0] === '文章の解説') && row[1]) {
+      } else if ((row[0] === '読み物の解説' || row[0] === 'テキストの解説' || row[0] === '文章の解説') && row[1]) {
         // Get the explanation content directly from row[1]
         const explanationContent = row[1].toString().trim();
         
         // Filter out instruction text from the explanation
         const filteredExplanation = explanationContent.split('\n').filter(line => {
           const trimmedLine = line.trim();
-          return !trimmedLine.includes('ここにテキストの解説を入力してください') &&
+          return !trimmedLine.includes('ここに読み物の解説を入力してください') &&
+                 !trimmedLine.includes('ここにテキストの解説を入力してください') &&
                  !trimmedLine.includes('ここに文章の解説を入力してください') &&
                  !trimmedLine.includes('※') &&
                  !trimmedLine.includes('例：') &&
@@ -224,7 +225,8 @@ export async function POST(request) {
           if (contentData[j][1]) {
             const continuationExplanation = contentData[j][1].toString().trim();
             // Apply same filtering to continuation lines
-            if (!continuationExplanation.includes('ここにテキストの解説を入力してください') &&
+            if (!continuationExplanation.includes('ここに読み物の解説を入力してください') &&
+                !continuationExplanation.includes('ここにテキストの解説を入力してください') &&
                 !continuationExplanation.includes('ここに文章の解説を入力してください') &&
                 !continuationExplanation.includes('※') &&
                 !continuationExplanation.includes('例：') &&

@@ -267,7 +267,7 @@ export class ImageManager {
 }
 
 /**
- * 文章内の画像プレースホルダーを検証
+ * 読み物内の画像プレースホルダーを検証
  * @param {string} text 
  * @param {Array} images 
  * @returns {Object} 検証結果

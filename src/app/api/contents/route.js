@@ -58,7 +58,7 @@ export async function GET() {
       text: content.text,
       wordCount: content.wordCount,    // 語数
       characterCount: content.characterCount || content.text.length, // 文字数
-      explanation: content.explanation || '', // 文章の解説
+      explanation: content.explanation || '', // 読み物の解説
       images: content.images || [],
       thumbnail: content.thumbnail || null,
       questions: content.questions.map(question => ({
@@ -149,7 +149,7 @@ export async function POST(request) {
         text,
         wordCount: wordCount ? parseInt(wordCount) : null,      // 語数
         characterCount: characterCount ? parseInt(characterCount) : null, // 文字数
-        explanation: explanation || null, // 文章の解説
+        explanation: explanation || null, // 読み物の解説
         images: images || [],
         thumbnail: thumbnail || null,
         questions: {

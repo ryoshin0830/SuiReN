@@ -163,7 +163,7 @@ export default function ResultDisplay({ content, answers, readingData, onBack, o
     };
   };
 
-  // 段落ごとの表示時間に基づく文章セグメントを作成
+  // 段落ごとの表示時間に基づく読み物セグメントを作成
   const createTimeBasedTextSegments = (text, analysis) => {
     if (!analysis) return [];
     
@@ -242,7 +242,7 @@ export default function ResultDisplay({ content, answers, readingData, onBack, o
     const lines = content.text.split('\n').filter(line => line.trim() && !isImageLine(line));
     const characterCount = lines.join('').length;
 
-    // 時間ベースの文章セグメントを作成（関数内で作成）
+    // 時間ベースの読み物セグメントを作成（関数内で作成）
     const currentTextSegments = speedAnalysis ? createTimeBasedTextSegments(content.text, speedAnalysis) : [];
 
     const pdfData = {
@@ -316,7 +316,7 @@ export default function ResultDisplay({ content, answers, readingData, onBack, o
 
 
 
-  // 時間ベースの文章セグメントを作成
+  // 時間ベースの読み物セグメントを作成
   const textSegments = speedAnalysis ? createTimeBasedTextSegments(content.text, speedAnalysis) : [];
 
   return (
@@ -447,7 +447,7 @@ export default function ResultDisplay({ content, answers, readingData, onBack, o
           </div>
         )}
 
-        {/* 文章解説 */}
+        {/* 読み物解説 */}
         {content.explanation && content.explanation.trim() && (
           <div className="backdrop-blur-xl bg-white/70 rounded-2xl p-6 sm:p-8 shadow-xl border border-white/20 mb-8 sm:mb-12 animate-slide-up">
             <div className="flex items-center mb-4 sm:mb-6">
@@ -456,7 +456,7 @@ export default function ResultDisplay({ content, answers, readingData, onBack, o
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-indigo-800 to-indigo-900 bg-clip-text text-transparent">テキスト解説</h2>
+              <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-indigo-800 to-indigo-900 bg-clip-text text-transparent">読み物解説</h2>
             </div>
             <div className="text-base sm:text-lg text-gray-700 leading-relaxed whitespace-pre-wrap">
               {content.explanation}

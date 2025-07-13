@@ -9,9 +9,9 @@ import React from 'react';
 import { parseRubyText } from '../lib/ruby-utils';
 
 /**
- * 文章内の画像プレースホルダーを実際の画像に置換し、ルビを表示してレンダリング
+ * 読み物内の画像プレースホルダーを実際の画像に置換し、ルビを表示してレンダリング
  * @param {Object} props 
- * @param {string} props.text - 画像プレースホルダーとルビ記法を含む文章
+ * @param {string} props.text - 画像プレースホルダーとルビ記法を含む読み物
  * @param {Array} props.images - 画像データ配列
  * @param {string} props.className - 追加CSSクラス
  * @returns {JSX.Element}
@@ -47,7 +47,7 @@ export default function TextWithImages({ text, images = [], className = "" }) {
     });
   }, []);
 
-  // 文章を画像プレースホルダーで分割し、各部分をレンダリング
+  // 読み物を画像プレースホルダーで分割し、各部分をレンダリング
   const renderTextWithImages = React.useMemo(() => {
     if (!text) return null;
 
@@ -66,7 +66,7 @@ export default function TextWithImages({ text, images = [], className = "" }) {
             <div key={index} className="my-6 text-center">
               <img
                 src={image.base64}
-                alt={image.alt || 'テキスト内の画像'}
+                alt={image.alt || '読み物内の画像'}
                 className="max-w-full h-auto max-h-96 mx-auto rounded-lg bg-transparent"
                 style={{ 
                   backgroundColor: 'transparent',
@@ -141,7 +141,7 @@ export default function TextWithImages({ text, images = [], className = "" }) {
                   <div key={imgIndex} className="flex-shrink-0">
                     <img
                       src={image.base64}
-                      alt={image.alt || `テキスト内の画像${imgIndex + 1}`}
+                      alt={image.alt || `読み物内の画像${imgIndex + 1}`}
                       className="max-w-xs h-auto max-h-64 rounded-lg bg-transparent"
                       style={{ 
                         backgroundColor: 'transparent',
@@ -259,7 +259,7 @@ export function TextWithImagesPreview({ text, images = [], className = "" }) {
 }
 
 /**
- * 文章統計情報を表示するコンポーネント（ルビ情報も含む）
+ * 読み物統計情報を表示するコンポーネント（ルビ情報も含む）
  */
 export function TextStatistics({ text, images = [] }) {
   const stats = React.useMemo(() => {
