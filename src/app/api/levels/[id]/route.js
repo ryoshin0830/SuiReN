@@ -25,23 +25,10 @@ export async function GET(request, props) {
 
     return NextResponse.json(level);
   } catch (error) {
-    // エラーログを簡潔に
-    console.log('Database error, returning default level:', error.code || error.message);
-    
-    // データベースエラーの場合は常にデフォルト値を返す
-    const defaultLevels = {
-      'beginner': { id: 'beginner', displayName: '中級前半', orderIndex: 1, isDefault: true, _count: { contents: 0 } },
-      'intermediate': { id: 'intermediate', displayName: '中級レベル', orderIndex: 2, isDefault: false, _count: { contents: 0 } },
-      'advanced': { id: 'advanced', displayName: '上級レベル', orderIndex: 3, isDefault: false, _count: { contents: 0 } }
-    };
-    
-    if (defaultLevels[id]) {
-      return NextResponse.json(defaultLevels[id], { status: 200 });
-    }
-    
+    console.error('Error fetching level:', error);
     return NextResponse.json(
-      { error: 'レベルが見つかりません' },
-      { status: 404 }
+      { error: 'レベルの取得に失敗しました' },
+      { status: 500 }
     );
   }
 }
@@ -90,11 +77,15 @@ export async function PUT(request, props) {
     return NextResponse.json(updatedLevel);
   } catch (error) {
     console.error('Error updating level:', error);
-    
-    // すべてのエラーに対して503を返す
+    if (error.code === 'P2025') {
+      return NextResponse.json(
+        { error: 'レベルが見つかりません' },
+        { status: 404 }
+      );
+    }
     return NextResponse.json(
-      { error: 'レベル管理機能は現在利用できません。データベースの設定が必要です。' },
-      { status: 503 }
+      { error: 'レベルの更新に失敗しました' },
+      { status: 500 }
     );
   }
 }
@@ -170,11 +161,9 @@ export async function DELETE(request, props) {
     });
   } catch (error) {
     console.error('Error deleting level:', error);
-    
-    // すべてのエラーに対して503を返す
     return NextResponse.json(
-      { error: 'レベル管理機能は現在利用できません。データベースの設定が必要です。' },
-      { status: 503 }
+      { error: 'レベルの削除に失敗しました' },
+      { status: 500 }
     );
   }
 }

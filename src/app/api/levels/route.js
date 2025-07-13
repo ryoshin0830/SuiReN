@@ -21,21 +21,11 @@ export async function GET() {
 
     return NextResponse.json(levels);
   } catch (error) {
-    console.error('Level API error:', {
-      message: error.message,
-      code: error.code,
-      stack: error.stack
-    });
-    
-    // デフォルトレベルを返す（すべてのエラーに対して）
-    const defaultLevels = [
-      { id: 'beginner', displayName: '中級前半', orderIndex: 1, isDefault: true, _count: { contents: 0 } },
-      { id: 'intermediate', displayName: '中級レベル', orderIndex: 2, isDefault: false, _count: { contents: 0 } },
-      { id: 'advanced', displayName: '上級レベル', orderIndex: 3, isDefault: false, _count: { contents: 0 } }
-    ];
-    
-    // 200ステータスで返してUIを壊さない
-    return NextResponse.json(defaultLevels, { status: 200 });
+    console.error('Level GET error:', error);
+    return NextResponse.json(
+      { error: 'レベルの取得に失敗しました' },
+      { status: 500 }
+    );
   }
 }
 
@@ -99,17 +89,15 @@ export async function POST(request) {
     return NextResponse.json(newLevel, { status: 201 });
   } catch (error) {
     console.error('Error creating level:', error);
-    console.error('Error details:', {
-      code: error.code,
-      message: error.message,
-      meta: error.meta
-    });
-    
-    // Levelテーブルが存在しない場合は503を返す
-    // すべてのデータベースエラーに対して503を返す
+    if (error.code === 'P2002') {
+      return NextResponse.json(
+        { error: '同じIDのレベルが既に存在します' },
+        { status: 400 }
+      );
+    }
     return NextResponse.json(
-      { error: 'レベル管理機能は現在利用できません。データベースの設定が必要です。' },
-      { status: 503 }
+      { error: 'レベルの作成に失敗しました' },
+      { status: 500 }
     );
   }
 }

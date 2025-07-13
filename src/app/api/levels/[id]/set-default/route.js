@@ -47,11 +47,9 @@ export async function PUT(request, props) {
     return NextResponse.json(updatedLevel);
   } catch (error) {
     console.error('Error setting default level:', error);
-    
-    // すべてのエラーに対して503を返す
     return NextResponse.json(
-      { error: 'レベル管理機能は現在利用できません。データベースの設定が必要です。' },
-      { status: 503 }
+      { error: 'デフォルトレベルの設定に失敗しました' },
+      { status: 500 }
     );
   }
 }

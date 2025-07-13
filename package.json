@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "postinstall": "prisma generate",
-    "vercel-build": "prisma generate && node scripts/safe-migration.js && prisma db push --skip-generate && next build"
+    "vercel-build": "prisma generate && node scripts/force-create-levels.js && next build"
   },
   "dependencies": {
     "@prisma/client": "^6.9.0",
