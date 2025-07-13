@@ -77,9 +77,15 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
             <Link 
               href="/reading"
-              className="group relative px-10 py-5 text-xl font-bold text-white bg-gradient-to-r from-blue-600 to-purple-600 rounded-full overflow-hidden shadow-2xl transform hover:scale-105 transition-all duration-300"
+              className="group relative px-8 sm:px-12 py-5 sm:py-6 text-xl sm:text-2xl font-black text-white bg-gradient-to-r from-blue-600 to-purple-600 rounded-full overflow-hidden shadow-2xl transform hover:scale-110 transition-all duration-300 animate-pulse-glow"
             >
-              <span className="relative z-10">今すぐ始める</span>
+              <div className="absolute inset-0 animate-shine"></div>
+              <span className="relative z-10 flex items-center gap-2 sm:gap-3">
+                <svg className="w-6 h-6 sm:w-8 sm:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+                <span className="animate-text-pulse">START</span>
+              </span>
               <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </Link>
             
@@ -429,12 +435,15 @@ export default function Home() {
           
           <Link 
             href="/reading"
-            className="group relative inline-flex items-center justify-center px-12 py-6 text-2xl font-bold text-gray-800 bg-white rounded-full shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-300"
+            className="group relative inline-flex items-center justify-center px-10 sm:px-14 py-5 sm:py-7 text-2xl sm:text-3xl font-black text-gray-800 bg-white rounded-full shadow-2xl hover:shadow-3xl transform hover:scale-110 transition-all duration-300 animate-pulse-glow"
           >
-            <span className="relative z-10">速読練習を始める</span>
-            <svg className="w-6 h-6 ml-3 transform group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-            </svg>
+            <div className="absolute inset-0 rounded-full animate-shine"></div>
+            <span className="relative z-10 flex items-center gap-3 sm:gap-4">
+              <svg className="w-8 h-8 sm:w-10 sm:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+              <span className="animate-text-pulse">START</span>
+            </span>
           </Link>
 
           <div className="mt-8">
