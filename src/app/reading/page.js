@@ -60,7 +60,7 @@ export default function Reading() {
 
   // ===== 統計データの計算 =====
   /**
-   * 文章数の統計を計算（総数・レベル別・文字数）
+   * 文章数の統計を計算（総数・レベル別）
    * useMemoを使用してパフォーマンス最適化
    */
   const stats = useMemo(() => {
@@ -72,11 +72,7 @@ export default function Reading() {
       levelCounts[level.id] = readingContents.filter(c => c.levelCode === level.id).length;
     });
     
-    // 平均文字数を計算
-    const totalCharacters = readingContents.reduce((sum, content) => sum + (content.characterCount || 0), 0);
-    const averageCharacters = total > 0 ? Math.round(totalCharacters / total) : 0;
-    
-    return { total, levelCounts, averageCharacters };
+    return { total, levelCounts };
   }, [readingContents, levels]);
 
   // ===== フィルタリング・ソート処理 =====
@@ -338,11 +334,6 @@ export default function Reading() {
                       </span>
                     </div>
                   ))}
-                  <hr className="border-gray-200" />
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600">平均文字数</span>
-                    <span className="font-bold text-orange-600">{stats.averageCharacters.toLocaleString()}字</span>
-                  </div>
                 </div>
               </div>
 
