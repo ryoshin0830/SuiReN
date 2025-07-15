@@ -93,6 +93,104 @@ export function countJapaneseCharacters(text) {
   };
 }
 
+/**
+ * 日本語読み物の語数（単語数）をカウントする
+ * 
+ * カウント方法：
+ * - 形態素単位で分割（簡易的な正規表現ベース）
+ * - 漢字・カタカナ・英数字を含む語：1.0としてカウント
+ * - ひらがなのみの語（助詞・助動詞など）：0.5としてカウント
+ * - 句読点・記号：カウントしない
+ * 
+ * @param {string} text - カウント対象のテキスト
+ * @returns {object} 語数の詳細情報
+ */
+export function countJapaneseWords(text) {
+  if (!text || typeof text !== 'string') {
+    return {
+      total: 0,
+      standardCount: 0,
+      details: {
+        contentWords: 0,    // 内容語（漢字・カタカナ・英数字を含む）
+        functionWords: 0,   // 機能語（ひらがなのみ）
+        numbers: 0,         // 数字
+        english: 0          // 英単語
+      }
+    };
+  }
+
+  const details = {
+    contentWords: 0,
+    functionWords: 0,
+    numbers: 0,
+    english: 0
+  };
+
+  // 画像プレースホルダーとルビ記法を除去
+  let cleanText = text.replace(/\{\{IMAGE:[^}]+\}\}/g, '');
+  cleanText = cleanText.replace(/[｜|]([^《]+)《[^》]+》/g, '$1');
+  cleanText = cleanText.replace(/([^《]+)《[^》]+》/g, '$1');
+  cleanText = cleanText.replace(/([^(]+)\([^)]+\)/g, '$1');
+
+  // 改行をスペースに変換
+  cleanText = cleanText.replace(/\n/g, ' ');
+
+  // 句読点で分割
+  const segments = cleanText.split(/[、。！？「」『』（）\[\]【】〈〉《》・…ー～\s]+/);
+
+  for (let segment of segments) {
+    if (!segment) continue;
+
+    // 英単語（連続する英字）
+    const englishWords = segment.match(/[a-zA-Z]+/g);
+    if (englishWords) {
+      details.english += englishWords.length;
+      // 英単語を除去
+      segment = segment.replace(/[a-zA-Z]+/g, ' ');
+    }
+
+    // 数字（連続する数字）
+    const numbers = segment.match(/[0-9０-９]+/g);
+    if (numbers) {
+      details.numbers += numbers.length;
+      // 数字を除去
+      segment = segment.replace(/[0-9０-９]+/g, ' ');
+    }
+
+    // 残りのテキストを形態素に分割（簡易版）
+    // 漢字・カタカナの連続、ひらがなの連続で分割
+    const morphemes = segment.match(/[\u4E00-\u9FAF]+|[\u30A0-\u30FF]+|[\u3040-\u309F]+/g);
+    
+    if (morphemes) {
+      for (const morpheme of morphemes) {
+        // ひらがなのみの場合は機能語として扱う
+        if (/^[\u3040-\u309F]+$/.test(morpheme)) {
+          details.functionWords++;
+        } else {
+          details.contentWords++;
+        }
+      }
+    }
+  }
+
+  // 標準語数の計算
+  const standardCount = 
+    details.contentWords * 1.0 +    // 内容語：1.0
+    details.functionWords * 0.5 +   // 機能語：0.5
+    details.numbers * 1.0 +         // 数字：1.0
+    details.english * 1.0;          // 英単語：1.0
+
+  // 総語数
+  const total = details.contentWords + details.functionWords + 
+                details.numbers + details.english;
+
+  return {
+    total,
+    standardCount: Math.round(standardCount),
+    details
+  };
+}
+
 
 /**
  * 読書速度を計算する（文字/分）

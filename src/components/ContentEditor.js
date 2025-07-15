@@ -11,6 +11,7 @@ import {
 import { TextWithImagesPreview, TextStatistics } from './TextWithImages';
 import { formatRubyText, getRubyExamples, validateRuby } from '../lib/ruby-utils';
 import { useLevels } from '../hooks/useLevels';
+import { countJapaneseCharacters, countJapaneseWords } from '../lib/speed-calculator';
 
 export default function ContentEditor({ mode, content, excelData, onClose }) {
   const { levels, loading: levelsLoading, getDefaultLevel } = useLevels();
@@ -38,6 +39,7 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [imageManager] = useState(new ImageManager());
+  const [autoCalculate, setAutoCalculate] = useState(true); // 自動計算モード
   const [imageManagerVersion, setImageManagerVersion] = useState(0); // 再レンダリング用
   const [selectedImageId, setSelectedImageId] = useState(null);
   const [showImageModal, setShowImageModal] = useState(false);
@@ -66,13 +68,24 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
       const images = content.images || [];
       imageManager.images = images;
       
+      // 自動計算モードかつ既存の値がない場合は計算
+      let wordCount = content.wordCount || '';
+      let characterCount = content.characterCount || '';
+      
+      if (autoCalculate && content.text && (!content.wordCount || !content.characterCount)) {
+        const wordCalc = countJapaneseWords(content.text);
+        const charCalc = countJapaneseCharacters(content.text);
+        wordCount = wordCalc.standardCount.toString();
+        characterCount = charCalc.total.toString();
+      }
+      
       setFormData({
         title: content.title,
         level: content.level,
         levelCode: content.levelCode,
         text: content.text,
-        wordCount: content.wordCount || '',    // 語数
-        characterCount: content.characterCount || '', // 文字数
+        wordCount: wordCount,    // 語数
+        characterCount: characterCount, // 文字数
         explanation: content.explanation || '', // 読み物の解説も初期化
         images: images,
         thumbnail: content.thumbnail || null, // サムネイルも初期化
@@ -107,7 +120,7 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
         ]
       });
     }
-  }, [mode, content, excelData, imageManager, defaultLevel]);
+  }, [mode, content, excelData, imageManager, defaultLevel, autoCalculate]);
 
   // レベル変更時にlevelCodeも更新
   const handleLevelChange = (levelId) => {
@@ -547,17 +560,45 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
             </div>
             
             {/* 語数・文字数入力 */}
-            <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mt-6">
+            <div className="mt-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-800">語数・文字数</h3>
+                <label className="flex items-center space-x-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={autoCalculate}
+                    onChange={(e) => {
+                      setAutoCalculate(e.target.checked);
+                      // 自動計算をONにした場合、即座に計算
+                      if (e.target.checked && formData.text) {
+                        const wordCount = countJapaneseWords(formData.text);
+                        const charCount = countJapaneseCharacters(formData.text);
+                        setFormData(prev => ({ 
+                          ...prev, 
+                          wordCount: wordCount.standardCount.toString(),
+                          characterCount: charCount.total.toString()
+                        }));
+                      }
+                    }}
+                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                  <span className="text-sm font-medium text-gray-700">自動計算</span>
+                </label>
+              </div>
+              <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   語数
-                  <span className="ml-2 text-xs font-normal text-gray-500">（標準語数を入力・任意）</span>
+                  <span className="ml-2 text-xs font-normal text-gray-500">
+                    {autoCalculate ? '（自動計算中）' : '（手動入力・任意）'}
+                  </span>
                 </label>
                 <input
                   type="number"
                   value={formData.wordCount}
                   onChange={(e) => setFormData(prev => ({ ...prev, wordCount: e.target.value }))}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500 ${autoCalculate ? 'bg-gray-50 border-gray-200' : 'border-gray-300'}`}
+                  readOnly={autoCalculate}
                   placeholder="例：250"
                   min="1"
                   required
@@ -567,13 +608,16 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   文字数
-                  <span className="ml-2 text-xs font-normal text-gray-500">（実際の文字数を入力・任意）</span>
+                  <span className="ml-2 text-xs font-normal text-gray-500">
+                    {autoCalculate ? '（自動計算中）' : '（手動入力・任意）'}
+                  </span>
                 </label>
                 <input
                   type="number"
                   value={formData.characterCount}
                   onChange={(e) => setFormData(prev => ({ ...prev, characterCount: e.target.value }))}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500 ${autoCalculate ? 'bg-gray-50 border-gray-200' : 'border-gray-300'}`}
+                  readOnly={autoCalculate}
                   placeholder="例：450"
                   min="1"
                   required
@@ -583,6 +627,19 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
                 </p>
               </div>
             </div>
+            </div>
+            
+            {/* 自動計算の説明 */}
+            {autoCalculate && (
+              <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <p className="text-sm text-gray-700">
+                  <strong>自動計算について：</strong>
+                  本文を入力すると、語数と文字数が自動的に計算されます。
+                  語数は形態素解析に基づき、漢字・カタカナ・英数字を含む語を1.0、
+                  ひらがなのみの語を0.5として計算した標準語数です。
+                </p>
+              </div>
+            )}
           </div>
 
           {/* サムネイル設定セクション */}
@@ -828,7 +885,21 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
               <textarea
                 name="text"
                 value={formData.text}
-                onChange={(e) => setFormData(prev => ({ ...prev, text: e.target.value }))}
+                onChange={(e) => {
+                  const newText = e.target.value;
+                  setFormData(prev => ({ ...prev, text: newText }));
+                  
+                  // 自動計算モードの場合、語数と文字数を自動計算
+                  if (autoCalculate) {
+                    const wordCount = countJapaneseWords(newText);
+                    const charCount = countJapaneseCharacters(newText);
+                    setFormData(prev => ({ 
+                      ...prev, 
+                      wordCount: wordCount.standardCount.toString(),
+                      characterCount: charCount.total.toString()
+                    }));
+                  }
+                }}
                 rows={12}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-gray-900 placeholder-gray-500"
                 placeholder="読解練習用の読み物を入力してください...&#10;&#10;ルビ記法:&#10;• 基本: ｜漢字《かんじ》&#10;• 省略: 漢字《かんじ》&#10;• 括弧: 漢字(かんじ)"
