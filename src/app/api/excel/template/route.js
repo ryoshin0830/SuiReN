@@ -53,11 +53,11 @@ export async function GET() {
       { wch: 20 }
     ];
 
-    // Merge cells for title
+    // Merge cells for title and notes
     mainSheet['!merges'] = [
-      { s: { r: 0, c: 0 }, e: { r: 0, c: 4 } },
-      { s: { r: 8, c: 0 }, e: { r: 8, c: 4 } },
-      { s: { r: 9, c: 0 }, e: { r: 9, c: 4 } }
+      { s: { r: 0, c: 0 }, e: { r: 0, c: 4 } },  // タイトル行
+      { s: { r: 10, c: 0 }, e: { r: 10, c: 4 } }, // 画像に関する注意事項
+      { s: { r: 11, c: 0 }, e: { r: 11, c: 4 } }  // 問題に関する注意事項
     ];
 
     XLSX.utils.book_append_sheet(workbook, mainSheet, 'コンテンツ');
