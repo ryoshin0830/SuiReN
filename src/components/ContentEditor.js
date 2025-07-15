@@ -110,7 +110,7 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
         ]
       });
     }
-  }, [mode, content, excelData, imageManager, defaultLevel, autoCalculate]);
+  }, [mode, content, excelData, imageManager, defaultLevel]);
 
   // レベル変更時にlevelCodeも更新
   const handleLevelChange = (levelId) => {
