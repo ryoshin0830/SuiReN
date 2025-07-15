@@ -309,32 +309,6 @@ export default function Home() {
           
           <div className="space-y-6">
             {/* FAQ 1 */}
-            <details className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-300">
-              <summary className="cursor-pointer font-semibold text-lg text-gray-800 flex items-center justify-between">
-                <span className="flex items-center">
-                  <span className="text-2xl mr-3">🤔</span>
-                  「標準語数」とは何ですか？
-                </span>
-                <svg className="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </summary>
-              <div className="mt-4 text-gray-700 space-y-3">
-                <p>
-                  標準語数は、日本語読み物の実質的な情報量を測るための指標です。
-                  日本語は漢字、ひらがな、カタカナが混在するため、
-                  単純な文字数ではなく、意味を持つ語彙単位でカウントします。
-                </p>
-                <ul className="list-disc list-inside space-y-1 ml-4">
-                  <li>漢字・カタカナ・英数字の語：1.0として計算</li>
-                  <li>ひらがなのみの語（助詞など）：0.5として計算</li>
-                </ul>
-                <p className="mt-3">
-                  この方法により、日本語の特殊性を考慮した公平な速度測定が可能になります。
-                </p>
-              </div>
-            </details>
-            
             {/* FAQ 2 */}
             <details className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-300">
               <summary className="cursor-pointer font-semibold text-lg text-gray-800 flex items-center justify-between">
