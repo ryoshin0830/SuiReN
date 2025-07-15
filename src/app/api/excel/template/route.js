@@ -5,24 +5,24 @@ import prisma from '../../../../lib/prisma';
 export async function GET() {
   try {
     // データベースからレベル情報を取得
-    let levels;
+    let levels = [];
+    let levelOptions = '中級前半 / 中級レベル / 上級レベル';
+    let defaultLevelName = '中級前半';
+    
     try {
       levels = await prisma.level.findMany({
         orderBy: { orderIndex: 'asc' }
       });
+      
+      if (levels && levels.length > 0) {
+        levelOptions = levels.map(l => l.displayName).join(' / ');
+        const defaultLevel = levels.find(l => l.isDefault) || levels[0];
+        defaultLevelName = defaultLevel?.displayName || '中級前半';
+      }
     } catch (error) {
       console.error('Failed to fetch levels:', error);
-      // フォールバック: デフォルトレベルを使用
-      levels = [
-        { id: 'beginner', displayName: '中級前半' },
-        { id: 'intermediate', displayName: '中級レベル' },
-        { id: 'advanced', displayName: '上級レベル' }
-      ];
+      // フォールバック値を使用（すでに初期化済み）
     }
-
-    // レベル選択肢の文字列を生成
-    const levelOptions = levels.map(l => l.displayName).join(' / ');
-    const defaultLevel = levels.find(l => l.isDefault) || levels[0];
     // Create a new workbook
     const workbook = XLSX.utils.book_new();
 
@@ -32,7 +32,7 @@ export async function GET() {
       ['', '', '', '', ''],
       ['項目', '入力内容', '説明・注意事項', '', ''],
       ['タイトル', '例：ももたろう', '必須：コンテンツのタイトル', '', ''],
-      ['レベル', defaultLevel.displayName, `${levelOptions} から選択`, '', ''],
+      ['レベル', defaultLevelName, `${levelOptions} から選択`, '', ''],
       ['本文', 'ここに本文を入力してください。', '必須：速読練習用の本文。改行はそのまま反映されます。ルビの記法：｜漢字《かんじ》または漢字《かんじ》', '', ''],
       ['語数', '250', '任意：標準語数を手動で入力。漢字・カタカナ語は1、ひらがなのみの語は0.5で計算', '', ''],
       ['文字数', '450', '任意：本文の文字数を手動で入力。自動計算も可能', '', ''],
