@@ -19,6 +19,7 @@
     "html2canvas": "^1.4.1",
     "js-cookie": "^3.0.5",
     "next": "15.3.3",
+    "node-fetch": "^2.7.0",
     "pdfmake": "^0.2.20",
     "pg": "^8.16.3",
     "prisma": "^6.9.0",

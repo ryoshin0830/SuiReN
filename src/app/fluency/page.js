@@ -16,8 +16,7 @@ export default function Fluency() {
           </p>
           <p>
             読解におけるfluencyは、<strong>正確性</strong>、<strong>自動性</strong>、<strong>速度</strong>の
-            3つの要素から構成されます。速度は「語数/分（WPM: Words Per Minute）」で測定され、
-            日本語の場合は「標準語数」という概念を導入して計算しています。
+            3つの要素から構成されます。速度は「語数/分（WPM: Words Per Minute）」で測定されます。
           </p>
         </div>
       </div>
@@ -105,24 +104,13 @@ export default function Fluency() {
           読書速度の測定方法
         </h2>
         <div className="text-gray-700 space-y-4">
-          <h3 className="text-lg font-semibold text-gray-900">標準語数とは？</h3>
+          <h3 className="text-lg font-semibold text-gray-900">速度の計算方法</h3>
           <p>
-            日本語読み物の実質的な情報量を測るための指標です。
-            SuiReNでは、形態素解析に基づいた語彙単位でカウントし、
-            以下の重み付けを行っています：
-          </p>
-          <ul className="list-disc list-inside space-y-2 ml-4">
-            <li>漢字・カタカナ・英数字の語：1.0として計算</li>
-            <li>ひらがなのみの語（助詞など）：0.5として計算</li>
-          </ul>
-          
-          <h3 className="text-lg font-semibold text-gray-900 mt-6">速度の計算方法</h3>
-          <p>
-            読書速度 = 標準語数 ÷ 読書時間（分）
+            読書速度 = 語数 ÷ 読書時間（分）
           </p>
           <p className="mt-2">
-            この計算方法により、日本語の特殊性を考慮した
-            公平な速度測定が可能になります。
+            SuiReNでは、コンテンツごとに設定された語数を基に
+            読書速度を計算します。
           </p>
           
           <h3 className="text-lg font-semibold text-gray-900 mt-6">目標速度の目安</h3>
