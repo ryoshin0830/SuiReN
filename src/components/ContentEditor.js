@@ -562,9 +562,6 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
                   min="1"
                   required
                 />
-                <p className="mt-1 text-xs text-gray-500">
-                  標準語数：漢字・カタカナ・英数字=1.0、ひらがな=0.5として計算
-                </p>
               </div>
               
               <div>
