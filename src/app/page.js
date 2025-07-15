@@ -126,7 +126,7 @@ export default function Home() {
               </p>
               
               <p className="text-lg">
-                「<span className="font-bold text-blue-600">SuiReN</span>」の練習では、簡単な読み物を、なるべく速く読みます。でも、速すぎてはだめです。だいたいの意味がわかるように、そして、速く読んでください。何回もこの練翕をしていると、楽しくスラスラ読めるようになりますよ。
+                「<span className="font-bold text-blue-600">SuiReN</span>」の練習では、簡単な読み物を、なるべく速く読みます。でも、速すぎてはだめです。だいたいの意味がわかるように、そして、速く読んでください。何回もこの練習をしていると、楽しくスラスラ読めるようになりますよ。
               </p>
               
               <div className="text-center mt-8">
