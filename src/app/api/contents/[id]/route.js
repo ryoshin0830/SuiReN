@@ -35,7 +35,7 @@ export async function GET(request, { params }) {
       levelCode: content.levelCode,
       text: content.text,
       wordCount: content.wordCount,    // 語数
-      characterCount: content.characterCount || content.text.length, // 文字数（保存された値または自動計算）
+      characterCount: content.characterCount || content.text.length, // 文字数
       explanation: content.explanation || '', // 読み物の解説
       images: content.images || [],
       thumbnail: content.thumbnail || null,
