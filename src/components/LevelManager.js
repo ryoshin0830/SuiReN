@@ -150,14 +150,21 @@ export default function LevelManager() {
       alert('レベル管理機能は現在利用できません。データベースの設定が必要です。');
       return;
     }
-    if (!targetLevelId) {
+    
+    // コンテンツが存在する場合のみ移行先レベルのチェックを行う
+    if (showDeleteModal._count.contents > 0 && !targetLevelId) {
       alert('移行先レベルを選択してください');
       return;
     }
 
     setSaving(true);
     try {
-      const response = await fetch(`/api/levels/${showDeleteModal.id}?targetLevelId=${targetLevelId}`, {
+      // URLを構築（コンテンツが0件の場合は移行先レベルIDを含めない）
+      const url = showDeleteModal._count.contents > 0 
+        ? `/api/levels/${showDeleteModal.id}?targetLevelId=${targetLevelId}`
+        : `/api/levels/${showDeleteModal.id}`;
+        
+      const response = await fetch(url, {
         method: 'DELETE'
       });
 
@@ -411,7 +418,7 @@ export default function LevelManager() {
               このレベルには {showDeleteModal._count.contents} 個のコンテンツが存在します。
             </p>
             
-            {showDeleteModal._count.contents > 0 && (
+            {showDeleteModal._count.contents > 0 ? (
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   移行先レベルを選択してください：
@@ -432,6 +439,10 @@ export default function LevelManager() {
                   }
                 </select>
               </div>
+            ) : (
+              <p className="text-sm text-gray-600 mb-4">
+                コンテンツが存在しないため、移行は不要です。
+              </p>
             )}
 
             <div className="flex justify-end space-x-3">
@@ -450,7 +461,7 @@ export default function LevelManager() {
                 className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
                 disabled={saving || (showDeleteModal._count.contents > 0 && !targetLevelId)}
               >
-                削除して移行
+                {showDeleteModal._count.contents > 0 ? '削除して移行' : '削除'}
               </button>
             </div>
           </div>

@@ -104,13 +104,6 @@ export async function DELETE(request, props) {
     const url = new URL(request.url);
     const targetLevelId = url.searchParams.get('targetLevelId');
 
-    if (!targetLevelId) {
-      return NextResponse.json(
-        { error: '移行先レベルを指定してください' },
-        { status: 400 }
-      );
-    }
-
     // デフォルトレベルは削除不可
     const levelToDelete = await prisma.level.findUnique({
       where: { id }
@@ -130,30 +123,43 @@ export async function DELETE(request, props) {
       );
     }
 
-    // 移行先レベルの存在確認
-    const targetLevel = await prisma.level.findUnique({
-      where: { id: targetLevelId }
+    // このレベルに関連するコンテンツ数をカウント
+    const contentCount = await prisma.content.count({
+      where: { levelCode: id }
     });
 
-    if (!targetLevel) {
+    // コンテンツが存在する場合は移行先レベルが必須
+    if (contentCount > 0 && !targetLevelId) {
       return NextResponse.json(
-        { error: '移行先レベルが見つかりません' },
+        { error: '移行先レベルを指定してください' },
         { status: 400 }
       );
     }
 
     // トランザクション処理
     await prisma.$transaction(async (tx) => {
-      // 1. 関連するコンテンツを移行先レベルに変更
-      await tx.content.updateMany({
-        where: { levelCode: id },
-        data: { 
-          levelCode: targetLevelId,
-          level: targetLevel.displayName
-        }
-      });
+      // コンテンツが存在する場合のみ移行処理を実行
+      if (contentCount > 0 && targetLevelId) {
+        // 移行先レベルの存在確認
+        const targetLevel = await tx.level.findUnique({
+          where: { id: targetLevelId }
+        });
 
-      // 2. レベルを削除
+        if (!targetLevel) {
+          throw new Error('移行先レベルが見つかりません');
+        }
+
+        // 関連するコンテンツを移行先レベルに変更
+        await tx.content.updateMany({
+          where: { levelCode: id },
+          data: { 
+            levelCode: targetLevelId,
+            level: targetLevel.displayName
+          }
+        });
+      }
+
+      // レベルを削除
       await tx.level.delete({
         where: { id }
       });
@@ -161,12 +167,13 @@ export async function DELETE(request, props) {
 
     return NextResponse.json({ 
       message: 'レベルが正常に削除されました',
-      movedContentsTo: targetLevelId
+      movedContentsTo: contentCount > 0 ? targetLevelId : null,
+      deletedContentCount: contentCount
     });
   } catch (error) {
     console.error('Error deleting level:', error);
     return NextResponse.json(
-      { error: 'レベルの削除に失敗しました' },
+      { error: error.message || 'レベルの削除に失敗しました' },
       { status: 500 }
     );
   }
