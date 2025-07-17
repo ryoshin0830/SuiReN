@@ -600,7 +600,7 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
           <div className="border-b border-gray-200 pb-8">
             <div className="mb-6">
               <h2 className="text-xl font-semibold text-gray-900">サムネイル設定</h2>
-              <p className="text-sm text-gray-600 mt-1">読解練習ライブラリで表示されるサムネイル画像を設定してください</p>
+              <p className="text-sm text-gray-600 mt-1">速読練習ライブラリで表示されるサムネイル画像を設定してください</p>
             </div>
 
             {/* 隠しファイル入力 */}
@@ -651,7 +651,7 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
                 <div className="text-6xl mb-4">🖼️</div>
                 <h3 className="text-lg font-semibold text-gray-700 mb-2">サムネイルが設定されていません</h3>
                 <p className="text-gray-600 mb-4">
-                  読解練習ライブラリで表示されるサムネイル画像を設定してください
+                  速読練習ライブラリで表示されるサムネイル画像を設定してください
                 </p>
                 <label
                   htmlFor="thumbnail-upload"
@@ -842,7 +842,7 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
                 onChange={(e) => setFormData(prev => ({ ...prev, text: e.target.value }))}
                 rows={12}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-gray-900 placeholder-gray-500"
-                placeholder="読解練習用の読み物を入力してください...&#10;&#10;ルビ記法:&#10;• 基本: ｜漢字《かんじ》&#10;• 省略: 漢字《かんじ》&#10;• 括弧: 漢字(かんじ)"
+                placeholder="速読練習用の読み物を入力してください...&#10;&#10;ルビ記法:&#10;• 基本: ｜漢字《かんじ》&#10;• 省略: 漢字《かんじ》&#10;• 括弧: 漢字(かんじ)"
                 required
               />
               
@@ -876,7 +876,7 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
                 onChange={(e) => setFormData(prev => ({ ...prev, explanation: e.target.value }))}
                 rows={4}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
-                placeholder="読み物の背景情報、重要なポイント、文化的な説明など...&#10;読解練習結果で表示される解説文です。"
+                placeholder="読み物の背景情報、重要なポイント、文化的な説明など...&#10;速読練習結果で表示される解説文です。"
               />
               <div className="mt-2 text-xs text-gray-500">
                 この解説は読解練習結果画面で表示されます。読み物の理解を深めるための補足情報を記載してください。
@@ -914,7 +914,7 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
                   📝 問題は設定されていません
                 </div>
                 <p className="text-sm text-gray-600">
-                  読解練習のみのコンテンツとして保存されます。<br/>
+                  速読練習のみのコンテンツとして保存されます。<br/>
                   問題を追加したい場合は「質問を追加」ボタンを押してください。
                 </p>
               </div>

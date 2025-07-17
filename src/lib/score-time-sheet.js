@@ -108,7 +108,7 @@ export const downloadScoreTimeSheet = () => {
     </head>
     <body>
       <div class="header">
-        <div class="title">速読 得点／時間 シート</div>
+        <div class="title">速読(そくどく) 得点／時間 シート</div>
         <div class="subtitle">Score/Time Sheet for SuiReN - Japanese Speed Reading</div>
       </div>
       

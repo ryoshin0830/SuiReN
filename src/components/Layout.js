@@ -68,7 +68,7 @@ export default function Layout({ children }) {
                     : 'text-gray-700 hover:text-white hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-500 hover:shadow-lg hover:shadow-blue-500/25' // 非アクティブ状態
                 }`}
               >
-                <span className="relative z-10">「速読」について</span>
+                <span className="relative z-10">「はやく<ruby>読<rt>よ</rt></ruby>む」について</span>
               </Link>
               
               {/* このサイトについてリンク */}
@@ -92,7 +92,7 @@ export default function Layout({ children }) {
                     : 'text-white bg-gradient-to-r from-emerald-500 to-blue-500 hover:from-emerald-600 hover:to-blue-600 hover:shadow-lg hover:shadow-emerald-500/25 hover:scale-105' // 非アクティブ状態
                 }`}
               >
-                <span className="relative z-10">読解練習</span>
+                <span className="relative z-10"><ruby>速読<rt>そくどく</rt></ruby><ruby>練習<rt>れんしゅう</rt></ruby></span>
               </Link>
               
               {/* 管理画面リンク - 控えめなスタイル */}

@@ -195,7 +195,7 @@ export default function Reading() {
               />
               <div>
                 <h1 className="text-2xl font-black bg-gradient-to-r from-gray-800 via-blue-600 to-purple-600 bg-clip-text text-transparent">
-                  読解練習ライブラリ
+                  <ruby>速読<rt>そくどく</rt></ruby><ruby>練習<rt>れんしゅう</rt></ruby>ライブラリ
                 </h1>
                 <p className="text-sm text-gray-600">お好みの読み物を選んでください</p>
               </div>

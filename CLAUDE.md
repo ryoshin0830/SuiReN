@@ -24,6 +24,9 @@ npx prisma db push
 
 # Seed initial data
 node scripts/seed.js
+
+# Populate initial levels in database
+node scripts/migrate-levels.js
 ```
 
 ### Testing API Endpoints
@@ -98,6 +101,10 @@ Content {
   images (JSON array of Base64 images)
   questions → Question[] → QuestionOption[]
 }
+
+AboutPage {
+  id, title, content, order
+}
 ```
 
 ### Key Libraries
@@ -107,6 +114,7 @@ Content {
 - **Excel Processing**: xlsx for import/export
 - **Styling**: Tailwind CSS v4 with custom glassmorphism
 - **Cookie Storage**: js-cookie for client preferences
+- **State Management**: Zustand for global state
 
 ### Important Implementation Details
 
@@ -130,6 +138,12 @@ Content {
 - Placeholder syntax: `{{IMAGE:image_id}}` in text content
 - Maximum 800x600px, 80% quality optimization
 - Images displayed inline within reading content
+
+#### Reading Tracking System
+- Advanced scroll tracking with throttling (src/lib/reading-tracker.js)
+- Paragraph-level visibility time tracking
+- Performance optimized with 200ms throttle and 100 event limit
+- Element-specific tracking support
 
 #### Japanese Language Support
 - Noto Sans JP font for readability
@@ -166,6 +180,12 @@ To populate initial levels in the database:
 ```bash
 node scripts/migrate-levels.js
 ```
+
+#### Database Migrations
+Several migration scripts are available in the scripts/ directory:
+- `migrate-levels.js` - Creates initial three levels
+- `seed.js` - Seeds initial content data
+- Scripts automatically load .env.local for database connection
 
 #### Adding New Content
 1. Navigate to /admin (password: gorira)

@@ -92,7 +92,7 @@ export const downloadScoreSheet = (resultData) => {
       </style>
     </head>
     <body>
-      <div class="header">速読練習記録シート</div>
+      <div class="header">速読(そくどく)練習記録シート</div>
       
       <div class="info-row">
         <div>日付: ${new Date().getFullYear()}年${(new Date().getMonth() + 1)}月${new Date().getDate()}日</div>

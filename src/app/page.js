@@ -51,7 +51,7 @@ export default function Home() {
             日本語学習者のための
           </p>
           <p className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-800 mb-12">
-            インタラクティブ速読練習
+            インタラクティブ<ruby>速読<rt>そくどく</rt></ruby><ruby>練習<rt>れんしゅう</rt></ruby>
           </p>
 
           {/* キャッチコピー */}
@@ -206,7 +206,7 @@ export default function Home() {
               <p className="text-lg text-center text-orange-700 leading-relaxed">
                 速すぎて何もわからないのはダメ。<br />
                 遅すぎて全部理解しようとするのもダメ。<br />
-                <span className="font-bold text-xl">ちょうどいい速さ</span>を見つけることが、速読上達の秘訣です。
+                <span className="font-bold text-xl">ちょうどいい速さ</span>を見つけることが、<ruby>速読<rt>そくどく</rt></ruby><ruby>上達<rt>じょうたつ</rt></ruby>の<ruby>秘訣<rt>ひけつ</rt></ruby>です。
               </p>
             </div>
           </div>
@@ -220,7 +220,7 @@ export default function Home() {
             <h2 className="text-4xl lg:text-5xl font-bold text-gray-800 mb-6">
               なぜSuiReN？
             </h2>
-            <p className="text-xl text-gray-600">科学的に設計された速読練習システム</p>
+            <p className="text-xl text-gray-600"><ruby>科学的<rt>かがくてき</rt></ruby>に<ruby>設計<rt>せっけい</rt></ruby>された<ruby>速読<rt>そくどく</rt></ruby><ruby>練習<rt>れんしゅう</rt></ruby>システム</p>
           </div>
 
           <div className="grid lg:grid-cols-2 gap-12 items-center">

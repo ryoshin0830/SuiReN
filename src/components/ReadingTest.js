@@ -1,8 +1,8 @@
 /**
- * ReadingTest.js - 読解テスト実行コンポーネント
+ * ReadingTest.js - 速読テスト実行コンポーネント
  * 
  * 機能:
- * - 読解テストの4段階フロー管理（説明→読書→問題→結果）
+ * - 速読テストの4段階フロー管理（説明→読書→問題→結果）
  * - 読書時間とスクロール行動の追跡
  * - 複数選択問題の表示と回答管理
  * - リアルタイムの読書データ収集
@@ -17,12 +17,12 @@ import ResultDisplay from './ResultDisplay';
 import TextWithImages from './TextWithImages';
 
 /**
- * 読解テストコンポーネント
+ * 速読テストコンポーネント
  * 
  * @param {Object} props - コンポーネントのプロパティ
- * @param {Object} props.content - 読解テストのコンテンツデータ
+ * @param {Object} props.content - 速読テストのコンテンツデータ
  * @param {Function} props.onBack - ライブラリ選択画面に戻るコールバック関数
- * @returns {JSX.Element} 読解テスト要素
+ * @returns {JSX.Element} 速読テスト要素
  */
 export default function ReadingTest({ content, onBack }) {
   // ===== 状態管理 =====
@@ -422,7 +422,7 @@ export default function ReadingTest({ content, onBack }) {
           {/* 進め方説明ボックス */}
           <div className="bg-blue-50 rounded-lg p-4 sm:p-6 mb-4 sm:mb-6">
             <h2 className="text-base sm:text-lg font-semibold text-blue-900 mb-3 sm:mb-4">
-              読解練習の進め方
+              速読練習の進め方
             </h2>
             {/* ステップバイステップの説明 */}
             <ol className="text-blue-700 space-y-1 sm:space-y-2 text-sm sm:text-base">

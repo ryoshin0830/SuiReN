@@ -10,7 +10,7 @@ const bizUDPGothic = BIZ_UDPGothic({
 
 export const metadata = {
   title: "SuiReN - Japanese Speed Reading",
-  description: "日本語学習者のための速読ウェブサイト",
+  description: "日本語を学ぶ人のための はやく読む練習ウェブサイト",
 };
 
 export default function RootLayout({ children }) {

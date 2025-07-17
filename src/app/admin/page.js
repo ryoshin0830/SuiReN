@@ -344,7 +344,7 @@ export default function Admin() {
                       <button
                         onClick={() => window.open(`/content/${content.id}`, '_blank')}
                         className="text-blue-600 hover:text-blue-800 hover:underline transition-colors text-left"
-                        title="速読ページを開く"
+                        title="読み物ページを開く"
                       >
                         {content.title}
                       </button>
@@ -368,7 +368,7 @@ export default function Admin() {
                         <button
                           onClick={() => window.open(`/content/${content.id}`, '_blank')}
                           className="bg-green-500 text-white px-3 py-1 rounded text-sm hover:bg-green-600 transition-colors"
-                          title="速読ページを開く"
+                          title="読み物ページを開く"
                         >
                           プレビュー
                         </button>
@@ -444,7 +444,7 @@ export default function Admin() {
             <div>
               <div className="text-sm text-gray-600">機能</div>
               <ul className="text-sm space-y-1 text-gray-800">
-                <li>✅ 読解速度測定</li>
+                <li>✅ 読み物の速度測定</li>
                 <li>✅ 理解度テスト</li>
                 <li>✅ QRコード結果出力</li>
                 <li>✅ 3段階レベル対応</li>
