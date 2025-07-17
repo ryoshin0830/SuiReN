@@ -164,6 +164,8 @@ export default function ReadingTest({ content, onBack }) {
 
 
     const handleScrollChange = () => {
+      if (!contentRef.current || !paragraphRefs.current) return;
+      
       const container = contentRef.current;
       const containerRect = container.getBoundingClientRect();
       const viewportCenterY = containerRect.top + containerRect.height / 2;
@@ -183,15 +185,21 @@ export default function ReadingTest({ content, onBack }) {
       for (let i = 0; i < paragraphRefs.current.length; i++) {
         const ref = paragraphRefs.current[i];
         if (ref && ref.current) {
-          const rect = ref.current.getBoundingClientRect();
-          
-          // 段落がフォーカスエリアと重なっているかチェック
-          const isInFocusArea = rect.bottom > focusAreaTop && rect.top < focusAreaBottom;
-          
-          if (isInFocusArea) {
-            newFocusedParagraph = i;
-            foundParagraph = true;
-            break; // 最初に見つかった段落をフォーカス
+          try {
+            const rect = ref.current.getBoundingClientRect();
+            
+            // 段落がフォーカスエリアと重なっているかチェック
+            const isInFocusArea = rect.bottom > focusAreaTop && rect.top < focusAreaBottom;
+            
+            if (isInFocusArea) {
+              newFocusedParagraph = i;
+              foundParagraph = true;
+              break; // 最初に見つかった段落をフォーカス
+            }
+          } catch (error) {
+            // 要素が削除されたなどの理由でエラーが発生した場合はスキップ
+            console.warn(`段落${i}の位置情報取得エラー:`, error);
+            continue;
           }
         }
       }
@@ -242,6 +250,8 @@ export default function ReadingTest({ content, onBack }) {
 
     // スクロールイベントリスナー追加
     const element = contentRef.current;
+    if (!element) return;
+    
     element.addEventListener('scroll', combinedScrollHandler);
     
     // 初期フォーカス設定（読書開始時のみ時刻を記録）
@@ -253,7 +263,9 @@ export default function ReadingTest({ content, onBack }) {
     }
     
     return () => {
-      element.removeEventListener('scroll', combinedScrollHandler);
+      if (element) {
+        element.removeEventListener('scroll', combinedScrollHandler);
+      }
       if (scrollTimeout) {
         clearTimeout(scrollTimeout);
       }
