@@ -11,9 +11,15 @@ export async function POST(request) {
   try {
     // データベースからレベル情報を取得
     let levels;
+    let labels = [];
     try {
       levels = await prisma.level.findMany({
         orderBy: { orderIndex: 'asc' }
+      });
+      
+      // ラベル情報も取得
+      labels = await prisma.label.findMany({
+        orderBy: { name: 'asc' }
       });
     } catch (error) {
       console.error('Failed to fetch levels:', error);
@@ -29,6 +35,12 @@ export async function POST(request) {
     const displayNameToLevelCode = {};
     levels.forEach(level => {
       displayNameToLevelCode[level.displayName] = level.id;
+    });
+    
+    // ラベル名からIDへのマッピングを作成（大文字小文字を無視）
+    const labelNameToId = {};
+    labels.forEach(label => {
+      labelNameToId[label.name.toLowerCase().trim()] = label.id;
     });
     // Check content-type
     const contentType = request.headers.get('content-type');
@@ -140,6 +152,7 @@ export async function POST(request) {
     let wordCount = null;
     let characterCount = null;
     let explanation = '';
+    let labelNames = [];
 
     // Find and extract data from table format
     for (let i = 0; i < contentData.length; i++) {
@@ -235,6 +248,12 @@ export async function POST(request) {
             }
           }
           j++;
+        }
+      } else if (row[0] === 'ラベル' && row[1]) {
+        // ラベルをカンマ区切りで解析
+        const labelText = row[1].toString().trim();
+        if (labelText) {
+          labelNames = labelText.split(/[,、，]/).map(l => l.trim()).filter(l => l);
         }
       }
     }
@@ -350,6 +369,23 @@ export async function POST(request) {
 
     // Determine level code using dynamic mapping
     const levelCode = displayNameToLevelCode[level] || defaultLevel.id;
+    
+    // ラベル名をIDに変換
+    const labelIds = [];
+    const notFoundLabels = [];
+    labelNames.forEach(labelName => {
+      const labelId = labelNameToId[labelName.toLowerCase().trim()];
+      if (labelId) {
+        labelIds.push(labelId);
+      } else {
+        notFoundLabels.push(labelName);
+      }
+    });
+    
+    // 見つからなかったラベルがある場合は警告をログに出力
+    if (notFoundLabels.length > 0) {
+      console.warn('以下のラベルが見つかりませんでした:', notFoundLabels);
+    }
 
     // Prepare the content data
     const contentData2 = {
@@ -363,13 +399,25 @@ export async function POST(request) {
       questions: questions, // Empty array is OK - ContentEditor will handle it
       images: [],
       thumbnail: null,
+      labelIds, // ラベルIDを追加
       isFromExcel: true // Flag to indicate this came from Excel import
     };
 
-    return NextResponse.json({
+    // レスポンスに警告情報を含める
+    const response = {
       success: true,
       data: contentData2
-    });
+    };
+    
+    // 見つからなかったラベルがある場合は警告を追加
+    if (notFoundLabels.length > 0) {
+      response.warnings = {
+        notFoundLabels: notFoundLabels,
+        message: `以下のラベルが見つかりませんでした: ${notFoundLabels.join(', ')}。これらのラベルはスキップされました。`
+      };
+    }
+
+    return NextResponse.json(response);
 
   } catch (error) {
     console.error('Error processing Excel file:', error);
