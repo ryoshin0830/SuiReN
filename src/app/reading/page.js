@@ -27,35 +27,51 @@ export default function Reading() {
   const { levels, loading: levelsLoading, getLevelDisplayName, getLevelStyle } = useLevels();
   const [searchTerm, setSearchTerm] = useState(''); // 検索キーワード
   const [levelFilter, setLevelFilter] = useState('all'); // レベルフィルタ（all, beginner, intermediate, advanced）
-  const [sortBy, setSortBy] = useState('id'); // 並び替え基準（id, title, level, questions）
+  const [labelFilter, setLabelFilter] = useState('all'); // ラベルフィルタ
+  const [sortBy, setSortBy] = useState('order'); // 並び替え基準（order, createdAt, title, level, questions, characters）
   const [viewMode, setViewMode] = useState('grid'); // 表示モード（grid or list）
   const [currentPage, setCurrentPage] = useState(1); // 現在のページ番号
   const itemsPerPage = 9; // 1ページあたりの表示件数
   const [readingContents, setReadingContents] = useState([]); // データベースから取得したコンテンツ
+  const [labels, setLabels] = useState([]); // ラベル一覧
   const [loading, setLoading] = useState(true); // ローディング状態
   const [sidebarOpen, setSidebarOpen] = useState(false); // モバイル用サイドバー開閉状態
 
-  // ===== データベースからコンテンツを取得 =====
+  // ===== データベースからコンテンツとラベルを取得 =====
   useEffect(() => {
-    const fetchContents = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetch('/api/contents');
-        if (response.ok) {
-          const contents = await response.json();
+        // コンテンツとラベルを並列で取得
+        const [contentsResponse, labelsResponse] = await Promise.all([
+          fetch('/api/contents'),
+          fetch('/api/labels')
+        ]);
+        
+        if (contentsResponse.ok) {
+          const contents = await contentsResponse.json();
           setReadingContents(contents);
         } else {
           console.error('Failed to fetch contents from API');
           setReadingContents([]);
         }
+        
+        if (labelsResponse.ok) {
+          const labelsData = await labelsResponse.json();
+          setLabels(labelsData);
+        } else {
+          console.error('Failed to fetch labels from API');
+          setLabels([]);
+        }
       } catch (error) {
-        console.error('Failed to fetch contents:', error);
+        console.error('Failed to fetch data:', error);
         setReadingContents([]);
+        setLabels([]);
       } finally {
         setLoading(false);
       }
     };
     
-    fetchContents();
+    fetchData();
   }, []);
 
   // ===== 統計データの計算 =====
@@ -96,25 +112,43 @@ export default function Reading() {
       filtered = filtered.filter(content => content.levelCode === levelFilter);
     }
 
+    // ラベルフィルタ
+    if (labelFilter !== 'all') {
+      filtered = filtered.filter(content => 
+        content.labels && content.labels.some(cl => cl.label.id === labelFilter)
+      );
+    }
+
     // ソート処理
     filtered = [...filtered].sort((a, b) => {
       switch (sortBy) {
+        case 'order':
+          // まずレベルでソート、次にorderIndexでソート（管理画面で設定した順番）
+          if (a.levelCode !== b.levelCode) {
+            const levelA = levels.find(l => l.id === a.levelCode);
+            const levelB = levels.find(l => l.id === b.levelCode);
+            return (levelA?.orderIndex || 0) - (levelB?.orderIndex || 0);
+          }
+          return (a.orderIndex || 999999) - (b.orderIndex || 999999);
         case 'title':
           return a.title.localeCompare(b.title); // タイトル順（あいうえお順）
         case 'level':
-          const levelOrder = LEVEL_ORDER;
-          return levelOrder[a.levelCode] - levelOrder[b.levelCode]; // レベル順
+          const levelA = levels.find(l => l.id === a.levelCode);
+          const levelB = levels.find(l => l.id === b.levelCode);
+          return (levelA?.orderIndex || 999) - (levelB?.orderIndex || 999); // レベル順
         case 'questions':
           return b.questions.length - a.questions.length; // 問題数順（多い順）
         case 'characters':
           return (b.characterCount || 0) - (a.characterCount || 0); // 文字数順（多い順）
-        default: // id
-          return a.id.localeCompare(b.id); // ID順
+        case 'createdAt':
+          return new Date(b.createdAt) - new Date(a.createdAt); // 追加日時順（新しい順）
+        default:
+          return 0;
       }
     });
 
     return filtered;
-  }, [readingContents, searchTerm, levelFilter, sortBy]);
+  }, [readingContents, searchTerm, levelFilter, labelFilter, sortBy]);
 
   // ===== ページネーション処理 =====
   /**
@@ -135,7 +169,7 @@ export default function Reading() {
    */
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, levelFilter, sortBy]);
+  }, [searchTerm, levelFilter, labelFilter, sortBy]);
 
   /**
    * フィルターをクリアする関数
@@ -143,13 +177,14 @@ export default function Reading() {
   const clearFilters = () => {
     setSearchTerm('');
     setLevelFilter('all');
-    setSortBy('id');
+    setLabelFilter('all');
+    setSortBy('order');
   };
 
   /**
    * アクティブなフィルターがあるかチェック
    */
-  const hasActiveFilters = searchTerm || levelFilter !== 'all' || sortBy !== 'id';
+  const hasActiveFilters = searchTerm || levelFilter !== 'all' || labelFilter !== 'all' || sortBy !== 'order';
 
   // ===== コンテンツ選択処理 =====
   /**
@@ -203,6 +238,37 @@ export default function Reading() {
             
           </div>
         </div>
+        
+        {/* レベルタブ */}
+        <div className="bg-white border-t border-gray-100">
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="flex overflow-x-auto">
+              <button
+                onClick={() => setLevelFilter('all')}
+                className={`px-4 py-3 font-medium transition-all whitespace-nowrap ${
+                  levelFilter === 'all'
+                    ? 'text-blue-600 border-b-2 border-blue-600'
+                    : 'text-gray-600 hover:text-gray-800 border-b-2 border-transparent'
+                }`}
+              >
+                すべて ({stats.total})
+              </button>
+              {levels.map((level) => (
+                <button
+                  key={level.id}
+                  onClick={() => setLevelFilter(level.id)}
+                  className={`px-4 py-3 font-medium transition-all whitespace-nowrap ${
+                    levelFilter === level.id
+                      ? 'text-blue-600 border-b-2 border-blue-600'
+                      : 'text-gray-600 hover:text-gray-800 border-b-2 border-transparent'
+                  }`}
+                >
+                  {level.displayName} ({stats.levelCounts[level.id] || 0})
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* ===== モバイル用上部フィルターバー ===== */}
@@ -220,17 +286,16 @@ export default function Reading() {
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-gray-900 placeholder-gray-500 bg-white"
               />
             </div>
-            {/* レベルフィルター */}
+            {/* ラベルフィルター */}
             <select
-              value={levelFilter}
-              onChange={(e) => setLevelFilter(e.target.value)}
+              value={labelFilter}
+              onChange={(e) => setLabelFilter(e.target.value)}
               className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-gray-800 bg-white font-medium"
-              disabled={levelsLoading}
             >
-              <option value="all">全レベル</option>
-              {levels.map(level => (
-                <option key={level.id} value={level.id}>
-                  {level.displayName}
+              <option value="all">全ラベル</option>
+              {labels.map(label => (
+                <option key={label.id} value={label.id}>
+                  {label.name}
                 </option>
               ))}
             </select>
@@ -240,7 +305,8 @@ export default function Reading() {
               onChange={(e) => setSortBy(e.target.value)}
               className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-gray-800 bg-white font-medium"
             >
-              <option value="id">ID順</option>
+              <option value="order">標準</option>
+              <option value="createdAt">追加日時順</option>
               <option value="title">タイトル順</option>
               <option value="level">レベル順</option>
               <option value="questions">問題数順</option>
@@ -374,41 +440,51 @@ export default function Reading() {
                     </div>
                   </div>
 
-                  {/* レベルフィルタ */}
+
+                  {/* ラベルフィルタ */}
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">レベル</label>
-                    <div className="space-y-2">
-                      {[
-                        { value: 'all', label: 'すべて', count: stats.total },
-                        ...levels.map(level => ({
-                          value: level.id,
-                          label: level.displayName,
-                          count: stats.levelCounts[level.id] || 0,
-                          color: level.id === 'beginner' ? 'blue' : level.id === 'intermediate' ? 'emerald' : level.id === 'advanced' ? 'purple' : 'gray'
-                        }))
-                      ].map((option) => (
-                         <label key={option.value} className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors duration-200">
-                           <div className="flex items-center min-w-0">
-                             <input
-                               type="radio"
-                               name="level"
-                               value={option.value}
-                               checked={levelFilter === option.value}
-                               onChange={(e) => setLevelFilter(e.target.value)}
-                               className="mr-3 text-blue-500 focus:ring-blue-500 flex-shrink-0"
-                             />
-                             <span className="text-gray-700 font-medium whitespace-nowrap">{option.label}</span>
-                           </div>
-                           <span className={`text-sm font-bold flex-shrink-0 ml-2 ${
-                             option.color === 'blue' ? 'text-blue-600' :
-                             option.color === 'emerald' ? 'text-emerald-600' :
-                             option.color === 'purple' ? 'text-purple-600' :
-                             'text-gray-600'
-                           }`}>
-                             {option.count}
-                           </span>
-                         </label>
-                       ))}
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">ラベル</label>
+                    <div className="space-y-2 max-h-60 overflow-y-auto">
+                      <label className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors duration-200">
+                        <div className="flex items-center min-w-0">
+                          <input
+                            type="radio"
+                            name="label"
+                            value="all"
+                            checked={labelFilter === 'all'}
+                            onChange={(e) => setLabelFilter(e.target.value)}
+                            className="mr-3 text-blue-500 focus:ring-blue-500 flex-shrink-0"
+                          />
+                          <span className="text-gray-700 font-medium whitespace-nowrap">すべて</span>
+                        </div>
+                        <span className="text-sm font-bold flex-shrink-0 ml-2 text-gray-600">
+                          {stats.total}
+                        </span>
+                      </label>
+                      {labels.map((label) => (
+                        <label key={label.id} className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors duration-200">
+                          <div className="flex items-center min-w-0">
+                            <input
+                              type="radio"
+                              name="label"
+                              value={label.id}
+                              checked={labelFilter === label.id}
+                              onChange={(e) => setLabelFilter(e.target.value)}
+                              className="mr-3 text-blue-500 focus:ring-blue-500 flex-shrink-0"
+                            />
+                            <div className="flex items-center space-x-2">
+                              <div
+                                className="w-3 h-3 rounded-full flex-shrink-0"
+                                style={{ backgroundColor: label.color }}
+                              />
+                              <span className="text-gray-700 font-medium whitespace-nowrap">{label.name}</span>
+                            </div>
+                          </div>
+                          <span className="text-sm font-bold flex-shrink-0 ml-2 text-gray-600">
+                            {label._count?.contents || 0}
+                          </span>
+                        </label>
+                      ))}
                     </div>
                   </div>
 
@@ -420,7 +496,8 @@ export default function Reading() {
                       onChange={(e) => setSortBy(e.target.value)}
                       className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
                     >
-                      <option value="id">ID順</option>
+                      <option value="order">標準</option>
+                      <option value="createdAt">追加日時順</option>
                       <option value="title">タイトル順</option>
                       <option value="level">レベル順</option>
                       <option value="questions">問題数順</option>
@@ -560,6 +637,25 @@ export default function Reading() {
                             </div>
                           </div>
 
+                          {/* ラベル表示 */}
+                          {content.labels && content.labels.length > 0 && (
+                            <div className="flex flex-wrap gap-1 sm:gap-2 mb-2 sm:mb-3">
+                              {content.labels.map((cl) => (
+                                <span
+                                  key={cl.label.id}
+                                  className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium"
+                                  style={{
+                                    backgroundColor: cl.label.color + '20',
+                                    color: cl.label.color,
+                                    border: `1px solid ${cl.label.color}40`
+                                  }}
+                                >
+                                  {cl.label.name}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+
                           <button
                             onClick={() => handleContentSelect(content)}
                             className="w-full group relative px-3 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-bold text-white bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg sm:rounded-xl hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
@@ -616,6 +712,24 @@ export default function Reading() {
                                 <span className="text-xs text-orange-600 font-medium">{(content.characterCount || 0).toLocaleString()}字</span>
                                 <span className="text-xs text-gray-600 font-medium">{content.questions.length}問</span>
                               </div>
+                              {/* ラベル表示 */}
+                              {content.labels && content.labels.length > 0 && (
+                                <div className="flex flex-wrap gap-1 mt-1">
+                                  {content.labels.map((cl) => (
+                                    <span
+                                      key={cl.label.id}
+                                      className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium"
+                                      style={{
+                                        backgroundColor: cl.label.color + '20',
+                                        color: cl.label.color,
+                                        border: `1px solid ${cl.label.color}40`
+                                      }}
+                                    >
+                                      {cl.label.name}
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
                             </div>
                             
                             <div className="flex-shrink-0">
