@@ -10,6 +10,7 @@ datasource db {
 model Level {
   id          String   @id
   displayName String
+  altName     String?  // 別名（かんたん、むずかしい、など）
   orderIndex  Int
   isDefault   Boolean  @default(false)
   createdAt   DateTime @default(now())

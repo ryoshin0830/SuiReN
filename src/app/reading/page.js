@@ -91,6 +91,18 @@ export default function Reading() {
     return { total, levelCounts };
   }, [readingContents, levels]);
 
+  // レベルコードから別名または表示名を取得する関数
+  const getLevelAltName = (levelCode) => {
+    const level = levels.find(l => l.id === levelCode);
+    return level ? (level.altName || level.displayName) : '';
+  };
+
+  // レベルコードからレベル情報を取得する関数
+  const getLevelInfo = (levelCode) => {
+    const level = levels.find(l => l.id === levelCode);
+    return level || { altName: '', displayName: '' };
+  };
+
   // ===== フィルタリング・ソート処理 =====
   /**
    * 検索・フィルタ・ソート条件に基づいてコンテンツをフィルタリング
@@ -217,59 +229,61 @@ export default function Reading() {
       {/* 背景要素 */}
       <div className="absolute inset-0 bg-gradient-to-br from-blue-400/10 via-purple-400/10 to-pink-400/10"></div>
       
-      {/* ===== ヘッダーセクション ===== */}
+      {/* ===== レベルタブセクション ===== */}
       <div className="relative z-10 bg-white/80 backdrop-blur-sm border-b border-gray-200 sticky top-0">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            {/* ロゴとタイトル */}
-            <div className="flex items-center space-x-4">
-              <img 
-                src="/logos/gorilla-only-animated.svg" 
-                alt="SuiReN" 
-                className="h-12 w-auto drop-shadow-lg"
-              />
-              <div>
-                <h1 className="text-2xl font-black bg-gradient-to-r from-gray-800 via-blue-600 to-purple-600 bg-clip-text text-transparent">
-                  <ruby>速読<rt>そくどく</rt></ruby><ruby>練習<rt>れんしゅう</rt></ruby>ライブラリ
-                </h1>
-                <p className="text-sm text-gray-600">お好みの読み物を選んでください</p>
-              </div>
-            </div>
-            
-          </div>
-        </div>
-        
-        {/* レベルタブ */}
-        <div className="bg-white border-t border-gray-100">
-          <div className="max-w-7xl mx-auto px-4">
-            <div className="flex overflow-x-auto">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex overflow-x-auto gap-2 py-2">
               <button
                 onClick={() => setLevelFilter('all')}
-                className={`px-4 py-3 font-medium transition-all whitespace-nowrap ${
+                className={`px-6 py-3 font-medium transition-all whitespace-nowrap flex items-center gap-3 rounded-lg ${
                   levelFilter === 'all'
-                    ? 'text-blue-600 border-b-2 border-blue-600'
-                    : 'text-gray-600 hover:text-gray-800 border-b-2 border-transparent'
+                    ? 'bg-blue-50 text-blue-700 border-b-3 border-blue-600 shadow-sm'
+                    : 'hover:bg-gray-50 text-gray-600 hover:text-gray-800'
                 }`}
               >
-                すべて ({stats.total})
+                <span className="text-base">すべて</span>
+                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+                  levelFilter === 'all' 
+                    ? 'bg-blue-600 text-white' 
+                    : 'bg-gray-200 text-gray-700'
+                }`}>
+                  {stats.total}
+                </span>
               </button>
               {levels.map((level) => (
                 <button
                   key={level.id}
                   onClick={() => setLevelFilter(level.id)}
-                  className={`px-4 py-3 font-medium transition-all whitespace-nowrap ${
+                  className={`px-6 py-3 font-medium transition-all whitespace-nowrap rounded-lg ${
                     levelFilter === level.id
-                      ? 'text-blue-600 border-b-2 border-blue-600'
-                      : 'text-gray-600 hover:text-gray-800 border-b-2 border-transparent'
+                      ? 'bg-blue-50 text-blue-700 border-b-3 border-blue-600 shadow-sm'
+                      : 'hover:bg-gray-50 text-gray-600 hover:text-gray-800'
                   }`}
                 >
-                  {level.displayName} ({stats.levelCounts[level.id] || 0})
+                  <div className="flex items-center gap-3">
+                    <div className="flex flex-col items-start">
+                      {level.altName && (
+                        <span className="text-base font-semibold leading-tight">{level.altName}</span>
+                      )}
+                      <span className={`text-xs leading-tight ${
+                        levelFilter === level.id ? 'text-blue-600' : 'text-gray-500'
+                      }`}>
+                        {level.displayName}
+                      </span>
+                    </div>
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+                      levelFilter === level.id 
+                        ? 'bg-blue-600 text-white' 
+                        : 'bg-gray-200 text-gray-700'
+                    }`}>
+                      {stats.levelCounts[level.id] || 0}
+                    </span>
+                  </div>
                 </button>
               ))}
             </div>
           </div>
         </div>
-      </div>
 
       {/* ===== モバイル用上部フィルターバー ===== */}
       <div className="lg:hidden relative z-10 max-w-7xl mx-auto px-4 pt-4">
@@ -320,9 +334,14 @@ export default function Reading() {
             <div className="flex items-center space-x-4 text-sm">
               <span className="font-bold text-gray-800">総数: {stats.total}</span>
               {levels.map(level => (
-                <span key={level.id} className={`font-medium ${getLevelStyle(level.id, 'textBold')}`}>
-                  {level.displayName}: {stats.levelCounts[level.id] || 0}
-                </span>
+                <div key={level.id} className="flex items-center gap-2">
+                  <span className={`font-medium ${getLevelStyle(level.id, 'textBold')}`}>
+                    {level.altName || level.displayName}
+                  </span>
+                  <span className="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded-full">
+                    {stats.levelCounts[level.id] || 0}
+                  </span>
+                </div>
               ))}
             </div>
             
@@ -394,7 +413,12 @@ export default function Reading() {
                   </div>
                   {levels.map(level => (
                     <div key={level.id} className="flex justify-between items-center">
-                      <span className="text-gray-600">{level.displayName}</span>
+                      <div className="flex flex-col items-start">
+                        {level.altName && (
+                          <span className="text-gray-700 font-medium text-sm">{level.altName}</span>
+                        )}
+                        <span className="text-gray-500 text-xs">{level.displayName}</span>
+                      </div>
                       <span className={`font-bold ${getLevelStyle(level.id, 'text')}`}>
                         {stats.levelCounts[level.id] || 0}
                       </span>
@@ -603,9 +627,16 @@ export default function Reading() {
                           
                           {/* レベルバッジ */}
                           <div className="absolute top-2 sm:top-4 left-2 sm:left-4">
-                            <span className={`inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-xs font-bold backdrop-blur-sm ${getLevelStyle(content.levelCode, 'badgeHover')}`}>
-                              {content.level}
-                            </span>
+                            <div className={`inline-flex flex-col items-start px-2 sm:px-3 py-1 rounded-lg backdrop-blur-sm ${getLevelStyle(content.levelCode, 'badgeHover')}`}>
+                              {getLevelInfo(content.levelCode).altName && (
+                                <span className="text-xs font-bold">
+                                  {getLevelInfo(content.levelCode).altName}
+                                </span>
+                              )}
+                              <span className="text-xs opacity-90">
+                                {getLevelInfo(content.levelCode).displayName}
+                              </span>
+                            </div>
                           </div>
 
                           {/* サムネイルがない場合のアイコン */}
@@ -706,9 +737,16 @@ export default function Reading() {
                             <div className="flex-1 min-w-0 mr-2 sm:mr-3">
                               <h3 className="text-xs sm:text-sm font-bold text-gray-800 mb-0.5 line-clamp-1">{content.title}</h3>
                               <div className="flex items-center space-x-1 sm:space-x-2 flex-wrap">
-                                <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-xs font-bold ${getLevelStyle(content.levelCode, 'badge')}`}>
-                                  {content.level}
-                                </span>
+                                <div className={`inline-flex flex-col items-start px-2 py-1 rounded-md ${getLevelStyle(content.levelCode, 'badge')}`}>
+                                  {getLevelInfo(content.levelCode).altName && (
+                                    <span className="text-xs font-bold leading-none">
+                                      {getLevelInfo(content.levelCode).altName}
+                                    </span>
+                                  )}
+                                  <span className="text-xs opacity-80 leading-none">
+                                    {getLevelInfo(content.levelCode).displayName}
+                                  </span>
+                                </div>
                                 <span className="text-xs text-orange-600 font-medium">{(content.characterCount || 0).toLocaleString()}字</span>
                                 <span className="text-xs text-gray-600 font-medium">{content.questions.length}問</span>
                               </div>

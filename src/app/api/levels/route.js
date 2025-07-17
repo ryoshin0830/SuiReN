@@ -65,7 +65,7 @@ export async function GET() {
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { id, displayName, orderIndex } = body;
+    const { id, displayName, altName, orderIndex } = body;
 
     // バリデーション
     if (!id || !displayName || orderIndex === undefined) {
@@ -91,6 +91,14 @@ export async function POST(request) {
       );
     }
 
+    // 別名の長さチェック
+    if (altName && altName.length > 20) {
+      return NextResponse.json(
+        { error: '別名は20文字以内で入力してください' },
+        { status: 400 }
+      );
+    }
+
     // 既存のIDチェック
     const existingLevel = await prisma.level.findUnique({
       where: { id }
@@ -108,6 +116,7 @@ export async function POST(request) {
       data: {
         id,
         displayName,
+        altName,
         orderIndex,
         isDefault: false
       }

@@ -43,7 +43,7 @@ export async function PUT(request, props) {
 
   try {
     const body = await request.json();
-    const { displayName, orderIndex } = body;
+    const { displayName, altName, orderIndex } = body;
 
     // バリデーション
     if (displayName && displayName.length > 20) {
@@ -53,9 +53,18 @@ export async function PUT(request, props) {
       );
     }
 
+    // 別名の長さチェック
+    if (altName && altName.length > 20) {
+      return NextResponse.json(
+        { error: '別名は20文字以内で入力してください' },
+        { status: 400 }
+      );
+    }
+
     // 更新データの構築
     const updateData = {};
     if (displayName !== undefined) updateData.displayName = displayName;
+    if (altName !== undefined) updateData.altName = altName;
     if (orderIndex !== undefined) updateData.orderIndex = orderIndex;
 
     // レベルの更新

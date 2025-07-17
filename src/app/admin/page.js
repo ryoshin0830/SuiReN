@@ -579,18 +579,12 @@ export default function Admin() {
             <div>
               <div className="text-sm text-gray-600">レベル別内訳</div>
               <div className="space-y-1">
-                <div className="flex justify-between text-gray-800">
-                  <span>{getLevelDisplayName(LEVEL_CODES.BEGINNER)}</span>
-                  <span>{contents.filter(c => c.levelCode === LEVEL_CODES.BEGINNER).length}</span>
-                </div>
-                <div className="flex justify-between text-gray-800">
-                  <span>{getLevelDisplayName(LEVEL_CODES.INTERMEDIATE)}</span>
-                  <span>{contents.filter(c => c.levelCode === LEVEL_CODES.INTERMEDIATE).length}</span>
-                </div>
-                <div className="flex justify-between text-gray-800">
-                  <span>{getLevelDisplayName(LEVEL_CODES.ADVANCED)}</span>
-                  <span>{contents.filter(c => c.levelCode === LEVEL_CODES.ADVANCED).length}</span>
-                </div>
+                {levels.map(level => (
+                  <div key={level.id} className="flex justify-between text-gray-800">
+                    <span>{level.displayName}</span>
+                    <span>{contents.filter(c => c.levelCode === level.id).length}</span>
+                  </div>
+                ))}
               </div>
             </div>
           </div>

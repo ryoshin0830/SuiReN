@@ -5,113 +5,134 @@ import { useLevels } from '../hooks/useLevels';
 
 export default function LevelManager() {
   const { levels, loading, error, refetch } = useLevels();
-  const [editingLevel, setEditingLevel] = useState(null);
+  const [localLevels, setLocalLevels] = useState([]);
+  const [editingCell, setEditingCell] = useState(null); // {levelId, field}
   const [showAddModal, setShowAddModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(null);
   const [targetLevelId, setTargetLevelId] = useState('');
   const [saving, setSaving] = useState(false);
-  const [isDatabaseAvailable, setIsDatabaseAvailable] = useState(true);
+  const [hasChanges, setHasChanges] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [draggedLevel, setDraggedLevel] = useState(null);
 
   // 新規レベル用のフォームデータ
   const [newLevel, setNewLevel] = useState({
     id: '',
     displayName: '',
-    orderIndex: levels.length + 1
+    altName: '',
+    orderIndex: 1
   });
 
-  // レベルを更新した時に順序を再計算
+  // レベル情報を初期化
   useEffect(() => {
     if (levels.length > 0) {
+      setLocalLevels(levels.map(level => ({ ...level })));
       setNewLevel(prev => ({ ...prev, orderIndex: levels.length + 1 }));
     }
   }, [levels]);
 
-  // データベースの可用性をチェック
-  useEffect(() => {
-    // レベルデータが正常に取得できているかチェック
-    if (levels && levels.length > 0 && !error) {
-      setIsDatabaseAvailable(true);
-    } else {
-      setIsDatabaseAvailable(false);
-    }
-  }, [levels, error]);
-
-  // レベルの表示名を編集
-  const handleEditDisplayName = async (levelId, newDisplayName) => {
-    if (!isDatabaseAvailable) {
-      alert('レベル管理機能は現在利用できません。データベースの設定が必要です。');
+  // ローカルでセルを編集
+  const handleCellEdit = (levelId, field, value) => {
+    // レベルIDの変更は既存のコンテンツに影響するため無効化
+    if (field === 'id') {
+      alert('レベルIDの変更は既存のコンテンツとの関連性に影響するため、変更できません。');
       return;
     }
     
+    setLocalLevels(prev => prev.map(level => 
+      level.id === levelId ? { ...level, [field]: value } : level
+    ));
+    setHasChanges(true);
+  };
+
+  // ドラッグ開始
+  const handleDragStart = (e, level) => {
+    setIsDragging(true);
+    setDraggedLevel(level);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  // ドラッグオーバー
+  const handleDragOver = (e, targetLevel) => {
+    e.preventDefault();
+    if (!draggedLevel || draggedLevel.id === targetLevel.id) return;
+
+    const draggedIndex = localLevels.findIndex(l => l.id === draggedLevel.id);
+    const targetIndex = localLevels.findIndex(l => l.id === targetLevel.id);
+
+    if (draggedIndex !== targetIndex) {
+      const newLevels = [...localLevels];
+      newLevels.splice(draggedIndex, 1);
+      newLevels.splice(targetIndex, 0, draggedLevel);
+      
+      // orderIndexを再計算
+      newLevels.forEach((level, index) => {
+        level.orderIndex = index + 1;
+      });
+      
+      setLocalLevels(newLevels);
+      setHasChanges(true);
+    }
+  };
+
+  // ドラッグ終了
+  const handleDragEnd = () => {
+    setIsDragging(false);
+    setDraggedLevel(null);
+  };
+
+  // 変更を保存
+  const handleSaveChanges = async () => {
     setSaving(true);
     try {
-      const response = await fetch(`/api/levels/${levelId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ displayName: newDisplayName })
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        if (response.status === 503) {
-          setIsDatabaseAvailable(false);
+      // デフォルトレベルを先に更新
+      const defaultLevel = localLevels.find(l => l.isDefault);
+      if (defaultLevel) {
+        const response = await fetch(`/api/levels/${defaultLevel.id}/set-default`, {
+          method: 'PUT'
+        });
+        
+        if (!response.ok) {
+          throw new Error('デフォルトレベルの設定に失敗しました');
         }
-        throw new Error(error.error || '更新に失敗しました');
+      }
+
+      // 各レベルを個別に更新
+      for (const level of localLevels) {
+        const response = await fetch(`/api/levels/${level.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            displayName: level.displayName,
+            altName: level.altName,
+            orderIndex: level.orderIndex
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`レベル ${level.id} の更新に失敗しました`);
+        }
       }
 
       await refetch();
-      setEditingLevel(null);
+      setHasChanges(false);
+      alert('変更を保存しました');
     } catch (error) {
-      alert(error.message);
+      alert(`保存中にエラーが発生しました: ${error.message}`);
     } finally {
       setSaving(false);
     }
   };
 
-  // レベルの順序を変更
-  const handleOrderChange = async (levelId, direction) => {
-    if (!isDatabaseAvailable) {
-      alert('レベル管理機能は現在利用できません。データベースの設定が必要です。');
-      return;
-    }
-    const currentIndex = levels.findIndex(l => l.id === levelId);
-    const targetIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
-
-    if (targetIndex < 0 || targetIndex >= levels.length) return;
-
-    setSaving(true);
-    try {
-      // 2つのレベルの順序を入れ替え
-      const currentLevel = levels[currentIndex];
-      const targetLevel = levels[targetIndex];
-
-      await Promise.all([
-        fetch(`/api/levels/${currentLevel.id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ orderIndex: targetLevel.orderIndex })
-        }),
-        fetch(`/api/levels/${targetLevel.id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ orderIndex: currentLevel.orderIndex })
-        })
-      ]);
-
-      await refetch();
-    } catch (error) {
-      alert('順序の変更に失敗しました');
-    } finally {
-      setSaving(false);
-    }
+  // 変更をキャンセル
+  const handleCancelChanges = () => {
+    setLocalLevels(levels.map(level => ({ ...level })));
+    setHasChanges(false);
+    setEditingCell(null);
   };
 
   // 新規レベルの追加
   const handleAddLevel = async () => {
-    if (!isDatabaseAvailable) {
-      alert('レベル管理機能は現在利用できません。データベースの設定が必要です。');
-      return;
-    }
     if (!newLevel.id || !newLevel.displayName) {
       alert('レベルIDと表示名を入力してください');
       return;
@@ -135,7 +156,8 @@ export default function LevelManager() {
       setNewLevel({
         id: '',
         displayName: '',
-        orderIndex: levels.length + 2
+        altName: '',
+        orderIndex: localLevels.length + 2
       });
     } catch (error) {
       alert(error.message);
@@ -146,12 +168,6 @@ export default function LevelManager() {
 
   // レベルの削除
   const handleDeleteLevel = async () => {
-    if (!isDatabaseAvailable) {
-      alert('レベル管理機能は現在利用できません。データベースの設定が必要です。');
-      return;
-    }
-    
-    // コンテンツが存在する場合のみ移行先レベルのチェックを行う
     if (showDeleteModal._count.contents > 0 && !targetLevelId) {
       alert('移行先レベルを選択してください');
       return;
@@ -159,7 +175,6 @@ export default function LevelManager() {
 
     setSaving(true);
     try {
-      // URLを構築（コンテンツが0件の場合は移行先レベルIDを含めない）
       const url = showDeleteModal._count.contents > 0 
         ? `/api/levels/${showDeleteModal.id}?targetLevelId=${targetLevelId}`
         : `/api/levels/${showDeleteModal.id}`;
@@ -184,28 +199,12 @@ export default function LevelManager() {
   };
 
   // デフォルトレベルの設定
-  const handleSetDefault = async (levelId) => {
-    if (!isDatabaseAvailable) {
-      alert('レベル管理機能は現在利用できません。データベースの設定が必要です。');
-      return;
-    }
-    setSaving(true);
-    try {
-      const response = await fetch(`/api/levels/${levelId}/set-default`, {
-        method: 'PUT'
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'デフォルトレベルの設定に失敗しました');
-      }
-
-      await refetch();
-    } catch (error) {
-      alert(error.message);
-    } finally {
-      setSaving(false);
-    }
+  const handleSetDefault = (levelId) => {
+    setLocalLevels(prev => prev.map(level => ({
+      ...level,
+      isDefault: level.id === levelId
+    })));
+    setHasChanges(true);
   };
 
   if (loading) {
@@ -220,29 +219,39 @@ export default function LevelManager() {
     <div className="bg-white rounded-lg shadow-md p-6">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-semibold text-gray-900">レベル管理</h2>
-        <button
-          onClick={() => setShowAddModal(true)}
-          className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          disabled={saving || !isDatabaseAvailable}
-        >
-          新規レベル追加
-        </button>
+        <div className="flex gap-3">
+          {hasChanges && (
+            <>
+              <button
+                onClick={handleCancelChanges}
+                className="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors"
+                disabled={saving}
+              >
+                キャンセル
+              </button>
+              <button
+                onClick={handleSaveChanges}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors animate-pulse"
+                disabled={saving}
+              >
+                {saving ? '保存中...' : '変更を保存'}
+              </button>
+            </>
+          )}
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+            disabled={saving}
+          >
+            新規レベル追加
+          </button>
+        </div>
       </div>
 
-      {/* データベース未設定の警告 */}
-      {!isDatabaseAvailable && (
-        <div className="mb-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-          <div className="flex">
-            <svg className="w-5 h-5 text-yellow-600 mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-            </svg>
-            <div>
-              <h3 className="text-sm font-semibold text-yellow-800">データベース設定が必要です</h3>
-              <p className="text-sm text-yellow-700 mt-1">
-                レベル管理機能を使用するにはデータベースの設定が必要です。現在は表示のみ可能です。
-              </p>
-            </div>
-          </div>
+      {/* 変更通知 */}
+      {hasChanges && (
+        <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-sm text-yellow-800">
+          <strong>⚠️ 未保存の変更があります</strong> - 「変更を保存」ボタンをクリックしてデータベースに反映してください。
         </div>
       )}
 
@@ -251,8 +260,9 @@ export default function LevelManager() {
         <table className="w-full table-auto">
           <thead>
             <tr className="bg-gray-50">
-              <th className="px-4 py-2 text-left text-gray-800 font-semibold">順序</th>
+              <th className="px-4 py-2 text-left text-gray-800 font-semibold w-12">順序</th>
               <th className="px-4 py-2 text-left text-gray-800 font-semibold">レベルID</th>
+              <th className="px-4 py-2 text-left text-gray-800 font-semibold">別名</th>
               <th className="px-4 py-2 text-left text-gray-800 font-semibold">表示名</th>
               <th className="px-4 py-2 text-left text-gray-800 font-semibold">コンテンツ数</th>
               <th className="px-4 py-2 text-left text-gray-800 font-semibold">デフォルト</th>
@@ -260,67 +270,86 @@ export default function LevelManager() {
             </tr>
           </thead>
           <tbody>
-            {levels.map((level, index) => (
-              <tr key={level.id} className="border-t hover:bg-gray-50">
+            {localLevels.map((level, index) => (
+              <tr 
+                key={level.id} 
+                className={`border-t hover:bg-gray-50 ${isDragging ? 'cursor-move' : ''}`}
+                draggable
+                onDragStart={(e) => handleDragStart(e, level)}
+                onDragOver={(e) => handleDragOver(e, level)}
+                onDragEnd={handleDragEnd}
+              >
                 <td className="px-4 py-2">
-                  <div className="flex items-center space-x-1">
-                    <button
-                      onClick={() => handleOrderChange(level.id, 'up')}
-                      disabled={index === 0 || saving || !isDatabaseAvailable}
-                      className="p-1 text-gray-600 hover:text-gray-800 disabled:opacity-60"
-                      title={!isDatabaseAvailable ? 'データベース設定が必要です' : ''}
-                    >
-                      ↑
-                    </button>
-                    <button
-                      onClick={() => handleOrderChange(level.id, 'down')}
-                      disabled={index === levels.length - 1 || saving || !isDatabaseAvailable}
-                      className="p-1 text-gray-600 hover:text-gray-800 disabled:opacity-60"
-                      title={!isDatabaseAvailable ? 'データベース設定が必要です' : ''}
-                    >
-                      ↓
-                    </button>
-                    <span className="ml-2">{index + 1}</span>
+                  <div className="flex items-center">
+                    <span className="text-gray-400 mr-2">⋮⋮</span>
+                    <span>{index + 1}</span>
                   </div>
                 </td>
-                <td className="px-4 py-2 font-mono text-sm text-gray-800">{level.id}</td>
                 <td className="px-4 py-2">
-                  {editingLevel === level.id ? (
+                  <span className="font-mono text-sm text-gray-600" title="レベルIDは変更できません">
+                    {level.id}
+                  </span>
+                </td>
+                <td className="px-4 py-2">
+                  {editingCell?.levelId === level.id && editingCell?.field === 'altName' ? (
                     <input
                       type="text"
-                      defaultValue={level.displayName}
-                      onBlur={(e) => handleEditDisplayName(level.id, e.target.value)}
+                      value={level.altName || ''}
+                      onChange={(e) => handleCellEdit(level.id, 'altName', e.target.value)}
+                      onBlur={() => setEditingCell(null)}
                       onKeyPress={(e) => {
-                        if (e.key === 'Enter') {
-                          handleEditDisplayName(level.id, e.target.value);
-                        }
+                        if (e.key === 'Enter') setEditingCell(null);
                       }}
-                      className="px-2 py-1 border border-gray-300 rounded text-gray-900"
-                      autoFocus
+                      className="px-2 py-1 border border-gray-300 rounded text-gray-900 w-full"
+                      placeholder="かんたん"
                       maxLength={20}
+                      autoFocus
+                    />
+                  ) : (
+                    <div
+                      onClick={() => setEditingCell({ levelId: level.id, field: 'altName' })}
+                      className="cursor-pointer hover:bg-gray-100 px-2 py-1 rounded"
+                    >
+                      {level.altName ? (
+                        <span className="text-gray-800 font-medium">{level.altName}</span>
+                      ) : (
+                        <span className="text-gray-400 italic">未設定</span>
+                      )}
+                    </div>
+                  )}
+                </td>
+                <td className="px-4 py-2">
+                  {editingCell?.levelId === level.id && editingCell?.field === 'displayName' ? (
+                    <input
+                      type="text"
+                      value={level.displayName}
+                      onChange={(e) => handleCellEdit(level.id, 'displayName', e.target.value)}
+                      onBlur={() => setEditingCell(null)}
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter') setEditingCell(null);
+                      }}
+                      className="px-2 py-1 border border-gray-300 rounded text-gray-900 w-full"
+                      maxLength={20}
+                      autoFocus
                     />
                   ) : (
                     <span
-                      onClick={() => !saving && isDatabaseAvailable && setEditingLevel(level.id)}
-                      className={`px-2 py-1 rounded text-gray-800 ${
-                        isDatabaseAvailable ? 'cursor-pointer hover:bg-gray-100' : 'cursor-not-allowed'
-                      }`}
-                      title={!isDatabaseAvailable ? 'データベース設定が必要です' : ''}
+                      onClick={() => setEditingCell({ levelId: level.id, field: 'displayName' })}
+                      className="text-gray-800 cursor-pointer hover:bg-gray-100 px-2 py-1 rounded"
                     >
                       {level.displayName}
                     </span>
                   )}
                 </td>
-                <td className="px-4 py-2 text-gray-800">{level._count.contents}</td>
+                <td className="px-4 py-2 text-gray-800">{level._count?.contents || 0}</td>
                 <td className="px-4 py-2">
                   {level.isDefault ? (
                     <span className="text-green-600 font-bold">✓</span>
                   ) : (
                     <button
                       onClick={() => handleSetDefault(level.id)}
-                      className="text-gray-600 hover:text-green-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                      disabled={saving || !isDatabaseAvailable}
-                      title={!isDatabaseAvailable ? 'データベース設定が必要です' : ''}
+                      className="text-gray-600 hover:text-green-600"
+                      disabled={saving}
                     >
                       設定
                     </button>
@@ -329,9 +358,8 @@ export default function LevelManager() {
                 <td className="px-4 py-2">
                   <button
                     onClick={() => setShowDeleteModal(level)}
-                    disabled={level.isDefault || saving || !isDatabaseAvailable}
+                    disabled={level.isDefault || saving}
                     className="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                    title={!isDatabaseAvailable ? 'データベース設定が必要です' : (level.isDefault ? 'デフォルトレベルは削除できません' : '')}
                   >
                     削除
                   </button>
@@ -358,7 +386,6 @@ export default function LevelManager() {
                   value={newLevel.id}
                   onChange={(e) => {
                     const value = e.target.value.toLowerCase();
-                    // 英数字とハイフンのみを許可
                     if (/^[a-z0-9-]*$/.test(value)) {
                       setNewLevel(prev => ({ ...prev, id: value }));
                     }
@@ -366,6 +393,23 @@ export default function LevelManager() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900"
                   placeholder="例: upper-intermediate"
                 />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  別名（20文字以内）
+                </label>
+                <input
+                  type="text"
+                  value={newLevel.altName}
+                  onChange={(e) => setNewLevel(prev => ({ ...prev, altName: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900"
+                  placeholder="例: かんたん"
+                  maxLength={20}
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  日本語学習者にわかりやすい表現（かんたん、むずかしい等）
+                </p>
               </div>
               
               <div>
@@ -380,6 +424,9 @@ export default function LevelManager() {
                   placeholder="例: 中上級レベル"
                   maxLength={20}
                 />
+                <p className="text-xs text-gray-500 mt-1">
+                  正式なレベル名（中級前半、中級レベル等）
+                </p>
               </div>
             </div>
 
@@ -387,7 +434,7 @@ export default function LevelManager() {
               <button
                 onClick={() => {
                   setShowAddModal(false);
-                  setNewLevel({ id: '', displayName: '', orderIndex: levels.length + 1 });
+                  setNewLevel({ id: '', displayName: '', altName: '', orderIndex: localLevels.length + 1 });
                 }}
                 className="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300"
                 disabled={saving}
@@ -429,7 +476,7 @@ export default function LevelManager() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900"
                 >
                   <option value="">選択してください</option>
-                  {levels
+                  {localLevels
                     .filter(l => l.id !== showDeleteModal.id)
                     .map(level => (
                       <option key={level.id} value={level.id}>
