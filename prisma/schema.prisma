@@ -29,9 +29,11 @@ model Content {
   explanation    String?
   images         Json?
   thumbnail      Json?
+  orderIndex     Int        @default(999999)
   createdAt      DateTime   @default(now())
   updatedAt      DateTime   @updatedAt
   questions      Question[]
+  labels         ContentLabel[]
 
   @@map("contents")
 }
@@ -71,4 +73,28 @@ model AboutPage {
   updatedAt DateTime @updatedAt
 
   @@map("about_page")
+}
+
+model Label {
+  id          String         @id @default(cuid())
+  name        String         @unique
+  color       String         @default("#6366f1")
+  description String?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  contents    ContentLabel[]
+
+  @@map("labels")
+}
+
+model ContentLabel {
+  id        String   @id @default(cuid())
+  contentId String
+  labelId   String
+  createdAt DateTime @default(now())
+  content   Content  @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  label     Label    @relation(fields: [labelId], references: [id], onDelete: Cascade)
+
+  @@unique([contentId, labelId])
+  @@map("content_labels")
 }
