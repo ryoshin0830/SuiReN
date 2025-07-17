@@ -4,11 +4,14 @@ import { useState, useEffect } from 'react';
 import ContentEditor from '../../components/ContentEditor';
 import LevelManager from '../../components/LevelManager';
 import AboutPageEditor from '../../components/AboutPageEditor';
+import LabelManager from '../../components/LabelManager';
+import ContentOrderTable from '../../components/ContentOrderTable';
 import { 
   LEVEL_CODES, 
   getLevelDisplayName,
   getLevelStyle 
 } from '../../lib/level-constants';
+import { useLevels } from '../../hooks/useLevels';
 
 const ADMIN_PASSWORD = 'gorira';
 
@@ -24,7 +27,10 @@ export default function Admin() {
   const [showExcelUpload, setShowExcelUpload] = useState(false);
   const [excelUploadLoading, setExcelUploadLoading] = useState(false);
   const [excelData, setExcelData] = useState(null);
-  const [activeTab, setActiveTab] = useState('contents'); // 'contents', 'levels', or 'about'
+  const [activeTab, setActiveTab] = useState('contents'); // 'contents', 'levels', 'labels', or 'about'
+  const [contentLevelTab, setContentLevelTab] = useState('all'); // 'all' or level id
+  const [orderChanging, setOrderChanging] = useState(false);
+  const { levels, loading: levelsLoading } = useLevels();
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -43,6 +49,7 @@ export default function Admin() {
       const response = await fetch('/api/contents');
       if (response.ok) {
         const data = await response.json();
+        console.log('Fetched contents:', data); // デバッグ用
         setContents(data);
       } else {
         setError('コンテンツの取得に失敗しました');
@@ -72,6 +79,31 @@ export default function Admin() {
     } catch (error) {
       console.error('Error deleting content:', error);
       setError('削除に失敗しました');
+    }
+  };
+
+  // コンテンツの順番を変更
+  const handleOrderChange = async (contentId, direction) => {
+    setOrderChanging(true);
+    try {
+      const response = await fetch(`/api/contents/${contentId}/order`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ direction, levelCode: contentLevelTab })
+      });
+
+      if (response.ok) {
+        await fetchContents(); // 一覧を再取得
+      } else {
+        setError('順番の変更に失敗しました');
+      }
+    } catch (error) {
+      console.error('Error changing order:', error);
+      setError('順番の変更に失敗しました');
+    } finally {
+      setOrderChanging(false);
     }
   };
 
@@ -122,6 +154,12 @@ export default function Admin() {
 
   // Excelファイルをアップロード
   const handleExcelUpload = async (file) => {
+    console.log('Starting Excel upload:', {
+      fileName: file.name,
+      fileSize: file.size,
+      fileType: file.type
+    });
+    
     setExcelUploadLoading(true);
     setError('');
     
@@ -129,33 +167,50 @@ export default function Admin() {
       const formData = new FormData();
       formData.append('file', file);
       
+      console.log('Sending request to /api/excel/upload');
       const response = await fetch('/api/excel/upload', {
         method: 'POST',
         body: formData,
       });
       
+      console.log('Response status:', response.status, response.ok);
+      
       if (response.ok) {
         const result = await response.json();
+        console.log('Upload result:', result);
+        
         if (result.success) {
+          // 警告メッセージがある場合は表示
+          if (result.warnings && result.warnings.notFoundLabels) {
+            alert(`⚠️ 警告\n\n${result.warnings.message}\n\n管理画面の「ラベル管理」タブで事前にラベルを作成してください。`);
+          }
+          
           // Excelからインポートしたデータをセット
           setExcelData(result.data);
           setEditorMode('create');
           setShowExcelUpload(false);
           setShowEditor(true);
+          console.log('Excel data imported successfully');
         } else {
           setError(result.error || 'アップロードに失敗しました');
         }
       } else {
         let errorMessage = 'アップロードに失敗しました';
         try {
-          const errorData = await response.json();
-          console.error('Excel upload error:', errorData);
-          errorMessage = errorData.error || errorMessage;
-          if (errorData.details) {
-            errorMessage += ': ' + errorData.details;
+          const errorText = await response.text();
+          console.error('Excel upload error response:', errorText);
+          try {
+            const errorData = JSON.parse(errorText);
+            errorMessage = errorData.error || errorMessage;
+            if (errorData.details) {
+              errorMessage += ': ' + errorData.details;
+            }
+          } catch (parseError) {
+            console.error('Failed to parse error as JSON:', parseError);
+            errorMessage = errorText || `HTTP ${response.status}: ${response.statusText}`;
           }
         } catch (e) {
-          console.error('Failed to parse error response:', e);
+          console.error('Failed to read error response:', e);
           errorMessage = `HTTP ${response.status}: ${response.statusText}`;
         }
         setError(errorMessage);
@@ -173,6 +228,18 @@ export default function Admin() {
       fetchContents();
     }
   }, [isAuthenticated]);
+
+  // ContentOrderTableからの編集イベントを受け取る
+  useEffect(() => {
+    const handleEditContent = (e) => {
+      handleEdit(e.detail);
+    };
+    
+    window.addEventListener('editContent', handleEditContent);
+    return () => {
+      window.removeEventListener('editContent', handleEditContent);
+    };
+  }, []);
 
   if (!isAuthenticated) {
     return (
@@ -281,6 +348,16 @@ export default function Admin() {
             レベル管理
           </button>
           <button
+            onClick={() => setActiveTab('labels')}
+            className={`py-2 px-1 border-b-2 font-medium text-sm ${
+              activeTab === 'labels'
+                ? 'border-blue-500 text-blue-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            }`}
+          >
+            ラベル管理
+          </button>
+          <button
             onClick={() => setActiveTab('about')}
             className={`py-2 px-1 border-b-2 font-medium text-sm ${
               activeTab === 'about'
@@ -303,9 +380,42 @@ export default function Admin() {
       {activeTab === 'contents' && (
         <>
           <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+        {/* レベル別タブ */}
+        <div className="mb-6">
+          <div className="flex flex-wrap gap-2 border-b border-gray-200">
+            <button
+              onClick={() => setContentLevelTab('all')}
+              className={`px-4 py-2 font-medium transition-all ${
+                contentLevelTab === 'all'
+                  ? 'text-blue-600 border-b-2 border-blue-600'
+                  : 'text-gray-600 hover:text-gray-800'
+              }`}
+            >
+              すべて ({contents.length})
+            </button>
+            {levels.map((level) => {
+              const count = contents.filter(c => c.levelCode === level.id).length;
+              return (
+                <button
+                  key={level.id}
+                  onClick={() => setContentLevelTab(level.id)}
+                  className={`px-4 py-2 font-medium transition-all ${
+                    contentLevelTab === level.id
+                      ? 'text-blue-600 border-b-2 border-blue-600'
+                      : 'text-gray-600 hover:text-gray-800'
+                  }`}
+                >
+                  {level.displayName} ({count})
+                </button>
+              );
+            })}
+          </div>
+        </div>
+        
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold text-gray-900">
-            コンテンツ一覧
+            {contentLevelTab === 'all' ? 'すべてのコンテンツ' : 
+             levels.find(l => l.id === contentLevelTab)?.displayName + 'のコンテンツ'}
           </h2>
           <button
             onClick={fetchContents}
@@ -320,6 +430,25 @@ export default function Admin() {
           <div className="text-center py-8">
             <div className="text-gray-600">読み込み中...</div>
           </div>
+        ) : contentLevelTab !== 'all' ? (
+          <ContentOrderTable
+            contents={contents
+              .filter(content => content.levelCode === contentLevelTab)
+              .sort((a, b) => (a.orderIndex || 999999) - (b.orderIndex || 999999))}
+            levels={levels}
+            onReorder={(newContents) => {
+              // 並び替え後の新しいコンテンツリストでstateを更新
+              const updatedContents = contents.map(c => {
+                const newContent = newContents.find(nc => nc.id === c.id);
+                if (newContent) {
+                  return { ...c, orderIndex: newContent.orderIndex };
+                }
+                return c;
+              });
+              setContents(updatedContents);
+              console.log('Contents state updated with new order');
+            }}
+          />
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full table-auto">
@@ -328,6 +457,7 @@ export default function Admin() {
                   <th className="px-4 py-2 text-left text-gray-800 font-semibold">ID</th>
                   <th className="px-4 py-2 text-left text-gray-800 font-semibold">タイトル</th>
                   <th className="px-4 py-2 text-left text-gray-800 font-semibold">レベル</th>
+                  <th className="px-4 py-2 text-left text-gray-800 font-semibold">ラベル</th>
                   <th className="px-4 py-2 text-left text-gray-800 font-semibold">問題数</th>
                   <th className="px-4 py-2 text-left text-gray-800 font-semibold">語数</th>
                   <th className="px-4 py-2 text-left text-gray-800 font-semibold">文字数</th>
@@ -335,9 +465,19 @@ export default function Admin() {
                 </tr>
               </thead>
               <tbody>
-                {contents.map((content) => (
-                  <tr key={content.id} className="border-t hover:bg-gray-50">
-                    <td className="px-4 py-2 font-mono text-sm text-gray-800">
+                {contents
+                  .sort((a, b) => {
+                    // まずレベルでソート、次にorderIndexでソート
+                    if (a.levelCode !== b.levelCode) {
+                      const levelA = levels.find(l => l.id === a.levelCode);
+                      const levelB = levels.find(l => l.id === b.levelCode);
+                      return (levelA?.orderIndex || 0) - (levelB?.orderIndex || 0);
+                    }
+                    return (a.orderIndex || 999999) - (b.orderIndex || 999999);
+                  })
+                  .map((content) => (
+                    <tr key={content.id} className="border-t hover:bg-gray-50">
+                      <td className="px-4 py-2 font-mono text-sm text-gray-800">
                       {content.id}
                     </td>
                     <td className="px-4 py-2 font-medium text-gray-800">
@@ -354,14 +494,38 @@ export default function Admin() {
                         {content.level}
                       </span>
                     </td>
+                    <td className="px-4 py-2">
+                      <div className="flex flex-wrap gap-1">
+                        {content.labels && content.labels.length > 0 ? (
+                          content.labels.map((cl) => {
+                            console.log('Label data:', cl); // デバッグ用
+                            return (
+                              <span
+                                key={cl.label?.id || cl.labelId}
+                                className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium"
+                                style={{
+                                  backgroundColor: (cl.label?.color || '#6366f1') + '20',
+                                  color: cl.label?.color || '#6366f1',
+                                  border: `1px solid ${(cl.label?.color || '#6366f1')}40`
+                                }}
+                              >
+                                {cl.label?.name || 'Unknown'}
+                              </span>
+                            );
+                          })
+                        ) : (
+                          <span className="text-gray-400 text-sm">-</span>
+                        )}
+                      </div>
+                    </td>
                     <td className="px-4 py-2 text-gray-800">
-                      {content.questions.length}問
+                      {content.questions?.length || 0}問
                     </td>
                     <td className="px-4 py-2 text-gray-800">
                       {content.wordCount ? `${content.wordCount}語` : '-'}
                     </td>
                     <td className="px-4 py-2 text-gray-800">
-                      {content.characterCount ? `${content.characterCount}文字` : `${content.text.length}文字`}
+                      {content.characterCount ? `${content.characterCount}文字` : `${content.text?.length || 0}文字`}
                     </td>
                     <td className="px-4 py-2">
                       <div className="flex space-x-2">
@@ -386,8 +550,8 @@ export default function Admin() {
                         </button>
                       </div>
                     </td>
-                  </tr>
-                ))}
+                    </tr>
+                  ))}
               </tbody>
             </table>
             
@@ -462,6 +626,11 @@ export default function Admin() {
       {/* レベル管理タブ */}
       {activeTab === 'levels' && (
         <LevelManager />
+      )}
+
+      {/* ラベル管理タブ */}
+      {activeTab === 'labels' && (
+        <LabelManager />
       )}
 
       {/* このサイトについてタブ */}

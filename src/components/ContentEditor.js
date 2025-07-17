@@ -26,6 +26,7 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
     explanation: '', // 読み物の解説
     images: [],
     thumbnail: null, // サムネイル画像
+    labelIds: [], // 選択されたラベルID
     questions: [
       {
         question: '',
@@ -48,6 +49,8 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
     ruby: '',
     format: 'basic'
   });
+  const [labels, setLabels] = useState([]); // 利用可能なラベル一覧
+  const [labelsLoading, setLabelsLoading] = useState(false);
 
   // デフォルトレベルの設定
   useEffect(() => {
@@ -59,6 +62,25 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
       }));
     }
   }, [defaultLevel, formData.level, formData.levelCode]);
+
+  // ラベル一覧を取得
+  useEffect(() => {
+    const fetchLabels = async () => {
+      setLabelsLoading(true);
+      try {
+        const response = await fetch('/api/labels');
+        if (response.ok) {
+          const data = await response.json();
+          setLabels(data);
+        }
+      } catch (error) {
+        console.error('Error fetching labels:', error);
+      } finally {
+        setLabelsLoading(false);
+      }
+    };
+    fetchLabels();
+  }, []);
 
   // 編集モードの場合、既存データで初期化
   useEffect(() => {
@@ -84,7 +106,8 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
           options: [...q.options],
           correctAnswer: q.correctAnswer,
           explanation: q.explanation || '' // 問題の解説も初期化
-        }))
+        })),
+        labelIds: content.labels ? content.labels.map(cl => cl.label.id) : []
       });
       setImageManagerVersion(prev => prev + 1); // 再レンダリングを強制
     } else if (mode === 'create' && excelData) {
@@ -107,7 +130,8 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
             correctAnswer: 0,
             explanation: ''
           }
-        ]
+        ],
+        labelIds: excelData.labelIds || [] // Excelから読み込んだラベルIDを設定
       });
     }
   }, [mode, content, excelData, imageManager, defaultLevel]);
@@ -452,6 +476,20 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
       });
 
       if (response.ok) {
+        const savedContent = await response.json();
+        
+        // 新しいAPIではlabelIdsがbodyに含まれているため、別途更新は不要
+        // ただし、旧実装の互換性のため、labelIds APIを使う場合はコメントアウトを解除
+        // if (savedContent.id) {
+        //   await fetch(`/api/contents/${savedContent.id}/labels`, {
+        //     method: 'PUT',
+        //     headers: {
+        //       'Content-Type': 'application/json',
+        //     },
+        //     body: JSON.stringify({ labelIds: formData.labelIds }),
+        //   });
+        // }
+        
         onClose(); // 管理画面に戻る
       } else {
         const errorText = await response.text();
@@ -546,6 +584,56 @@ export default function ContentEditor({ mode, content, excelData, onClose }) {
                     ))
                   )}
                 </select>
+              </div>
+            </div>
+
+            {/* ラベル選択 */}
+            <div className="col-span-2">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                ラベル（複数選択可）
+              </label>
+              <div className="border border-gray-300 rounded-lg p-4 max-h-48 overflow-y-auto">
+                {labelsLoading ? (
+                  <p className="text-gray-500">読み込み中...</p>
+                ) : labels.length === 0 ? (
+                  <p className="text-gray-500">ラベルがありません</p>
+                ) : (
+                  <div className="space-y-2">
+                    {labels.map((label) => (
+                      <label key={label.id} className="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 p-2 rounded">
+                        <input
+                          type="checkbox"
+                          value={label.id}
+                          checked={formData.labelIds.includes(label.id)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setFormData(prev => ({
+                                ...prev,
+                                labelIds: [...prev.labelIds, label.id]
+                              }));
+                            } else {
+                              setFormData(prev => ({
+                                ...prev,
+                                labelIds: prev.labelIds.filter(id => id !== label.id)
+                              }));
+                            }
+                          }}
+                          className="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                        />
+                        <div className="flex items-center space-x-2 flex-1">
+                          <div
+                            className="w-4 h-4 rounded"
+                            style={{ backgroundColor: label.color }}
+                          />
+                          <span className="text-gray-700">{label.name}</span>
+                          {label.description && (
+                            <span className="text-sm text-gray-500">({label.description})</span>
+                          )}
+                        </div>
+                      </label>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
             
