@@ -1,0 +1,100 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Level {
+  id          String   @id
+  displayName String
+  orderIndex  Int
+  isDefault   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("levels")
+}
+
+model Content {
+  id             String     @id @default(cuid())
+  title          String
+  level          String
+  levelCode      String
+  text           String
+  wordCount      Int?
+  characterCount Int?
+  explanation    String?
+  images         Json?
+  thumbnail      Json?
+  orderIndex     Int        @default(999999)
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  questions      Question[]
+  labels         ContentLabel[]
+
+  @@map("contents")
+}
+
+model Question {
+  id            String           @id @default(cuid())
+  contentId     String
+  question      String
+  correctAnswer Int
+  explanation   String?
+  orderIndex    Int
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  options       QuestionOption[]
+  content       Content          @relation(fields: [contentId], references: [id], onDelete: Cascade)
+
+  @@map("questions")
+}
+
+model QuestionOption {
+  id         String   @id @default(cuid())
+  questionId String
+  optionText String
+  orderIndex Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@map("question_options")
+}
+
+model AboutPage {
+  id        String   @id @default(cuid())
+  content   String
+  images    Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("about_page")
+}
+
+model Label {
+  id          String         @id @default(cuid())
+  name        String         @unique
+  color       String         @default("#6366f1")
+  description String?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  contents    ContentLabel[]
+
+  @@map("labels")
+}
+
+model ContentLabel {
+  id        String   @id @default(cuid())
+  contentId String
+  labelId   String
+  createdAt DateTime @default(now())
+  content   Content  @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  label     Label    @relation(fields: [labelId], references: [id], onDelete: Cascade)
+
+  @@unique([contentId, labelId])
+  @@map("content_labels")
+}
