@@ -16,6 +16,11 @@ export async function GET(request, { params }) {
             }
           },
           orderBy: { orderIndex: 'asc' }
+        },
+        labels: {
+          include: {
+            label: true
+          }
         }
       }
     });
@@ -39,6 +44,7 @@ export async function GET(request, { params }) {
       explanation: content.explanation || '', // 読み物の解説
       images: content.images || [],
       thumbnail: content.thumbnail || null,
+      labels: content.labels || [], // ラベル情報を追加
       questions: content.questions.map(question => ({
         id: question.orderIndex + 1,
         question: question.question,
@@ -63,7 +69,7 @@ export async function PUT(request, { params }) {
   try {
     const { id } = await params;
     const body = await request.json();
-    const { title, level, levelCode, text, wordCount, characterCount, explanation, questions, images, thumbnail } = body;
+    const { title, level, levelCode, text, wordCount, characterCount, explanation, questions, images, thumbnail, labelIds } = body;
     
     console.log('PUT /api/contents/[id] received:', {
       id,
@@ -82,6 +88,11 @@ export async function PUT(request, { params }) {
         }
       });
       await tx.question.deleteMany({
+        where: { contentId: id }
+      });
+
+      // 既存のラベル関連を削除
+      await tx.contentLabel.deleteMany({
         where: { contentId: id }
       });
 
@@ -111,7 +122,13 @@ export async function PUT(request, { params }) {
                 }))
               }
             }))
-          }
+          },
+          // ラベルの関連付け
+          labels: labelIds && labelIds.length > 0 ? {
+            create: labelIds.map(labelId => ({
+              labelId
+            }))
+          } : undefined
         },
         include: {
           questions: {
@@ -121,6 +138,11 @@ export async function PUT(request, { params }) {
               }
             },
             orderBy: { orderIndex: 'asc' }
+          },
+          labels: {
+            include: {
+              label: true
+            }
           }
         }
       });

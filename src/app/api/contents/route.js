@@ -38,9 +38,18 @@ export async function GET() {
               }
             },
             orderBy: { orderIndex: 'asc' }
+          },
+          labels: {
+            include: {
+              label: true
+            }
           }
         },
-        orderBy: { id: 'asc' }
+        orderBy: [
+          { levelCode: 'asc' },
+          { orderIndex: 'asc' },
+          { id: 'asc' }
+        ]
       });
     }, {
       maxWait: 10000, // 10 seconds max wait
@@ -61,6 +70,9 @@ export async function GET() {
       explanation: content.explanation || '', // 読み物の解説
       images: content.images || [],
       thumbnail: content.thumbnail || null,
+      labels: content.labels || [], // ラベル情報を追加
+      orderIndex: content.orderIndex, // 順番情報も追加
+      createdAt: content.createdAt, // 作成日時を追加
       questions: content.questions.map(question => ({
         id: question.orderIndex + 1, // 1から始まる連番
         question: question.question,
@@ -130,7 +142,7 @@ export async function POST(request) {
       totalSize: JSON.stringify(body).length
     });
     
-    const { title, level, levelCode, text, wordCount, characterCount, explanation, questions, images, thumbnail } = body;
+    const { title, level, levelCode, text, wordCount, characterCount, explanation, questions, images, thumbnail, labelIds } = body;
     
     console.log('POST /api/contents received wordCount/characterCount:', {
       wordCount: { value: wordCount, type: typeof wordCount },
@@ -140,6 +152,15 @@ export async function POST(request) {
         characterCount: characterCount ? parseInt(characterCount) : null
       }
     });
+
+    // 同じレベルの最大orderIndexを取得
+    const maxOrderContent = await prisma.content.findFirst({
+      where: { levelCode },
+      orderBy: { orderIndex: 'desc' },
+      select: { orderIndex: true }
+    });
+    
+    const newOrderIndex = maxOrderContent?.orderIndex ? maxOrderContent.orderIndex + 10 : 10;
 
     const content = await prisma.content.create({
       data: {
@@ -152,6 +173,7 @@ export async function POST(request) {
         explanation: explanation || null, // 読み物の解説
         images: images || [],
         thumbnail: thumbnail || null,
+        orderIndex: newOrderIndex,
         questions: {
           create: questions.map((question, questionIndex) => ({
             question: question.question,
@@ -165,7 +187,13 @@ export async function POST(request) {
               }))
             }
           }))
-        }
+        },
+        // ラベルの関連付け
+        labels: labelIds && labelIds.length > 0 ? {
+          create: labelIds.map(labelId => ({
+            labelId
+          }))
+        } : undefined
       },
       include: {
         questions: {
@@ -175,6 +203,11 @@ export async function POST(request) {
             }
           },
           orderBy: { orderIndex: 'asc' }
+        },
+        labels: {
+          include: {
+            label: true
+          }
         }
       }
     });
