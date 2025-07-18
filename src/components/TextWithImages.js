@@ -226,7 +226,7 @@ export default function TextWithImages({ text, images = [], className = "" }) {
 
   return (
     <div className={`prose max-w-none ruby-container ${className}`}>      
-      <div className="text-lg text-gray-800" style={{ lineHeight: '2.2' }}>
+      <div className="text-lg text-gray-800" style={{ lineHeight: '2.5' }}>
         {renderTextWithImages}
       </div>
     </div>

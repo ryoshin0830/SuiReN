@@ -209,7 +209,7 @@ input::placeholder, textarea::placeholder {
 
 /* ルビ表示のためのスタイル */
 .ruby-container {
-  line-height: 2.2; /* ルビスペースを確保するために行間を広げる */
+  line-height: 2.5; /* ルビスペースを確保するために行間を広げる */
 }
 
 .ruby-container ruby {
@@ -267,7 +267,7 @@ input::placeholder, textarea::placeholder {
 @media (max-width: 640px) {
   body {
     font-size: 14px;
-    line-height: 1.5;
+    line-height: 1.75;
   }
 
   /* ホバーエフェクトをタッチデバイスで無効化 */
