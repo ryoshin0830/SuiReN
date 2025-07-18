@@ -103,12 +103,8 @@ export default function Layout({ children }) {
                     ? 'text-purple-600 bg-purple-50' // アクティブ状態
                     : 'text-gray-500 hover:text-purple-600 hover:bg-purple-50' // 非アクティブ状態
                 }`}
-                title="本番環境では非表示にする"
               >
-                <span className="relative z-10 flex items-center gap-1">
-                  管理
-                  <span className="text-[10px] text-red-500">(※本番時削除)</span>
-                </span>
+                <span className="relative z-10">管理</span>
               </Link>
             </div>
           </div>
