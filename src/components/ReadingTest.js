@@ -15,6 +15,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { ReadingTracker } from '../lib/reading-tracker';
 import ResultDisplay from './ResultDisplay';
 import TextWithImages from './TextWithImages';
+import { renderRubyText } from '../lib/ruby-utils';
 
 /**
  * 速読テストコンポーネント
@@ -659,7 +660,7 @@ export default function ReadingTest({ content, onBack }) {
               <div key={question.id} className="border-b border-gray-200 pb-4 sm:pb-6">
                 {/* 問題文 */}
                 <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">
-                  問題 {questionIndex + 1}: {question.question}
+                  問題 {questionIndex + 1}: {renderRubyText(question.question)}
                 </h3>
                 
                 {/* 選択肢一覧 */}
@@ -679,7 +680,7 @@ export default function ReadingTest({ content, onBack }) {
                         className="mr-3 mt-1 text-blue-600 flex-shrink-0"
                       />
                       {/* 選択肢テキスト */}
-                      <span className="text-sm sm:text-base text-gray-700">{option}</span>
+                      <span className="text-sm sm:text-base text-gray-700">{renderRubyText(option)}</span>
                     </label>
                   ))}
                 </div>

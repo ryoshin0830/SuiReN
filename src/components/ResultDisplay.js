@@ -583,7 +583,7 @@ export default function ResultDisplay({ content, answers, readingData, onBack, o
                         return (
                           <div key={optionIndex} className={className}>
                             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-                              <span className="flex-1 text-sm sm:text-base mb-2 sm:mb-0 font-medium leading-relaxed text-gray-800">{optionIndex + 1}. {option}</span>
+                              <span className="flex-1 text-sm sm:text-base mb-2 sm:mb-0 font-medium leading-relaxed text-gray-800">{optionIndex + 1}. {renderRubyText(option)}</span>
                               <div className="flex space-x-2">
                                 {isSelected && (
                                   <span className="px-3 py-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-xs font-semibold rounded-lg shadow-sm">
