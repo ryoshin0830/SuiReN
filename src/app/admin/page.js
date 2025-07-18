@@ -296,7 +296,8 @@ export default function Admin() {
     <div className="max-w-7xl mx-auto px-4 py-8 sm:py-12 pb-safe-area-inset-bottom pb-6">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold text-gray-900">
-          管理画面
+          <span className="relative z-10">管理</span>
+          <span className="text-sm text-red-600 ml-2">(※本番環境では非表示にする)</span>
         </h1>
         <div className="flex flex-wrap gap-4">
           {activeTab === 'contents' && (
