@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { renderRubyText } from '@/lib/ruby-utils';
 
 export default function About() {
   const [aboutData, setAboutData] = useState(null);
@@ -52,12 +53,12 @@ export default function About() {
           );
         }
       }
-      // 改行を<br>に変換
+      // テキスト部分をルビ対応でレンダリング
       return (
         <span key={index}>
           {part.split('\n').map((line, lineIndex) => (
             <span key={lineIndex}>
-              {line}
+              {renderRubyText(line)}
               {lineIndex < part.split('\n').length - 1 && <br />}
             </span>
           ))}

@@ -143,6 +143,9 @@ export default function AboutPageEditor() {
         <p className="mt-2 text-sm text-gray-500">
           改行は自動的に反映されます。画像を挿入する場合は、下の画像管理から画像をアップロードし、挿入ボタンをクリックしてください。
         </p>
+        <p className="mt-1 text-sm text-gray-500">
+          ルビ（振り仮名）を使用できます: ｜漢字《かんじ》、漢字《かんじ》、漢字(かんじ)
+        </p>
       </div>
 
       <div className="mb-6">
