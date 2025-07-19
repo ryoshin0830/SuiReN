@@ -22,6 +22,11 @@ npm run lint
 npx prisma generate
 npx prisma db push
 
+# Database migration commands
+npm run migrate:dev    # Run migrations in development
+npm run migrate:deploy # Deploy migrations to production
+npm run migrate:status # Check migration status
+
 # Seed initial data
 node scripts/seed.js
 
@@ -51,6 +56,11 @@ curl http://localhost:3000/api/excel/template -o template.xlsx
 
 # Excel upload
 curl -X POST http://localhost:3000/api/excel/upload -F "file=@content.xlsx"
+
+# Label management
+curl http://localhost:3000/api/labels                    # Get all labels
+curl -X POST http://localhost:3000/api/labels -H "Content-Type: application/json" -d '{"name":"Label Name"}'
+curl -X DELETE http://localhost:3000/api/labels/[id]
 ```
 
 ## Architecture
@@ -78,6 +88,9 @@ SuiReN is a Next.js 15 web application for Japanese language learners to practic
   - Transaction support for complex updates
   - Base64 image support with placeholder system ({{IMAGE:id}})
   - Excel import/export functionality
+- **Label Management**: RESTful endpoints at /api/labels/*
+  - Create, read, delete labels
+  - Many-to-many relationship with contents
 - **Level Management**: RESTful endpoints at /api/levels/*
   - GET /api/levels - List all levels ordered by orderIndex
   - POST /api/levels - Create new level
@@ -105,6 +118,16 @@ Content {
 AboutPage {
   id, title, content, order
 }
+
+Label {
+  id, name
+  contents → ContentLabel[]
+}
+
+ContentLabel {
+  contentId → Content
+  labelId → Label
+}
 ```
 
 ### Key Libraries
@@ -115,6 +138,7 @@ AboutPage {
 - **Styling**: Tailwind CSS v4 with custom glassmorphism
 - **Cookie Storage**: js-cookie for client preferences
 - **State Management**: Zustand for global state
+- **Font**: Inter for modern typography, Noto Sans JP for Japanese text
 
 ### Important Implementation Details
 
@@ -211,3 +235,20 @@ Required environment variables (.env.local):
 DATABASE_URL="postgresql://..."
 DATABASE_URL_UNPOOLED="postgresql://..."
 ```
+
+### Development Workflow
+
+#### Initial Setup
+1. Clone the repository
+2. Install dependencies: `npm install`
+3. Set up environment variables in `.env.local`
+4. Generate Prisma client: `npx prisma generate`
+5. Push database schema: `npx prisma db push`
+6. Populate initial levels: `node scripts/migrate-levels.js`
+7. (Optional) Seed test data: `node scripts/seed.js`
+
+#### Making Database Schema Changes
+1. Modify `prisma/schema.prisma`
+2. Run `npm run migrate:dev` to create migration
+3. Test changes locally
+4. Deploy with `npm run migrate:deploy`
