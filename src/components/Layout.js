@@ -41,7 +41,7 @@ export default function Layout({ children }) {
                 {/* SuiReN ロゴ - ホバーエフェクト付き */}
                 <div className="relative">
                   <img 
-                    src="/logos/gorilla-only-friendly.svg" 
+                    src="/logos/logo-only.svg" 
                     alt="SuiReN" 
                     className="h-8 sm:h-12 w-auto transition-all duration-300 group-hover:drop-shadow-lg"
                   />

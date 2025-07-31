@@ -1,9 +1,0 @@
-<svg width="200" height="60" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
-  <!-- Layered waves background -->
-  <path d="M0,20 Q50,10 100,20 T200,20 L200,60 L0,60 Z" fill="#3B82F6" opacity="0.1"/>
-  <path d="M0,30 Q50,20 100,30 T200,30 L200,60 L0,60 Z" fill="#06B6D4" opacity="0.15"/>
-  <path d="M0,40 Q50,30 100,40 T200,40 L200,60 L0,60 Z" fill="#0EA5E9" opacity="0.2"/>
-  <!-- Text -->
-  <text x="100" y="25" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#1E40AF">すいすいリーダー</text>
-  <text x="100" y="40" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="white" font-weight="bold">Japanese Reading Practice</text>
-</svg>

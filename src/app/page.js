@@ -20,89 +20,90 @@ export default function Home() {
   return (
     <div className="relative overflow-hidden">
       {/* ===== ヒーローセクション ===== */}
-      <div className="relative min-h-screen flex items-center justify-center px-6 py-20">
-        {/* 動的背景 */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
+      <div className="relative bg-gradient-to-br from-blue-50 via-white to-purple-50 min-h-[60vh] lg:min-h-[50vh] overflow-hidden">
+        <div className="absolute inset-0">
+          <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-blue-100 rounded-full blur-3xl opacity-30 translate-x-1/2 -translate-y-1/2"></div>
+          <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-purple-100 rounded-full blur-3xl opacity-30 -translate-x-1/2 translate-y-1/2"></div>
         </div>
+        
+        <div className="relative max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 min-h-[60vh] lg:min-h-[50vh] flex items-center py-8">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center w-full">
+            {/* 左側：テキストコンテンツ */}
+            <div className="text-center lg:text-left lg:pl-8 xl:pl-16 relative z-30">
+              {/* タイトル */}
+              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 mb-2">
+                SuiReN
+              </h1>
+              <p className="text-xl sm:text-2xl text-gray-600 mb-6">
+                Sui Sui Reading Nihongo
+              </p>
 
-        {/* メインコンテンツ */}
-        <div className="relative z-10 text-center max-w-5xl mx-auto">
-          {/* ロゴアニメーション */}
-          <div className="mb-8 transform hover:scale-110 transition-transform duration-500">
-            <img 
-              src="/logos/gorilla-only-animated.svg" 
-              alt="SuiReN" 
-              className="h-32 sm:h-40 lg:h-48 w-auto mx-auto filter drop-shadow-2xl"
-            />
+              {/* メインタイトル */}
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-6">
+                日本語学習者のための
+                <span className="text-blue-600 block mt-2">インタラクティブ速読練習</span>
+              </h2>
+
+              {/* 説明文 */}
+              <p className="text-lg sm:text-xl text-gray-600 mb-10 leading-relaxed">
+                速く、正確に、楽しく。<br />
+                日本語の読み物を読む力を身につけよう
+              </p>
+
+              {/* CTAボタン */}
+              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                <Link 
+                  href="/reading"
+                  className="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold rounded-lg text-white bg-blue-600 hover:bg-blue-700 shadow-lg transition-all duration-200"
+                >
+                  練習を始める
+                  <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  </svg>
+                </Link>
+                
+                <Link 
+                  href="#how-to"
+                  className="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold rounded-lg text-gray-700 bg-white border-2 border-gray-300 hover:border-gray-400 transition-all duration-200"
+                >
+                  練習方法を見る
+                </Link>
+              </div>
+            </div>
+
+            {/* 右側：超ダイナミックアニメーションロゴ - デスクトップでは右にオーバーフロー */}
+            <div className="relative order-first lg:order-last">
+              <div className="relative flex items-center justify-center">
+                <div className="relative">
+                  {/* 多層背景エフェクト */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-300 to-purple-300 rounded-full blur-3xl opacity-30 scale-150 animate-pulse"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-cyan-300 to-blue-400 rounded-full blur-2xl opacity-20 scale-125 animate-pulse animation-delay-2000"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-purple-300 to-pink-300 rounded-full blur-3xl opacity-15 scale-110 animate-pulse animation-delay-4000"></div>
+                  
+                  {/* 回転する装飾リング */}
+                  <div className="absolute inset-0 rounded-full border-4 border-blue-200 opacity-20 scale-110 animate-spin-slow"></div>
+                  <div className="absolute inset-0 rounded-full border-4 border-purple-200 opacity-20 scale-125 animate-spin-reverse"></div>
+                  
+                  {/* 超巨大アニメーションロゴ */}
+                  <div className="relative animate-float">
+                    <div className="animate-logo-3d">
+                      <img 
+                        src="/logos/logo-only-animated.svg" 
+                        alt="SuiReN Logo" 
+                        className="relative z-10 w-[300px] h-[300px] sm:w-[400px] sm:h-[400px] lg:w-[500px] lg:h-[500px] xl:w-[600px] xl:h-[600px] 2xl:w-[700px] 2xl:h-[700px] object-contain animate-logo-pulse-scale"
+                      />
+                    </div>
+                  </div>
+                  
+                  {/* パーティクルエフェクト */}
+                  <div className="absolute top-20 left-10 w-4 h-4 bg-blue-400 rounded-full animate-float-delay-1 opacity-50"></div>
+                  <div className="absolute top-40 right-20 w-6 h-6 bg-purple-400 rounded-full animate-float-delay-2 opacity-50"></div>
+                  <div className="absolute bottom-20 left-20 w-5 h-5 bg-cyan-400 rounded-full animate-float-delay-3 opacity-50"></div>
+                  <div className="absolute bottom-40 right-10 w-4 h-4 bg-pink-400 rounded-full animate-float-delay-4 opacity-50"></div>
+                </div>
+              </div>
+            </div>
           </div>
-
-          {/* タイトル */}
-          <h1 className="text-6xl sm:text-7xl lg:text-8xl font-black mb-6">
-            <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent animate-gradient">
-              SuiReN
-            </span>
-          </h1>
-
-          {/* サブタイトル */}
-          <p className="text-2xl sm:text-3xl lg:text-4xl font-light text-gray-700 mb-4">
-            日本語学習者のための
-          </p>
-          <p className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-800 mb-12">
-            インタラクティブ<ruby>速読<rt>そくどく</rt></ruby><ruby>練習<rt>れんしゅう</rt></ruby>
-          </p>
-
-          {/* キャッチコピー */}
-          <div className="mb-12 max-w-2xl mx-auto">
-            <p className="text-xl text-gray-600 leading-relaxed">
-              <span className="font-bold text-2xl text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
-                速く
-              </span>
-              、
-              <span className="font-bold text-2xl text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">
-                正確に
-              </span>
-              、
-              <span className="font-bold text-2xl text-transparent bg-clip-text bg-gradient-to-r from-pink-600 to-orange-600">
-                楽しく
-              </span>
-              <br />
-              日本語の読み物を読む力を身につけよう
-            </p>
-          </div>
-
-          {/* CTAボタン */}
-          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-            <Link 
-              href="/reading"
-              className="group relative px-8 sm:px-12 py-5 sm:py-6 text-xl sm:text-2xl font-black text-white bg-gradient-to-r from-blue-600 to-purple-600 rounded-full overflow-hidden shadow-2xl transform hover:scale-110 transition-all duration-300 animate-pulse-glow"
-            >
-              <div className="absolute inset-0 animate-shine"></div>
-              <span className="relative z-10 flex items-center gap-2 sm:gap-3">
-                <svg className="w-6 h-6 sm:w-8 sm:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                </svg>
-                <span className="animate-text-pulse">START</span>
-              </span>
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            </Link>
-            
-            <Link 
-              href="#how-to"
-              className="px-10 py-5 text-xl font-semibold text-gray-700 bg-white/80 backdrop-blur-sm rounded-full shadow-xl hover:shadow-2xl hover:bg-white transform hover:scale-105 transition-all duration-300 border border-gray-200"
-            >
-              練習方法を見る
-            </Link>
-          </div>
-        </div>
-
-        {/* スクロールインジケーター */}
-        <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
-          <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-          </svg>
         </div>
       </div>
 

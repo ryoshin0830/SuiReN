@@ -86,7 +86,7 @@ body {
 
 /* Utility classes */
 .animate-float {
-  animation: float 6s ease-in-out infinite;
+  animation: float 4s ease-in-out infinite;
 }
 
 .animate-glow-pulse {
@@ -205,6 +205,146 @@ input::placeholder, textarea::placeholder {
 
 ::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+}
+
+/* Hero section animations */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin-reverse {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) scale(1) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-30px) scale(1.1) rotate(5deg);
+  }
+  50% {
+    transform: translateY(-50px) scale(1.15) rotate(-5deg);
+  }
+  75% {
+    transform: translateY(-30px) scale(1.1) rotate(3deg);
+  }
+}
+
+@keyframes subtle-rotate {
+  0%, 100% {
+    transform: rotate(-2deg) scale(1);
+  }
+  25% {
+    transform: rotate(10deg) scale(1.05);
+  }
+  50% {
+    transform: rotate(-8deg) scale(1.1);
+  }
+  75% {
+    transform: rotate(6deg) scale(1.05);
+  }
+}
+
+@keyframes float-delay-1 {
+  0%, 100% {
+    transform: translate(0px, 0px);
+  }
+  33% {
+    transform: translate(30px, -30px);
+  }
+  66% {
+    transform: translate(-20px, 20px);
+  }
+}
+
+@keyframes float-delay-2 {
+  0%, 100% {
+    transform: translate(0px, 0px);
+  }
+  33% {
+    transform: translate(-40px, 20px);
+  }
+  66% {
+    transform: translate(20px, -40px);
+  }
+}
+
+@keyframes float-delay-3 {
+  0%, 100% {
+    transform: translate(0px, 0px);
+  }
+  33% {
+    transform: translate(25px, 25px);
+  }
+  66% {
+    transform: translate(-30px, -20px);
+  }
+}
+
+@keyframes float-delay-4 {
+  0%, 100% {
+    transform: translate(0px, 0px);
+  }
+  33% {
+    transform: translate(-20px, -30px);
+  }
+  66% {
+    transform: translate(30px, 20px);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 20s linear infinite;
+}
+
+.animate-spin-reverse {
+  animation: spin-reverse 15s linear infinite;
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+.animate-subtle-rotate {
+  animation: subtle-rotate 3s ease-in-out infinite;
+}
+
+.animate-float-delay-1 {
+  animation: float-delay-1 7s ease-in-out infinite;
+}
+
+.animate-float-delay-2 {
+  animation: float-delay-2 8s ease-in-out infinite;
+  animation-delay: 1s;
+}
+
+.animate-float-delay-3 {
+  animation: float-delay-3 9s ease-in-out infinite;
+  animation-delay: 2s;
+}
+
+.animate-float-delay-4 {
+  animation: float-delay-4 10s ease-in-out infinite;
+  animation-delay: 3s;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
 }
 
 /* ルビ表示のためのスタイル */
@@ -329,6 +469,57 @@ input::placeholder, textarea::placeholder {
 
 .animation-delay-4000 {
   animation-delay: 4s;
+}
+
+/* ロゴの高度なアニメーション */
+@keyframes logo-pulse-scale {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+    filter: drop-shadow(0 0 60px rgba(59,130,246,0.4));
+  }
+  20% {
+    transform: scale(1.2) rotate(15deg);
+    filter: drop-shadow(0 0 100px rgba(147,51,234,0.6));
+  }
+  40% {
+    transform: scale(1.15) rotate(-10deg);
+    filter: drop-shadow(0 0 80px rgba(236,72,153,0.5));
+  }
+  60% {
+    transform: scale(1.25) rotate(8deg);
+    filter: drop-shadow(0 0 120px rgba(59,130,246,0.7));
+  }
+  80% {
+    transform: scale(1.1) rotate(-12deg);
+    filter: drop-shadow(0 0 90px rgba(147,51,234,0.5));
+  }
+}
+
+@keyframes logo-3d-rotate {
+  0% {
+    transform: perspective(1000px) rotateY(0deg) rotateX(0deg);
+  }
+  25% {
+    transform: perspective(1000px) rotateY(20deg) rotateX(5deg);
+  }
+  50% {
+    transform: perspective(1000px) rotateY(-15deg) rotateX(-5deg);
+  }
+  75% {
+    transform: perspective(1000px) rotateY(10deg) rotateX(3deg);
+  }
+  100% {
+    transform: perspective(1000px) rotateY(0deg) rotateX(0deg);
+  }
+}
+
+.animate-logo-pulse-scale {
+  animation: logo-pulse-scale 2.5s ease-in-out infinite;
+}
+
+.animate-logo-3d {
+  animation: logo-3d-rotate 5s ease-in-out infinite;
+  transform-style: preserve-3d;
 }
 
 @keyframes gradient {
